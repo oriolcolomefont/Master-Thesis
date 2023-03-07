@@ -9,8 +9,8 @@ import wandb
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning import Trainer
 
-wandb_logger = WandbLogger()
-trainer = Trainer(logger=wandb_logger)
+#wandb_logger = WandbLogger()
+#trainer = Trainer(logger=wandb_logger)
 
 from dataloader import *
 from dataset import MyDataset
