@@ -1,82 +1,45 @@
+#Import the required libraries
 import torch
 import torch.nn as nn
-import torch.optim as optim
-
+import torch.nn.functional as F
 import pytorch_lightning as pl
-#from typing_extensions import Protocol
+import torchaudio
 
-import wandb
+from loss_function import TripletLoss
 
-class MyModel(pl.LightningModule):
-    
-    def __init__(self, num_classes=10, conv_layers=[(32, 3), (64, 3)], loss_func=nn.CrossEntropyLoss(), optimizer=optim.Adam):
-        super().__init__()
-        # Define convolutional layers of the neural network
-        self.conv_layers = nn.ModuleList()
-        prev_channels = 1
-        for channels, kernel_size in conv_layers:
-            self.conv_layers.append(nn.Conv2d(prev_channels, channels, kernel_size))
-            self.conv_layers.append(nn.ReLU())
-            self.conv_layers.append(nn.MaxPool2d(kernel_size=2))
-            self.conv_layers.append(nn.Dropout2d(p=0.25))
-            prev_channels = channels
-        self.fc1 = nn.Linear(9216, 128)
-        self.fc2 = nn.Linear(128, num_classes)
-        # Define loss function and optimizer
-        self.loss_func = loss_func
-        self.optimizer = optimizer(self.parameters(), lr=1e-3)
-        
-        def forward(self, x):
-        # Define forward pass of the neural network
-        for layer in self.conv_layers:
-            x = layer(x)
-        x = torch.flatten(x, 1)
-        x = self.fc1(x)
-        x = nn.functional.dropout(x, p=0.5, training=self.training)
+#Define your triplet network model by inheriting from pl.LightningModule.
+
+'''
+In this example, we are using a convolutional neural network to extract features from audio signals. 
+The embedding_size parameter specifies the size of the output embedding space. 
+We have defined a simple architecture with three convolutional layers, followed by max pooling, and two fully connected layers.
+'''
+
+class TripletNet(pl.LightningModule):
+    def __init__(self, embedding_size=128):
+        super(TripletNet, self).__init__()
+        self.embedding_size = embedding_size
+        self.conv1 = nn.Conv2d(1, 64, kernel_size=3, padding=1)
+        self.conv2 = nn.Conv2d(64, 128, kernel_size=3, padding=1)
+        self.conv3 = nn.Conv2d(128, 256, kernel_size=3, padding=1)
+        self.pool = nn.MaxPool2d(2, 2)
+        self.fc1 = nn.Linear(256 * 7 * 7, 1024)
+        self.fc2 = nn.Linear(1024, self.embedding_size)
+
+    def forward(self, x):
+        x = self.pool(F.relu(self.conv1(x)))
+        x = self.pool(F.relu(self.conv2(x)))
+        x = self.pool(F.relu(self.conv3(x)))
+        x = x.view(-1, 256 * 7 * 7)
+        x = F.relu(self.fc1(x))
         x = self.fc2(x)
         return x
     
     def training_step(self, batch, batch_idx):
-        # Define training step of the neural network
-        x, y = batch
-        y_hat = self(x)
-        loss = self.loss_func(y_hat, y)
-        # Log training loss to Wandb logger
+        anchor, positive, negative = batch
+        anchor_embedding = self(anchor)
+        positive_embedding = self(positive)
+        negative_embedding = self(negative)
+        loss = TripletLoss()(anchor_embedding, positive_embedding, negative_embedding)
         self.log('train_loss', loss)
         return loss
-    
-    def validation_step(self, batch, batch_idx):
-        # Define validation step of the neural network
-        x, y = batch
-        y_hat = self(x)
-        loss = self.loss_func(y_hat, y)
-        # Log validation loss to Wandb logger
-        self.log('val_loss', loss)
-        return loss
-    
-    def configure_optimizers(self):
-        # Return optimizer for neural network
-        return self.optimizer
-    
-    def prepare_data(self):
-        # Define data preprocessing steps
-        # Load and preprocess audio data
-        
-    def train_dataloader(self):
-        # Define data loading for training set
-        # Return DataLoader for training set
-        
-    def val_dataloader(self):
-        # Define data loading for validation set
-        # Return DataLoader for validation set
-
-
-# Initialize model and Wandb logger
-model = MyModel()
-wandb_logger = pl.loggers.WandbLogger(project='master-thesis')
-
-# Initialize PyTorch Lightning Trainer
-trainer = pl.Trainer(gpus=1, logger=wandb_logger)
-
-# Train model
-trainer.fit(model)
