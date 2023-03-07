@@ -44,12 +44,9 @@ for batch in dataloader:
             negative_audio, _ = torchaudio.load(random.choice(negatives))
 
             # Apply transforms to the anchor, positive, and negative audio
-            anchor_audio = custom_transform(anchor_audio)
-            positive_audio = custom_transform(positive_audio)
-            negative_audio = custom_transform(negative_audio)
-
-            # Use the transformed audio to train your model
-            # ...
+            anchor_audio = anchor_audio.mean(dim=0, keepdim=True)  # convert stereo to mono
+            #positive_audio = custom_transform(positive_audio)
+            #negative_audio = custom_transform(negative_audio)
 
         else:
             # Skip files with unsupported extensions

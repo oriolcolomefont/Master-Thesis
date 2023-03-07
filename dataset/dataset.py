@@ -13,4 +13,6 @@ class MyDataset(Dataset):
     def __getitem__(self, index):
         filename = os.path.join(self.root_dir, self.file_list[index])
         waveform, sample_rate = torchaudio.load(filename)
+        waveform = waveform.mean(dim=0, keepdim=True)  # convert stereo to mono
+
         return waveform, sample_rate

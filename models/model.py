@@ -6,6 +6,7 @@ import pytorch_lightning as pl
 import torchaudio
 
 from loss_function import TripletLoss
+from dataset import MyDataset
 
 #Define your triplet network model by inheriting from pl.LightningModule.
 
@@ -25,6 +26,7 @@ class TripletNet(pl.LightningModule):
         self.pool = nn.MaxPool2d(2, 2)
         self.fc1 = nn.Linear(256 * 7 * 7, 1024)
         self.fc2 = nn.Linear(1024, self.embedding_size)
+        self.save_hyperparameters()
 
     def forward(self, x):
         x = self.pool(F.relu(self.conv1(x)))
@@ -34,7 +36,12 @@ class TripletNet(pl.LightningModule):
         x = F.relu(self.fc1(x))
         x = self.fc2(x)
         return x
-    
+    '''
+    we are using the training_step function from pl.LightningModule to define our training step. 
+    We are passing in batches of anchor, positive, and negative examples. 
+    We then compute the embeddings for each example using our TripletNet model. 
+    We calculate the loss using our TripletLoss function and log the loss using self.log.
+    '''
     def training_step(self, batch, batch_idx):
         anchor, positive, negative = batch
         anchor_embedding = self(anchor)
@@ -43,3 +50,19 @@ class TripletNet(pl.LightningModule):
         loss = TripletLoss()(anchor_embedding, positive_embedding, negative_embedding)
         self.log('train_loss', loss)
         return loss
+    
+    def configure_optimizers(self):
+        optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
+        return optimizer
+
+    def triplet_loss(self, anchor, positive, negative):
+        distance_positive = F.pairwise_distance(anchor, positive, 2)
+        distance_negative = F.pairwise_distance(anchor, negative, 2)
+        loss = torch.mean(torch.max(distance_positive - distance_negative + self.margin, torch.tensor([0.]).to(anchor.device)))
+        return loss
+
+    def train_dataloader(self):
+        audio_dataset = MyDataset(root_dir='data')
+        batch_size = 16
+        train_loader = torch.utils.data.DataLoader(audio_dataset, batch_size=batch_size, shuffle=True, drop_last=True)
+        return train_loader
