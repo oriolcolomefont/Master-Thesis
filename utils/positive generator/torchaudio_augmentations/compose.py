@@ -2,7 +2,9 @@ import torch
 
 
 class Compose:
-    """Data augmentation module that transforms any given data example with a chain of audio augmentations."""
+    """
+    Data augmentation module that transforms any given data example with a chain of audio augmentations.
+    """
 
     def __init__(self, transforms):
         self.transforms = transforms
