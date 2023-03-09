@@ -8,10 +8,10 @@ import torchaudio
 from loss_function import TripletLoss
 from dataset import MyDataset
 
-#Define your triplet network model by inheriting from pl.LightningModule.
+#Define the triplet network model by inheriting from pl.LightningModule.
 
 '''
-In this example, we are using a convolutional neural network to extract features from audio signals. 
+In this example, we are using a convolutional neural network to extract features from raw audio signals. 
 The embedding_size parameter specifies the size of the output embedding space. 
 We have defined a simple architecture with three convolutional layers, followed by max pooling, and two fully connected layers.
 '''
@@ -62,7 +62,7 @@ class TripletNet(pl.LightningModule):
         return loss
 
     def train_dataloader(self):
-        audio_dataset = MyDataset(root_dir='data')
-        batch_size = 16
+        audio_dataset = MyDataset(root_dir='data') #To be improved
+        batch_size = 32
         train_loader = torch.utils.data.DataLoader(audio_dataset, batch_size=batch_size, shuffle=True, drop_last=True)
         return train_loader
