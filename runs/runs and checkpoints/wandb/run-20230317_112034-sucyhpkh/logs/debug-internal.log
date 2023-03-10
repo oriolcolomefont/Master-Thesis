@@ -1,0 +1,184 @@
+2023-03-17 11:20:34,495 INFO    StreamThr :10822 [internal.py:wandb_internal():90] W&B internal server running at pid: 10822, started at: 2023-03-17 11:20:34.494371
+2023-03-17 11:20:34,496 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: status
+2023-03-17 11:20:34,499 INFO    WriterThread:10822 [datastore.py:open_for_write():85] open: /home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints/wandb/run-20230317_112034-sucyhpkh/run-sucyhpkh.wandb
+2023-03-17 11:20:34,500 DEBUG   SenderThread:10822 [sender.py:send():336] send: header
+2023-03-17 11:20:34,512 DEBUG   SenderThread:10822 [sender.py:send():336] send: run
+2023-03-17 11:20:34,870 INFO    SenderThread:10822 [dir_watcher.py:__init__():219] watching files in: /home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints/wandb/run-20230317_112034-sucyhpkh/files
+2023-03-17 11:20:34,870 INFO    SenderThread:10822 [sender.py:_start_run_threads():1081] run started: sucyhpkh with start time 1679052034.493575
+2023-03-17 11:20:34,870 DEBUG   SenderThread:10822 [sender.py:send_request():363] send_request: summary_record
+2023-03-17 11:20:34,870 INFO    SenderThread:10822 [sender.py:_save_file():1332] saving file wandb-summary.json with policy end
+2023-03-17 11:20:34,874 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: check_version
+2023-03-17 11:20:34,874 DEBUG   SenderThread:10822 [sender.py:send_request():363] send_request: check_version
+2023-03-17 11:20:34,931 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: run_start
+2023-03-17 11:20:35,872 INFO    Thread-13 :10822 [dir_watcher.py:_on_file_created():278] file/dir created: /home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints/wandb/run-20230317_112034-sucyhpkh/files/wandb-summary.json
+2023-03-17 11:20:36,758 DEBUG   HandlerThread:10822 [system_info.py:__init__():31] System info init
+2023-03-17 11:20:36,758 DEBUG   HandlerThread:10822 [system_info.py:__init__():46] System info init done
+2023-03-17 11:20:36,758 INFO    HandlerThread:10822 [system_monitor.py:start():183] Starting system monitor
+2023-03-17 11:20:36,759 INFO    SystemMonitor:10822 [system_monitor.py:_start():147] Starting system asset monitoring threads
+2023-03-17 11:20:36,759 INFO    HandlerThread:10822 [system_monitor.py:probe():204] Collecting system info
+2023-03-17 11:20:36,759 INFO    SystemMonitor:10822 [interfaces.py:start():187] Started cpu monitoring
+2023-03-17 11:20:36,760 INFO    SystemMonitor:10822 [interfaces.py:start():187] Started disk monitoring
+2023-03-17 11:20:36,761 INFO    SystemMonitor:10822 [interfaces.py:start():187] Started gpu monitoring
+2023-03-17 11:20:36,762 INFO    SystemMonitor:10822 [interfaces.py:start():187] Started memory monitoring
+2023-03-17 11:20:36,762 INFO    SystemMonitor:10822 [interfaces.py:start():187] Started network monitoring
+2023-03-17 11:20:36,777 DEBUG   HandlerThread:10822 [system_info.py:probe():195] Probing system
+2023-03-17 11:20:36,783 DEBUG   HandlerThread:10822 [system_info.py:_probe_git():180] Probing git
+2023-03-17 11:20:36,794 DEBUG   HandlerThread:10822 [system_info.py:_probe_git():188] Probing git done
+2023-03-17 11:20:36,795 DEBUG   HandlerThread:10822 [system_info.py:probe():240] Probing system done
+2023-03-17 11:20:36,795 DEBUG   HandlerThread:10822 [system_monitor.py:probe():213] {'os': 'Linux-4.19.0-23-cloud-amd64-x86_64-with-debian-10.13', 'python': '3.7.12', 'heartbeatAt': '2023-03-17T11:20:36.777989', 'startedAt': '2023-03-17T11:20:34.487183', 'docker': None, 'cuda': None, 'args': (), 'state': 'running', 'program': 'train.py', 'codePath': 'train.py', 'git': {'remote': 'https://github.com/oriolcolomefont/Master-Thesis.git', 'commit': 'dd715ddcfa7894f5048313fe11185d775b23aa45'}, 'email': 'oriolcolomefont@gmail.com', 'root': '/home/oriol_colome_font_epidemicsound_/Master-Thesis-1', 'host': 'oriol-notebook', 'username': 'oriol_colome_font_epidemicsound_', 'executable': '/home/oriol_colome_font_epidemicsound_/.local/share/virtualenvs/Master-Thesis-1-aKm4ydtm/bin/python', 'cpu_count': 8, 'cpu_count_logical': 16, 'cpu_freq': {'current': 2000.18, 'min': 0.0, 'max': 0.0}, 'cpu_freq_per_core': [{'current': 2000.18, 'min': 0.0, 'max': 0.0}, {'current': 2000.18, 'min': 0.0, 'max': 0.0}, {'current': 2000.18, 'min': 0.0, 'max': 0.0}, {'current': 2000.18, 'min': 0.0, 'max': 0.0}, {'current': 2000.18, 'min': 0.0, 'max': 0.0}, {'current': 2000.18, 'min': 0.0, 'max': 0.0}, {'current': 2000.18, 'min': 0.0, 'max': 0.0}, {'current': 2000.18, 'min': 0.0, 'max': 0.0}, {'current': 2000.18, 'min': 0.0, 'max': 0.0}, {'current': 2000.18, 'min': 0.0, 'max': 0.0}, {'current': 2000.18, 'min': 0.0, 'max': 0.0}, {'current': 2000.18, 'min': 0.0, 'max': 0.0}, {'current': 2000.18, 'min': 0.0, 'max': 0.0}, {'current': 2000.18, 'min': 0.0, 'max': 0.0}, {'current': 2000.18, 'min': 0.0, 'max': 0.0}, {'current': 2000.18, 'min': 0.0, 'max': 0.0}], 'disk': {'total': 98.18611526489258, 'used': 71.86059188842773}, 'gpu': 'Tesla T4', 'gpu_count': 1, 'gpu_devices': [{'name': 'Tesla T4', 'memory_total': 16106127360}], 'memory': {'total': 58.975955963134766}}
+2023-03-17 11:20:36,795 INFO    HandlerThread:10822 [system_monitor.py:probe():214] Finished collecting system info
+2023-03-17 11:20:36,795 INFO    HandlerThread:10822 [system_monitor.py:probe():217] Publishing system info
+2023-03-17 11:20:36,795 DEBUG   HandlerThread:10822 [system_info.py:_save_pip():52] Saving list of pip packages installed into the current environment
+2023-03-17 11:20:36,795 DEBUG   HandlerThread:10822 [system_info.py:_save_pip():67] Saving pip packages done
+2023-03-17 11:20:36,796 INFO    HandlerThread:10822 [system_monitor.py:probe():219] Finished publishing system info
+2023-03-17 11:20:36,798 DEBUG   SenderThread:10822 [sender.py:send():336] send: files
+2023-03-17 11:20:36,799 INFO    SenderThread:10822 [sender.py:_save_file():1332] saving file wandb-metadata.json with policy now
+2023-03-17 11:20:36,806 DEBUG   SenderThread:10822 [sender.py:send():336] send: telemetry
+2023-03-17 11:20:36,806 DEBUG   SenderThread:10822 [sender.py:send():336] send: metric
+2023-03-17 11:20:36,806 DEBUG   SenderThread:10822 [sender.py:send():336] send: telemetry
+2023-03-17 11:20:36,806 DEBUG   SenderThread:10822 [sender.py:send():336] send: metric
+2023-03-17 11:20:36,807 WARNING SenderThread:10822 [sender.py:send_metric():1283] Seen metric with glob (shouldn't happen)
+2023-03-17 11:20:36,807 DEBUG   SenderThread:10822 [sender.py:send():336] send: telemetry
+2023-03-17 11:20:36,807 DEBUG   SenderThread:10822 [sender.py:send():336] send: config
+2023-03-17 11:20:36,809 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: stop_status
+2023-03-17 11:20:36,810 DEBUG   SenderThread:10822 [sender.py:send_request():363] send_request: stop_status
+2023-03-17 11:20:36,872 INFO    Thread-13 :10822 [dir_watcher.py:_on_file_created():278] file/dir created: /home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints/wandb/run-20230317_112034-sucyhpkh/files/requirements.txt
+2023-03-17 11:20:36,872 INFO    Thread-13 :10822 [dir_watcher.py:_on_file_created():278] file/dir created: /home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints/wandb/run-20230317_112034-sucyhpkh/files/output.log
+2023-03-17 11:20:36,873 INFO    Thread-13 :10822 [dir_watcher.py:_on_file_created():278] file/dir created: /home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints/wandb/run-20230317_112034-sucyhpkh/files/wandb-metadata.json
+2023-03-17 11:20:37,454 INFO    wandb-upload_0:10822 [upload_job.py:push():138] Uploaded file /var/tmp/tmpv4inpj5owandb/j8brl3bv-wandb-metadata.json
+2023-03-17 11:20:38,441 DEBUG   SenderThread:10822 [sender.py:send():336] send: config
+2023-03-17 11:20:38,871 INFO    Thread-13 :10822 [dir_watcher.py:_on_file_modified():295] file/dir modified: /home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints/wandb/run-20230317_112034-sucyhpkh/files/output.log
+2023-03-17 11:20:39,382 DEBUG   SenderThread:10822 [sender.py:send():336] send: telemetry
+2023-03-17 11:20:40,383 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: status_report
+2023-03-17 11:20:40,872 INFO    Thread-13 :10822 [dir_watcher.py:_on_file_modified():295] file/dir modified: /home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints/wandb/run-20230317_112034-sucyhpkh/files/output.log
+2023-03-17 11:20:41,088 DEBUG   SenderThread:10822 [sender.py:send():336] send: exit
+2023-03-17 11:20:41,088 INFO    SenderThread:10822 [sender.py:send_exit():559] handling exit code: 1
+2023-03-17 11:20:41,089 INFO    SenderThread:10822 [sender.py:send_exit():561] handling runtime: 6
+2023-03-17 11:20:41,089 INFO    SenderThread:10822 [sender.py:_save_file():1332] saving file wandb-summary.json with policy end
+2023-03-17 11:20:41,089 INFO    SenderThread:10822 [sender.py:send_exit():567] send defer
+2023-03-17 11:20:41,089 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: defer
+2023-03-17 11:20:41,089 INFO    HandlerThread:10822 [handler.py:handle_request_defer():170] handle defer: 0
+2023-03-17 11:20:41,090 DEBUG   SenderThread:10822 [sender.py:send_request():363] send_request: defer
+2023-03-17 11:20:41,090 INFO    SenderThread:10822 [sender.py:send_request_defer():583] handle sender defer: 0
+2023-03-17 11:20:41,090 INFO    SenderThread:10822 [sender.py:transition_state():587] send defer: 1
+2023-03-17 11:20:41,090 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: defer
+2023-03-17 11:20:41,090 INFO    HandlerThread:10822 [handler.py:handle_request_defer():170] handle defer: 1
+2023-03-17 11:20:41,090 DEBUG   SenderThread:10822 [sender.py:send_request():363] send_request: defer
+2023-03-17 11:20:41,090 INFO    SenderThread:10822 [sender.py:send_request_defer():583] handle sender defer: 1
+2023-03-17 11:20:41,090 INFO    SenderThread:10822 [sender.py:transition_state():587] send defer: 2
+2023-03-17 11:20:41,091 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: defer
+2023-03-17 11:20:41,091 INFO    HandlerThread:10822 [handler.py:handle_request_defer():170] handle defer: 2
+2023-03-17 11:20:41,091 INFO    HandlerThread:10822 [system_monitor.py:finish():193] Stopping system monitor
+2023-03-17 11:20:41,091 DEBUG   SystemMonitor:10822 [system_monitor.py:_start():161] Starting system metrics aggregation loop
+2023-03-17 11:20:41,092 DEBUG   SystemMonitor:10822 [system_monitor.py:_start():168] Finished system metrics aggregation loop
+2023-03-17 11:20:41,092 DEBUG   SystemMonitor:10822 [system_monitor.py:_start():172] Publishing last batch of metrics
+2023-03-17 11:20:41,092 INFO    HandlerThread:10822 [interfaces.py:finish():199] Joined cpu monitor
+2023-03-17 11:20:41,093 INFO    HandlerThread:10822 [interfaces.py:finish():199] Joined disk monitor
+2023-03-17 11:20:41,124 INFO    HandlerThread:10822 [interfaces.py:finish():199] Joined gpu monitor
+2023-03-17 11:20:41,124 INFO    HandlerThread:10822 [interfaces.py:finish():199] Joined memory monitor
+2023-03-17 11:20:41,124 INFO    HandlerThread:10822 [interfaces.py:finish():199] Joined network monitor
+2023-03-17 11:20:41,125 DEBUG   SenderThread:10822 [sender.py:send_request():363] send_request: defer
+2023-03-17 11:20:41,125 INFO    SenderThread:10822 [sender.py:send_request_defer():583] handle sender defer: 2
+2023-03-17 11:20:41,125 INFO    SenderThread:10822 [sender.py:transition_state():587] send defer: 3
+2023-03-17 11:20:41,125 DEBUG   SenderThread:10822 [sender.py:send():336] send: stats
+2023-03-17 11:20:41,125 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: defer
+2023-03-17 11:20:41,125 INFO    HandlerThread:10822 [handler.py:handle_request_defer():170] handle defer: 3
+2023-03-17 11:20:41,126 DEBUG   SenderThread:10822 [sender.py:send_request():363] send_request: defer
+2023-03-17 11:20:41,126 INFO    SenderThread:10822 [sender.py:send_request_defer():583] handle sender defer: 3
+2023-03-17 11:20:41,126 INFO    SenderThread:10822 [sender.py:transition_state():587] send defer: 4
+2023-03-17 11:20:41,126 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: defer
+2023-03-17 11:20:41,126 INFO    HandlerThread:10822 [handler.py:handle_request_defer():170] handle defer: 4
+2023-03-17 11:20:41,126 DEBUG   SenderThread:10822 [sender.py:send_request():363] send_request: defer
+2023-03-17 11:20:41,126 INFO    SenderThread:10822 [sender.py:send_request_defer():583] handle sender defer: 4
+2023-03-17 11:20:41,126 INFO    SenderThread:10822 [sender.py:transition_state():587] send defer: 5
+2023-03-17 11:20:41,126 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: defer
+2023-03-17 11:20:41,127 INFO    HandlerThread:10822 [handler.py:handle_request_defer():170] handle defer: 5
+2023-03-17 11:20:41,127 DEBUG   SenderThread:10822 [sender.py:send():336] send: summary
+2023-03-17 11:20:41,127 INFO    SenderThread:10822 [sender.py:_save_file():1332] saving file wandb-summary.json with policy end
+2023-03-17 11:20:41,127 DEBUG   SenderThread:10822 [sender.py:send_request():363] send_request: defer
+2023-03-17 11:20:41,127 INFO    SenderThread:10822 [sender.py:send_request_defer():583] handle sender defer: 5
+2023-03-17 11:20:41,127 INFO    SenderThread:10822 [sender.py:transition_state():587] send defer: 6
+2023-03-17 11:20:41,127 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: defer
+2023-03-17 11:20:41,128 INFO    HandlerThread:10822 [handler.py:handle_request_defer():170] handle defer: 6
+2023-03-17 11:20:41,128 DEBUG   SenderThread:10822 [sender.py:send_request():363] send_request: defer
+2023-03-17 11:20:41,128 INFO    SenderThread:10822 [sender.py:send_request_defer():583] handle sender defer: 6
+2023-03-17 11:20:41,132 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: status_report
+2023-03-17 11:20:41,302 INFO    SenderThread:10822 [sender.py:transition_state():587] send defer: 7
+2023-03-17 11:20:41,302 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: defer
+2023-03-17 11:20:41,302 INFO    HandlerThread:10822 [handler.py:handle_request_defer():170] handle defer: 7
+2023-03-17 11:20:41,302 DEBUG   SenderThread:10822 [sender.py:send_request():363] send_request: defer
+2023-03-17 11:20:41,302 INFO    SenderThread:10822 [sender.py:send_request_defer():583] handle sender defer: 7
+2023-03-17 11:20:41,873 INFO    Thread-13 :10822 [dir_watcher.py:_on_file_modified():295] file/dir modified: /home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints/wandb/run-20230317_112034-sucyhpkh/files/config.yaml
+2023-03-17 11:20:41,873 INFO    Thread-13 :10822 [dir_watcher.py:_on_file_modified():295] file/dir modified: /home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints/wandb/run-20230317_112034-sucyhpkh/files/wandb-summary.json
+2023-03-17 11:20:42,089 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: poll_exit
+2023-03-17 11:20:42,873 INFO    Thread-13 :10822 [dir_watcher.py:_on_file_modified():295] file/dir modified: /home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints/wandb/run-20230317_112034-sucyhpkh/files/output.log
+2023-03-17 11:20:44,457 INFO    SenderThread:10822 [sender.py:transition_state():587] send defer: 8
+2023-03-17 11:20:44,458 DEBUG   SenderThread:10822 [sender.py:send_request():363] send_request: poll_exit
+2023-03-17 11:20:44,458 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: defer
+2023-03-17 11:20:44,458 INFO    HandlerThread:10822 [handler.py:handle_request_defer():170] handle defer: 8
+2023-03-17 11:20:44,459 DEBUG   SenderThread:10822 [sender.py:send_request():363] send_request: defer
+2023-03-17 11:20:44,459 INFO    SenderThread:10822 [sender.py:send_request_defer():583] handle sender defer: 8
+2023-03-17 11:20:44,466 INFO    SenderThread:10822 [sender.py:transition_state():587] send defer: 9
+2023-03-17 11:20:44,466 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: defer
+2023-03-17 11:20:44,466 INFO    HandlerThread:10822 [handler.py:handle_request_defer():170] handle defer: 9
+2023-03-17 11:20:44,467 DEBUG   SenderThread:10822 [sender.py:send():336] send: artifact
+2023-03-17 11:20:44,874 INFO    Thread-13 :10822 [dir_watcher.py:_on_file_modified():295] file/dir modified: /home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints/wandb/run-20230317_112034-sucyhpkh/files/output.log
+2023-03-17 11:20:45,248 INFO    SenderThread:10822 [sender.py:send_artifact():1428] sent artifact job-https___github.com_oriolcolomefont_Master-Thesis.git_train.py - {'id': 'QXJ0aWZhY3Q6Mzk5NjY2NDg2', 'digest': 'cffc3745e5e8da6c93c2087b724e48b1', 'state': 'COMMITTED', 'aliases': [{'artifactCollectionName': 'job-https___github.com_oriolcolomefont_Master-Thesis.git_train.py', 'alias': 'latest'}, {'artifactCollectionName': 'job-https___github.com_oriolcolomefont_Master-Thesis.git_train.py', 'alias': 'v5'}], 'artifactSequence': {'id': 'QXJ0aWZhY3RDb2xsZWN0aW9uOjU3MDA5Njg1', 'latestArtifact': {'id': 'QXJ0aWZhY3Q6Mzk5NjY2NDg2', 'versionIndex': 5}}, 'version': 'v5'}
+2023-03-17 11:20:45,248 DEBUG   SenderThread:10822 [sender.py:send_request():363] send_request: defer
+2023-03-17 11:20:45,248 INFO    SenderThread:10822 [sender.py:send_request_defer():583] handle sender defer: 9
+2023-03-17 11:20:45,248 INFO    SenderThread:10822 [dir_watcher.py:finish():365] shutting down directory watcher
+2023-03-17 11:20:45,875 INFO    SenderThread:10822 [dir_watcher.py:finish():395] scan: /home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints/wandb/run-20230317_112034-sucyhpkh/files
+2023-03-17 11:20:45,875 INFO    SenderThread:10822 [dir_watcher.py:finish():409] scan save: /home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints/wandb/run-20230317_112034-sucyhpkh/files/config.yaml config.yaml
+2023-03-17 11:20:45,875 INFO    SenderThread:10822 [dir_watcher.py:finish():409] scan save: /home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints/wandb/run-20230317_112034-sucyhpkh/files/output.log output.log
+2023-03-17 11:20:45,875 INFO    SenderThread:10822 [dir_watcher.py:finish():409] scan save: /home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints/wandb/run-20230317_112034-sucyhpkh/files/wandb-summary.json wandb-summary.json
+2023-03-17 11:20:45,876 INFO    SenderThread:10822 [dir_watcher.py:finish():409] scan save: /home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints/wandb/run-20230317_112034-sucyhpkh/files/wandb-metadata.json wandb-metadata.json
+2023-03-17 11:20:45,876 INFO    SenderThread:10822 [dir_watcher.py:finish():409] scan save: /home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints/wandb/run-20230317_112034-sucyhpkh/files/requirements.txt requirements.txt
+2023-03-17 11:20:45,876 INFO    SenderThread:10822 [sender.py:transition_state():587] send defer: 10
+2023-03-17 11:20:45,876 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: defer
+2023-03-17 11:20:45,876 INFO    HandlerThread:10822 [handler.py:handle_request_defer():170] handle defer: 10
+2023-03-17 11:20:45,880 DEBUG   SenderThread:10822 [sender.py:send_request():363] send_request: defer
+2023-03-17 11:20:45,880 INFO    SenderThread:10822 [sender.py:send_request_defer():583] handle sender defer: 10
+2023-03-17 11:20:45,880 INFO    SenderThread:10822 [file_pusher.py:finish():164] shutting down file pusher
+2023-03-17 11:20:46,351 INFO    wandb-upload_1:10822 [upload_job.py:push():138] Uploaded file /home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints/wandb/run-20230317_112034-sucyhpkh/files/config.yaml
+2023-03-17 11:20:46,388 INFO    wandb-upload_0:10822 [upload_job.py:push():138] Uploaded file /home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints/wandb/run-20230317_112034-sucyhpkh/files/wandb-summary.json
+2023-03-17 11:20:46,424 INFO    wandb-upload_4:10822 [upload_job.py:push():138] Uploaded file /home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints/wandb/run-20230317_112034-sucyhpkh/files/requirements.txt
+2023-03-17 11:20:47,091 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: keepalive
+2023-03-17 11:20:47,123 INFO    wandb-upload_2:10822 [upload_job.py:push():138] Uploaded file /home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints/wandb/run-20230317_112034-sucyhpkh/files/output.log
+2023-03-17 11:20:47,324 INFO    Thread-12 :10822 [sender.py:transition_state():587] send defer: 11
+2023-03-17 11:20:47,324 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: defer
+2023-03-17 11:20:47,324 INFO    HandlerThread:10822 [handler.py:handle_request_defer():170] handle defer: 11
+2023-03-17 11:20:47,324 DEBUG   SenderThread:10822 [sender.py:send_request():363] send_request: defer
+2023-03-17 11:20:47,324 INFO    SenderThread:10822 [sender.py:send_request_defer():583] handle sender defer: 11
+2023-03-17 11:20:47,325 INFO    SenderThread:10822 [file_pusher.py:join():169] waiting for file pusher
+2023-03-17 11:20:47,325 INFO    SenderThread:10822 [sender.py:transition_state():587] send defer: 12
+2023-03-17 11:20:47,325 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: defer
+2023-03-17 11:20:47,325 INFO    HandlerThread:10822 [handler.py:handle_request_defer():170] handle defer: 12
+2023-03-17 11:20:47,325 DEBUG   SenderThread:10822 [sender.py:send_request():363] send_request: defer
+2023-03-17 11:20:47,325 INFO    SenderThread:10822 [sender.py:send_request_defer():583] handle sender defer: 12
+2023-03-17 11:20:47,488 INFO    SenderThread:10822 [sender.py:transition_state():587] send defer: 13
+2023-03-17 11:20:47,488 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: defer
+2023-03-17 11:20:47,488 INFO    HandlerThread:10822 [handler.py:handle_request_defer():170] handle defer: 13
+2023-03-17 11:20:47,489 DEBUG   SenderThread:10822 [sender.py:send_request():363] send_request: defer
+2023-03-17 11:20:47,489 INFO    SenderThread:10822 [sender.py:send_request_defer():583] handle sender defer: 13
+2023-03-17 11:20:47,489 INFO    SenderThread:10822 [sender.py:transition_state():587] send defer: 14
+2023-03-17 11:20:47,489 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: defer
+2023-03-17 11:20:47,489 INFO    HandlerThread:10822 [handler.py:handle_request_defer():170] handle defer: 14
+2023-03-17 11:20:47,490 DEBUG   SenderThread:10822 [sender.py:send():336] send: final
+2023-03-17 11:20:47,490 DEBUG   SenderThread:10822 [sender.py:send():336] send: footer
+2023-03-17 11:20:47,490 DEBUG   SenderThread:10822 [sender.py:send_request():363] send_request: defer
+2023-03-17 11:20:47,490 INFO    SenderThread:10822 [sender.py:send_request_defer():583] handle sender defer: 14
+2023-03-17 11:20:47,490 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: poll_exit
+2023-03-17 11:20:47,491 DEBUG   SenderThread:10822 [sender.py:send_request():363] send_request: poll_exit
+2023-03-17 11:20:47,491 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: server_info
+2023-03-17 11:20:47,491 DEBUG   SenderThread:10822 [sender.py:send_request():363] send_request: server_info
+2023-03-17 11:20:47,494 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: get_summary
+2023-03-17 11:20:47,494 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: sampled_history
+2023-03-17 11:20:47,649 INFO    MainThread:10822 [wandb_run.py:_footer_history_summary_info():3422] rendering history
+2023-03-17 11:20:47,649 INFO    MainThread:10822 [wandb_run.py:_footer_history_summary_info():3454] rendering summary
+2023-03-17 11:20:47,649 INFO    MainThread:10822 [wandb_run.py:_footer_sync_info():3380] logging synced files
+2023-03-17 11:20:47,650 DEBUG   HandlerThread:10822 [handler.py:handle_request():144] handle_request: shutdown
+2023-03-17 11:20:47,650 INFO    HandlerThread:10822 [handler.py:finish():842] shutting down handler
+2023-03-17 11:20:48,491 INFO    WriterThread:10822 [datastore.py:close():298] close: /home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints/wandb/run-20230317_112034-sucyhpkh/run-sucyhpkh.wandb
+2023-03-17 11:20:48,649 INFO    SenderThread:10822 [sender.py:finish():1504] shutting down sender
+2023-03-17 11:20:48,649 INFO    SenderThread:10822 [file_pusher.py:finish():164] shutting down file pusher
+2023-03-17 11:20:48,649 INFO    SenderThread:10822 [file_pusher.py:join():169] waiting for file pusher
