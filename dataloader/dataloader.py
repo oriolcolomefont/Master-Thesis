@@ -15,10 +15,7 @@ import torchaudio
 from torch.utils.data import DataLoader
 from dataset import MyDataset
 
-# Define your custom transforms here
-def custom_transform(audio):
-    # apply your custom transformations here
-    return audio
+#Transforms to be imported
 
 # Define your dataset here
 dataset = MyDataset()
