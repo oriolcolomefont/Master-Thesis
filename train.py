@@ -11,7 +11,7 @@ from model import TripletNet, SampleCNN
 dataset = MyDataset("datasets/GTZAN/gtzan_genre")
 
 # Create data loader and setup data
-batch_size = 1
+batch_size = 32
 train_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
 # Encoder
