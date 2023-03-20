@@ -57,7 +57,7 @@ class MyDataset(Dataset):
         audio_len = audio.shape[1]
         if audio_len < self.fixed_audio_len:
             padding = torch.zeros((audio.shape[0], self.fixed_audio_len - audio_len))
-            audio = torch.cat(dim=1, [audio, padding])
+            audio = torch.cat([audio, padding], dim=1)
         return audio
 
     def generate_positive(self, anchor, sample_rate):
