@@ -8,7 +8,7 @@ from dataset import MyDataset
 from model import TripletNet, SampleCNN
 
 # Create dataset
-dataset = MyDataset("datasets/GTZAN/gtzan_genre")
+dataset = MyDataset(root_dir="datasets/GTZAN/gtzan_genre", fixed_audio_len=44100*3)
 
 # Create data loader and setup data
 batch_size = 32

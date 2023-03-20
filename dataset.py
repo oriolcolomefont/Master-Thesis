@@ -1,17 +1,18 @@
+import torch
 import torchaudio
 import librosa
 import numpy as np
 from torch.utils.data import Dataset
-import torchaudio
 import torchaudio.sox_effects as sox
 
 
 class MyDataset(Dataset):
-    def __init__(self, root_dir):
+    def __init__(self, root_dir, fixed_audio_len):
         self.root_dir = root_dir
         self.file_list = librosa.util.find_files(
             root_dir, ext=["mp3", "wav", "ogg", "flac", "aiff", "m4a"]
         )
+        self.fixed_audio_len = fixed_audio_len
 
     def __len__(self):
         return len(self.file_list)
@@ -20,8 +21,8 @@ class MyDataset(Dataset):
         self,
         index,
         sample_rate=44100,
-        min_clip_duration=3,
-        max_clip_duration=20,
+        min_clip_duration=3,#seconds
+        max_clip_duration=20, #seconds
         min_chunk_length=2205,
         max_chunk_length=44100,
     ):
@@ -33,7 +34,7 @@ class MyDataset(Dataset):
             filename, frame_offset=0, num_frames=num_frames
         )
         waveform = waveform.mean(dim=0, keepdim=True)  # convert stereo to mono
-        print(waveform.shape)
+        waveform_len = waveform.shape[1]
 
         # generate anchor, positive from anchor and negative from positive
         anchor = waveform
@@ -44,16 +45,30 @@ class MyDataset(Dataset):
             min_chunk_length=min_chunk_length,
             max_chunk_length=max_chunk_length,
         )
-        print(anchor.shape, positive.shape, negative.shape)
+
+        # apply padding to ensure same length per batch
+        anchor = self.apply_padding(audio=anchor)
+        positive = self.apply_padding(audio=positive)
+        negative = self.apply_padding(audio=negative)
+
         return anchor, positive, negative
+
+    def apply_padding(self, audio):
+        audio_len = audio.shape[1]
+        if audio_len < self.fixed_audio_len:
+            padding = torch.zeros((audio.shape[0], self.fixed_audio_len - audio_len))
+            audio = torch.cat(dim=1, [audio, padding])
+        return audio
 
     def generate_positive(self, anchor, sample_rate):
         # function to generate a positive sample from the anchor
 
         gain_min, gain_max = -12, 0
-        speed = np.random.uniform(0.5, 2.0)
+        speed = round(np.random.uniform(0.5, 2.0), 3)
         pitch_min, pitch_max = -1200, +1200  # it ruins the lyrics!!!
+        pitch = np.random.randint(pitch_min, pitch_max)
         reverberance, damping_factor, room_size = (np.random.randint(0, 100),) * 3
+        #chorus = round(np.random.uniform(0.01, 1.0), 1)
         effects = [
             [
                 "gain",
@@ -64,7 +79,7 @@ class MyDataset(Dataset):
             ["rate", f"{sample_rate}"],
             [
                 "chorus",
-                "0.8",
+                "0.9",
                 "0.9",
                 "55",
                 "0.4",
@@ -75,7 +90,7 @@ class MyDataset(Dataset):
             ["overdrive", "30"],  #'overdrive': '[gain [colour]]',
             [
                 "pitch",
-                str(np.random.randint(pitch_min, pitch_max)),
+                str(pitch),
             ],  #'pitch': 'semitones [octaves [cents]]',
             [
                 "reverb",
