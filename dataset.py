@@ -54,7 +54,7 @@ class MyDataset(Dataset):
             max_chunk_length=max_chunk_length,
         )
 
-        return anchor, positive, negative
+        return {'anchor': anchor, 'positive': positive, 'negative': negative}
 
     def generate_positive(self, anchor, sample_rate):
         # function to generate a positive sample from the anchor
