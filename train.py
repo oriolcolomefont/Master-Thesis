@@ -2,14 +2,11 @@ import torch
 from torch.utils.data import DataLoader
 import torch.nn.functional as F
 import pytorch_lightning as pl
-import wandb
 
-from pytorchsummary import summary
+#from pytorchsummary import summary
 
 from dataset import MyDataset
 from model import TripletNet, SampleCNN
-
-import torch
 
 def pad_waveform(waveform, target_length):
     current_length = waveform.shape[-1]
@@ -53,10 +50,6 @@ dataset = MyDataset(root_dir=data_path, min_length=min_length)
 # Create data loader and setup data
 batch_size = 32
 train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True, collate_fn=collate_fn)
-
-for batch_idx, batch in enumerate(train_loader):
-    batch_size = batch['anchor'].size(0)  # get batch size
-    print(f"Batch {batch_idx} with size {batch_size}")
 
 # Encoder
 encoder = SampleCNN(strides=[3, 3, 3, 3, 3, 3, 3, 3, 3], supervised=False, out_dim=128)
