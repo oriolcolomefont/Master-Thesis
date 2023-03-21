@@ -33,7 +33,6 @@ class MyDataset(Dataset):
             filename, frame_offset=0, num_frames=num_frames
         )
         waveform = waveform.mean(dim=0, keepdim=True)  # convert stereo to mono
-        waveform_len = waveform.shape[1]
 
         # generate anchor, positive from anchor and negative from positive
         anchor = waveform
