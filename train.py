@@ -1,5 +1,6 @@
 import torch
 from torch.utils.data import DataLoader
+import torch.nn.functional as F
 import pytorch_lightning as pl
 import wandb
 
@@ -13,9 +14,10 @@ import torch
 def pad_waveform(waveform, target_length):
     current_length = waveform.shape[-1]
     if current_length < target_length:
+        # Calculate the number of zeros to pad
+        num_zeros = target_length - current_length
         # Pad the waveform with zeros
-        padded_waveform = torch.zeros(waveform.shape[0], target_length)
-        padded_waveform[:, :current_length] = waveform
+        padded_waveform = F.pad(waveform, (0, num_zeros), mode='constant', value=0)
         return padded_waveform
     else:
         return waveform

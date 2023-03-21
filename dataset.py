@@ -115,32 +115,15 @@ class MyDataset(Dataset):
 
     def generate_negative(
         self, positive, sample_rate, min_chunk_length=2205, max_chunk_length=44100
-    ):
-        # Calculate the number of chunks
-        total_length = positive.shape[-1]
-        chunk_lengths = np.random.randint(
-            min_chunk_length, max_chunk_length, size=total_length // min_chunk_length
-        )
-        chunk_lengths = np.concatenate(
-            [chunk_lengths, [total_length % min_chunk_length]]
-        )
-        n_chunks = len(chunk_lengths)
+        ):
+        # Split the positive clip into chunks
+        chunks = positive.unfold(-1, max_chunk_length, min_chunk_length)
+        n_chunks = chunks.shape[-2]
 
-        # Calculate the start and end points of the chunks
-        chunk_start = np.cumsum(np.concatenate([[0], chunk_lengths[:-1]]))
-        chunk_end = chunk_start + chunk_lengths
-
-        # Shuffle the list of chunks
-        indices = np.arange(n_chunks)
-        np.random.shuffle(indices)
-        chunk_start = chunk_start[indices]
-        chunk_end = chunk_end[indices]
+        # Shuffle the chunks
+        indices = torch.randperm(n_chunks)
+        chunks = chunks[..., indices, :]
 
         # Concatenate the shuffled chunks
-        negative = np.concatenate(
-            [positive[start:end] for start, end in zip(chunk_start, chunk_end)]
-        )
-
-        # Ensure the negative clip is the same length as the positive
-        negative = librosa.util.fix_length(negative, size=total_length)
+        negative = chunks.reshape(chunks.shape[:-2] + (-1,))
         return negative
