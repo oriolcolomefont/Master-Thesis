@@ -8,45 +8,53 @@ from pytorchsummary import summary
 from dataset import MyDataset
 from model import TripletNet, SampleCNN
 
+import torch
+
+def pad_waveform(waveform, target_length):
+    current_length = waveform.shape[-1]
+    if current_length < target_length:
+        # Pad the waveform with zeros
+        padded_waveform = torch.zeros(waveform.shape[0], target_length)
+        padded_waveform[:, :current_length] = waveform
+        return padded_waveform
+    else:
+        return waveform
+
 def collate_fn(batch):
-    def pad_audio(audio, max_length):
-        padding = max_length - audio.shape[-1]
-        return torch.nn.functional.pad(audio, (0, padding))
+    anchors = []
+    positives = []
+    negatives = []
 
+    # Find the maximum waveform length in the batch
     max_length = 0
+    for item in batch:
+        max_length = max(max_length, item['anchor'].shape[-1], item['positive'].shape[-1], item['negative'].shape[-1])
 
-    # Find the maximum length in the batch
-    for sample in batch:
-        anchor_length = sample['anchor'].shape[-1]
-        positive_length = sample['positive'].shape[-1]
-        negative_length = sample['negative'].shape[-1]
+    # Pad all waveforms to the maximum length
+    for item in batch:
+        anchors.append(pad_waveform(item['anchor'], max_length))
+        positives.append(pad_waveform(item['positive'], max_length))
+        negatives.append(pad_waveform(item['negative'], max_length))
 
-        max_length = max(max_length, anchor_length, positive_length, negative_length)
+    anchors = torch.stack(anchors)
+    positives = torch.stack(positives)
+    negatives = torch.stack(negatives)
 
-    # Pad audios to have the same length
-    padded_batch = []
-    for sample in batch:
-        padded_anchor = pad_audio(sample['anchor'], max_length)
-        padded_positive = pad_audio(sample['positive'], max_length)
-        padded_negative = pad_audio(sample['negative'], max_length)
-
-        padded_sample = {'anchor': padded_anchor,
-                         'positive': padded_positive,
-                         'negative': padded_negative}
-
-        padded_batch.append(padded_sample)
-
-    return padded_batch
+    return {'anchor': anchors, 'positive': positives, 'negative': negatives}
 
 # Create dataset
 data_path = "datasets/GTZAN/gtzan_genre"
-min_length = 16000  # Minimum audio length in samples
+min_length = 44100  # Minimum audio length in samples
 
-dataset = MyDataset(root_dir=data_path, min_length)
+dataset = MyDataset(root_dir=data_path, min_length=min_length)
 
 # Create data loader and setup data
 batch_size = 32
 train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True, collate_fn=collate_fn)
+
+for batch_idx, batch in enumerate(train_loader):
+    batch_size = batch['anchor'].size(0)  # get batch size
+    print(f"Batch {batch_idx} with size {batch_size}")
 
 # Encoder
 encoder = SampleCNN(strides=[3, 3, 3, 3, 3, 3, 3, 3, 3], supervised=False, out_dim=128)

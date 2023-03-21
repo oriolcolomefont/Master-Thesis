@@ -13,14 +13,21 @@ class MyDataset(Dataset):
         self.file_list = self._load_files()
     
     def _load_files(self):
+        #filter based on min_length
         filtered_file_list = []
         file_list = librosa.util.find_files(
-            root_dir, ext=["mp3", "wav", "ogg", "flac", "aiff", "m4a"]
+            self.root_dir, ext=['aac', 'au', 'flac', 'm4a', 'mp3', 'ogg', 'wav'],
         )
         for file in file_list:
-            waveform, _ = torchaudio.load(file)
+            try:
+                waveform, _ = torchaudio.load(file)
                 if waveform.shape[-1] >= self.min_length:
                     filtered_file_list.append(file)
+            except RuntimeError as e:
+                if "Invalid data found when processing input" in str(e):
+                    print(f"Skipping invalid file: {file}")
+                else:
+                    raise e
         return filtered_file_list
         
     def __len__(self):
@@ -54,6 +61,7 @@ class MyDataset(Dataset):
             max_chunk_length=max_chunk_length,
         )
 
+        print(f"Anchor shape: {anchor.shape}, Positive shape: {positive.shape}, Negative shape: {negative.shape}")
         return {'anchor': anchor, 'positive': positive, 'negative': negative}
 
     def generate_positive(self, anchor, sample_rate):
