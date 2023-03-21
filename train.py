@@ -80,6 +80,3 @@ trainer = pl.Trainer(max_epochs=10, logger=wandb_logger)
 
 # Start training
 trainer.fit(model, train_loader)
-
-# [optional] finish the wandb run, necessary in notebooks
-wandb.finish()
