@@ -47,7 +47,7 @@ min_length = 44100*3  # Minimum audio length in samples
 dataset = MyDataset(root_dir=data_path, min_length=min_length)
 
 # Create data loader and setup data
-batch_size = 32
+batch_size = 8
 train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True, collate_fn=collate_fn)
 
 # Encoder
