@@ -30,12 +30,7 @@ wandb_logger = pl.loggers.WandbLogger(
     name="my-run",  # Name of the run (default: None) torchu
     id=None,  # ID of the run (default: None)
     project="master-thesis",  # Name of the project to log the run to (default: None)
-    log_model=True,  # Whether to log the model to WandB (default: True)
-    offline=False,  # Whether to run WandB in offline mode (default: False)
     save_dir="/home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints",  # Directory to save the logs and checkpoint files (default: None)
-    version=None,  # Version of the run (default: None)
-    entity=None,  # WandB entity to log the run to (default: None)
-    group=None,  # Name of the run group (default: None)
     config={
         "lr": 0.001,
         "batch_size": batch_size,
@@ -45,8 +40,6 @@ wandb_logger = pl.loggers.WandbLogger(
         "pytorch",
         "deep learning",
     ],  # List of tags to apply to the run (default: None)
-    reinit=False,  # Whether to reinitialize the WandB run (default: False)
-    resume=False,  # Whether to resume a previously stopped WandB run (default: False)
 )
 
 # add your batch size to the wandb config
