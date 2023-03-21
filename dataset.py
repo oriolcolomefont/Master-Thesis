@@ -7,11 +7,21 @@ import torchaudio.sox_effects as sox
 
 
 class MyDataset(Dataset):
-    def __init__(self, root_dir):
+    def __init__(self, root_dir, min_length):
         self.root_dir = root_dir
-        self.file_list = librosa.util.find_files(
+        self.min_length = min_length
+        self.file_list = self._load_files()
+    
+    def _load_files(self):
+        filtered_file_list = []
+        file_list = librosa.util.find_files(
             root_dir, ext=["mp3", "wav", "ogg", "flac", "aiff", "m4a"]
         )
+        for file in file_list:
+            waveform, _ = torchaudio.load(file)
+                if waveform.shape[-1] >= self.min_length:
+                    filtered_file_list.append(file)
+        return filtered_file_list
         
     def __len__(self):
         return len(self.file_list)
