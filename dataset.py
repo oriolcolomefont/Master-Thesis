@@ -7,13 +7,12 @@ import torchaudio.sox_effects as sox
 
 
 class MyDataset(Dataset):
-    def __init__(self, root_dir, fixed_audio_len):
+    def __init__(self, root_dir):
         self.root_dir = root_dir
         self.file_list = librosa.util.find_files(
             root_dir, ext=["mp3", "wav", "ogg", "flac", "aiff", "m4a"]
         )
-        self.fixed_audio_len = fixed_audio_len
-
+        
     def __len__(self):
         return len(self.file_list)
 
@@ -46,19 +45,7 @@ class MyDataset(Dataset):
             max_chunk_length=max_chunk_length,
         )
 
-        # apply padding to ensure same length per batch
-        anchor = self.apply_padding(audio=anchor)
-        positive = self.apply_padding(audio=positive)
-        negative = self.apply_padding(audio=negative)
-
         return anchor, positive, negative
-
-    def apply_padding(self, audio):
-        audio_len = audio.shape[1]
-        if audio_len < self.fixed_audio_len:
-            padding = torch.zeros((audio.shape[0], self.fixed_audio_len - audio_len))
-            audio = torch.cat([audio, padding], dim=1)
-        return audio
 
     def generate_positive(self, anchor, sample_rate):
         # function to generate a positive sample from the anchor
