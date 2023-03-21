@@ -1,4 +1,5 @@
 import torch
+from torch.utils.data import DataLoader
 import pytorch_lightning as pl
 import wandb
 
@@ -8,11 +9,14 @@ from dataset import MyDataset
 from model import TripletNet, SampleCNN
 
 # Create dataset
-dataset = MyDataset(root_dir="datasets/GTZAN/gtzan_genre", fixed_audio_len=44100*3)
+data_path = "datasets/GTZAN/gtzan_genre"
+min_length = 16000  # Minimum audio length in samples
+
+dataset = MyDataset(root_dir=data_path, min_length)
 
 # Create data loader and setup data
 batch_size = 32
-train_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True)
+train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
 # Encoder
 encoder = SampleCNN(strides=[3, 3, 3, 3, 3, 3, 3, 3, 3], supervised=False, out_dim=128)
