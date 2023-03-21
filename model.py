@@ -3,14 +3,13 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import pytorch_lightning as pl
+from criterion import TripletLoss
 
 pl.seed_everything(hash("setting random seeds") % 2**32 - 1)
 
 import wandb
-
 wandb.login()
 
-from criterion import TripletLoss
 
 # Define the triplet network model by inheriting from pl.LightningModule.
 
@@ -118,14 +117,12 @@ class TripletNet(pl.LightningModule):
         self.save_hyperparameters(ignore=["encoder"])
         self.encoder = encoder
 
-    def training_step(self, batch):
-        anchor, positive, negative = batch
+    def training_step(self, batch, batch_idx):
+        anchor, positive, negative = batch  # batch is now a tuple
         anchor_embedding = self.encoder(anchor)
         positive_embedding = self.encoder(positive)
         negative_embedding = self.encoder(negative)
-        loss = F.triplet_margin_loss(
-            anchor_embedding, positive_embedding, negative_embedding, margin=1.0, p=2
-        )
+        loss = self.triplet_loss(anchor_embedding, positive_embedding, negative_embedding)
         self.log("train_loss", loss)
         return loss
 

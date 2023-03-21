@@ -3,8 +3,6 @@ from torch.utils.data import DataLoader
 import torch.nn.functional as F
 import pytorch_lightning as pl
 
-#from pytorchsummary import summary
-
 from dataset import MyDataset
 from model import TripletNet, SampleCNN
 
@@ -39,11 +37,12 @@ def collate_fn(batch):
     positives = torch.stack(positives)
     negatives = torch.stack(negatives)
 
-    return {'anchor': anchors, 'positive': positives, 'negative': negatives}
+    return anchors, positives, negatives  # return a tuple instead of a dictionary
+
 
 # Create dataset
 data_path = "datasets/GTZAN/gtzan_genre"
-min_length = 44100  # Minimum audio length in samples
+min_length = 44100*3  # Minimum audio length in samples
 
 dataset = MyDataset(root_dir=data_path, min_length=min_length)
 
@@ -60,7 +59,7 @@ model = TripletNet(encoder)
 
 # Initialize WandB logger
 wandb_logger = pl.loggers.WandbLogger(
-    name="my-run",  # Name of the run (default: None) torchu
+    name="first run",  # Name of the run (default: None) torchu
     id=None,  # ID of the run (default: None)
     project="master-thesis",  # Name of the project to log the run to (default: None)
     save_dir="/home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints",  # Directory to save the logs and checkpoint files (default: None)

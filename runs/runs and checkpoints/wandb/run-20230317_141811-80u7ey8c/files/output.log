@@ -1,6 +1,0 @@
-Traceback (most recent call last):
-  File "/home/oriol_colome_font_epidemicsound_/Master-Thesis-1/train.py", line 52, in <module>
-    trainer = pl.Trainer(gpus=1, max_epochs=10, logger=wandb_logger)
-  File "/opt/conda/envs/master_thesis/lib/python3.10/site-packages/pytorch_lightning/utilities/argparse.py", line 69, in insert_env_defaults
-    return fn(self, **kwargs)
-TypeError: Trainer.__init__() got an unexpected keyword argument 'gpus'
