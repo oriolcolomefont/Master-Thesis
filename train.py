@@ -61,7 +61,7 @@ for batch_idx, batch in enumerate(train_loader):
 # Encoder
 encoder = SampleCNN(strides=[3, 3, 3, 3, 3, 3, 3, 3, 3], supervised=False, out_dim=128)
 
-print(summary(model=encoder, input_size=(1, 160857)))
+#print(summary(model=encoder))
 # Initialize model
 model = TripletNet(encoder)
 
