@@ -2,6 +2,7 @@ import torch
 import torchaudio
 import librosa
 import numpy as np
+import random
 from torch.utils.data import Dataset
 import torchaudio.transforms as T
 import torchaudio.sox_effects as sox
@@ -17,6 +18,7 @@ class MyDataset(Dataset):
         max_clip_duration: int = 5,
         min_chunk_duration_sec: float = 0.05,
         max_chunk_duration_sec: float = 1.0,
+        seed: int = 42
     ):
         self.root_dir = root_dir
         self.min_duration = min_duration
@@ -26,6 +28,9 @@ class MyDataset(Dataset):
         self.min_chunk_duration_sec = min_chunk_duration_sec
         self.max_chunk_duration_sec = max_chunk_duration_sec
         self.file_list = self._load_files()
+        
+        random.seed(seed)
+        np.random.seed(seed)
     
     def _load_files(self):
         #filter based on min_length
