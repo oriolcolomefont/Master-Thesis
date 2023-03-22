@@ -37,14 +37,13 @@ class MyDataset(Dataset):
         self,
         index,
         sample_rate=44100,
-        min_clip_duration=3,#seconds
-        max_clip_duration=20, #seconds
+        max_clip_duration=5, #seconds
         min_chunk_length=2205,
         max_chunk_length=44100,
     ):
         filename = self.file_list[index]
         num_frames = np.random.randint(
-            min_clip_duration * sample_rate, max_clip_duration * sample_rate
+            self.min_length, max_clip_duration * sample_rate
         )
         waveform, sample_rate = torchaudio.load(
             filename, frame_offset=0, num_frames=num_frames

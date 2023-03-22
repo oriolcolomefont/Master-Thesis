@@ -127,7 +127,7 @@ class TripletNet(pl.LightningModule):
         return loss
 
     def triplet_loss(self, anchor, positive, negative):
-        criterion = TripletLoss(margin=1.0, p=2)
+        criterion = TripletLoss(margin=1.0)
         return criterion(anchor, positive, negative)
 
     def configure_optimizers(self):

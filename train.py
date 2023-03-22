@@ -37,17 +37,22 @@ def collate_fn(batch):
     positives = torch.stack(positives)
     negatives = torch.stack(negatives)
 
-    return anchors, positives, negatives  # return a tuple instead of a dictionary
+    # Online triplet mining: Select the hardest negative for each anchor-positive pair
+    anchor_positive_distance = (anchors - positives).pow(2).sum(dim=2).sqrt()
+    anchor_negative_distance = (anchors.unsqueeze(2) - negatives.unsqueeze(1)).pow(2).sum(dim=3).sqrt()
+    hardest_negative_indices = torch.argmin(anchor_negative_distance - anchor_positive_distance.unsqueeze(2), dim=2)
+    hardest_negatives = torch.cat([negatives[i, idx, :].unsqueeze(0) for i, idx in enumerate(hardest_negative_indices)])
 
+    return anchors, positives, hardest_negatives
 
 # Create dataset
 data_path = "datasets/GTZAN/gtzan_genre"
-min_length = 44100*3  # Minimum audio length in samples
+min_length = 44100  # Minimum audio length in samples
 
 dataset = MyDataset(root_dir=data_path, min_length=min_length)
 
 # Create data loader and setup data
-batch_size = 8
+batch_size = 1
 train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True, collate_fn=collate_fn)
 
 # Encoder
@@ -78,7 +83,7 @@ wandb_logger = pl.loggers.WandbLogger(
 wandb_logger.experiment.config["batch_size"] = batch_size
 
 # Initialize trainer and pass wandb_logger
-trainer = pl.Trainer(max_epochs=10, logger=wandb_logger)
+trainer = pl.Trainer(max_epochs=10, logger=wandb_logger, accumulate_grad_batches=4)
 
 # Start training
 trainer.fit(model, train_loader)
