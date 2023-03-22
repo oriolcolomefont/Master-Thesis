@@ -5,8 +5,6 @@ import torch.nn.functional as F
 import pytorch_lightning as pl
 from criterion import TripletLoss
 
-pl.seed_everything(hash("setting random seeds") % 2**32 - 1)
-
 import wandb
 wandb.login()
 
@@ -131,5 +129,5 @@ class TripletNet(pl.LightningModule):
         return criterion(anchor, positive, negative)
 
     def configure_optimizers(self):
-        optimizer = torch.optim.Adam(self.parameters(), lr=self.hparams["lr"])
+        optimizer = optim.AdamW(model.parameters(), lr=0.001, weight_decay=0.01)
         return optimizer
