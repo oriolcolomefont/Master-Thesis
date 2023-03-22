@@ -88,48 +88,35 @@ class MyDataset(Dataset):
         return {'anchor': anchor, 'positive': positive, 'negative': negative}
 
     def generate_positive(self, anchor, sample_rate):
-        # function to generate a positive sample from the anchor
+        # Define the effect parameters using numpy
+        gain = np.random.randint(-12, 0)
+        pitch = np.random.randint(-1200, 1200)
+        reverb_params = [np.random.randint(0, 100)] * 3
+        chorus_params = [
+            round(np.random.uniform(0.1, 1.0), 1),
+            round(np.random.uniform(0.1, 1.0), 1),
+            55,
+            round(np.random.uniform(0.1, 0.9), 1),
+            round(np.random.uniform(0.1, 2.0), 2),
+            np.random.randint(2, 5),
+            np.random.choice(["-s", "-t"]),
+        ]
+        drive = np.random.randint(0, 30)
+        stretch = round(np.random.uniform(0.8, 1.2), 1)
+        speed = np.random.uniform(0.7, 1.3)
+        tremolo_speed = np.random.uniform(0.1, 100)
+        tremolo_depth = np.random.randint(1, 101)
 
-        gain_min, gain_max = -12, 0
-        speed = round(np.random.uniform(0.5, 2.0), 3)
-        pitch_min, pitch_max = -1200, +1200  # it ruins the lyrics!!!
-        pitch = np.random.randint(pitch_min, pitch_max)
-        reverberance, damping_factor, room_size = (np.random.randint(0, 100),) * 3
-        #chorus = round(np.random.uniform(0.01, 1.0), 1)
+        # Define the effect chain using f-strings
         effects = [
-            [
-                "gain",
-                "-n",
-                str(np.random.randint(gain_min, gain_max)),
-            ],  # apply 10 db attenuation
-            ["speed", f"{speed:.5f}"],  # duration is now 0.5 ~ 2.0 seconds.
-            [
-                "chorus",
-                "0.9",
-                "0.9",
-                "55",
-                "0.4",
-                "0.25",
-                "2",
-                "-t",
-            ],  #'chorus': 'gain-in gain-out delay decay speed depth [ -s | -t ]',
-            ["overdrive", "30"],  #'overdrive': '[gain [colour]]',
-            [
-                "pitch",
-                str(pitch),
-            ],  #'pitch': 'semitones [octaves [cents]]',
-            [
-                "reverb",
-                str(reverberance),
-                str(damping_factor),
-                str(room_size),
-            ],  #'reverb': '[-w|--wet-only] [reverberance (50%) [HF-damping (50%) [room-scale (100%) [stereo-depth (100%) [pre-delay (0ms) [wet-gain (0dB)]]]]]]',
-            ["speed", "2"],  #'speed': 'factor[c]',
-            [
-                "stretch",
-                "1.5",
-            ],  #'stretch': 'factor [window fade shift fading]\n       (expansion, frame in ms, lin/..., unit<1.0, unit<0.5)\n       (defaults: 1.0 20 lin ...)',
-            ["tremolo", "10", "50"],  #'tremolo': 'speed_Hz [depth_percent]',
+            ["gain", "-n", f"{gain}"],
+            ["chorus", *map(str, chorus_params)],
+            ["overdrive", f"{drive}"],
+            ["pitch", f"{pitch}"],
+            ["reverb", *[str(param) for param in reverb_params]],
+            ["speed", f"{speed}"],
+            ["stretch", f"{stretch}"],
+            ["tremolo", f"{tremolo_speed}", f"{tremolo_depth}"],
         ]
         positive, _ = sox.apply_effects_tensor(anchor, sample_rate, effects)
         positive = positive.mean(dim=0, keepdim=True)  # convert stereo to mono
