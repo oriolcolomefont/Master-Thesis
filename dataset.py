@@ -3,25 +3,34 @@ import torchaudio
 import librosa
 import numpy as np
 from torch.utils.data import Dataset
+import torchaudio.transforms as T
 import torchaudio.sox_effects as sox
 
 
 class MyDataset(Dataset):
-    def __init__(self, root_dir, min_length):
+    def __init__(self, root_dir, min_duration, resample: int = None, default_sample_rate: int = 44100):
         self.root_dir = root_dir
-        self.min_length = min_length
+        self.min_duration = min_duration
+        self.resample = resample
+        self.default_sample_rate = default_sample_rate
         self.file_list = self._load_files()
     
     def _load_files(self):
         #filter based on min_length
         filtered_file_list = []
+    
+        if self.resample is not None:
+             min_length = int(self.min_duration * self.resample)
+        else:
+            min_length = int(self.min_duration * self.default_sample_rate)
+
         file_list = librosa.util.find_files(
             self.root_dir, ext=['aac', 'au', 'flac', 'm4a', 'mp3', 'ogg', 'wav'],
         )
         for file in file_list:
             try:
                 waveform, _ = torchaudio.load(file)
-                if waveform.shape[-1] >= self.min_length:
+                if waveform.shape[-1] >= min_length:
                     filtered_file_list.append(file)
             except RuntimeError as e:
                 if "Invalid data found when processing input" in str(e):
@@ -29,26 +38,41 @@ class MyDataset(Dataset):
                 else:
                     raise e
         return filtered_file_list
-        
+
+     
     def __len__(self):
         return len(self.file_list)
+    
+    def _resample_waveform(self, waveform, original_sample_rate):
+        if self.resample is not None:
+            resampler = T.Resample(original_sample_rate, self.resample)
+            waveform = resampler(waveform)
+            return waveform, self.resample
+        else:
+            return waveform, self.default_sample_rate
 
     def __getitem__(
         self,
         index,
-        sample_rate=44100,
-        max_clip_duration=5, #seconds
-        min_chunk_length=2205,
-        max_chunk_length=44100,
+        max_clip_duration:int = 5,
+        min_chunk_duration_sec:float = 0.05,
+        max_chunk_duration_sec:float = 1.0,
     ):
         filename = self.file_list[index]
         num_frames = np.random.randint(
-            self.min_length, max_clip_duration * sample_rate
+            self.min_duration * self.default_sample_rate, max_clip_duration * self.default_sample_rate
         )
         waveform, sample_rate = torchaudio.load(
             filename, frame_offset=0, num_frames=num_frames
         )
         waveform = waveform.mean(dim=0, keepdim=True)  # convert stereo to mono
+
+        # Resample the waveform if the resample parameter is set, otherwise use the default sample rate
+        waveform, sample_rate = self._resample_waveform(waveform, sample_rate)
+
+        # Calculate min and max chunk lengths based on sample rate and duration in seconds
+        min_chunk_length = int(min_chunk_duration_sec * sample_rate)
+        max_chunk_length = int(max_chunk_duration_sec * sample_rate)
 
         # generate anchor, positive from anchor and negative from positive
         anchor = waveform
@@ -62,6 +86,7 @@ class MyDataset(Dataset):
 
         print(f"Anchor shape: {anchor.shape}, Positive shape: {positive.shape}, Negative shape: {negative.shape}")
         return {'anchor': anchor, 'positive': positive, 'negative': negative}
+
 
     def generate_positive(self, anchor, sample_rate):
         # function to generate a positive sample from the anchor
@@ -113,8 +138,13 @@ class MyDataset(Dataset):
         return positive
 
     def generate_negative(
-        self, positive, sample_rate, min_chunk_length=2205, max_chunk_length=44100
+        self, positive, min_chunk_length, max_chunk_length
         ):
+        # Add padding if the positive waveform length is smaller than the max_chunk_length
+        if positive.shape[-1] < max_chunk_length:
+            padding_size = max_chunk_length - positive.shape[-1]
+            positive = torch.cat([positive, torch.zeros(positive.shape[:-1] + (padding_size,))], dim=-1)
+
         # Split the positive clip into chunks
         chunks = positive.unfold(-1, max_chunk_length, min_chunk_length)
         n_chunks = chunks.shape[-2]

@@ -47,9 +47,8 @@ def collate_fn(batch):
 
 # Create dataset
 data_path = "datasets/GTZAN/gtzan_genre"
-min_length = 44100  # Minimum audio length in samples
-
-dataset = MyDataset(root_dir=data_path, min_length=min_length)
+min_duration = 3  # minimum duration in seconds
+dataset = MyDataset(root_dir=data_path, min_duration=min_duration, resample=22050)
 
 # Create data loader and setup data
 batch_size = 1
