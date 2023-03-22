@@ -41,7 +41,7 @@ data_path = "datasets/GTZAN/gtzan_genre"
 dataset = MyDataset(root_dir=data_path, resample=22050)
 
 # Create data loader and setup data
-batch_size = 16
+batch_size = 8
 train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True, collate_fn=collate_fn)
 
 # Encoder
