@@ -8,11 +8,23 @@ import torchaudio.sox_effects as sox
 
 
 class MyDataset(Dataset):
-    def __init__(self, root_dir, min_duration, resample: int = None, default_sample_rate: int = 44100):
+    def __init__(
+        self,
+        root_dir,
+        min_duration,
+        resample: int = None,
+        default_sample_rate: int = 44100,
+        max_clip_duration: int = 5,
+        min_chunk_duration_sec: float = 0.05,
+        max_chunk_duration_sec: float = 1.0,
+    ):
         self.root_dir = root_dir
         self.min_duration = min_duration
         self.resample = resample
         self.default_sample_rate = default_sample_rate
+        self.max_clip_duration = max_clip_duration
+        self.min_chunk_duration_sec = min_chunk_duration_sec
+        self.max_chunk_duration_sec = max_chunk_duration_sec
         self.file_list = self._load_files()
     
     def _load_files(self):
@@ -51,17 +63,9 @@ class MyDataset(Dataset):
         else:
             return waveform, self.default_sample_rate
 
-    def __getitem__(
-        self,
-        index,
-        max_clip_duration:int = 5,
-        min_chunk_duration_sec:float = 0.05,
-        max_chunk_duration_sec:float = 1.0,
-    ):
+    def __getitem__(self, index):
         filename = self.file_list[index]
-        num_frames = np.random.randint(
-            self.min_duration * self.default_sample_rate, max_clip_duration * self.default_sample_rate
-        )
+        num_frames = np.random.randint(self.min_duration * self.default_sample_rate, self.max_clip_duration * self.default_sample_rate)
         waveform, sample_rate = torchaudio.load(
             filename, frame_offset=0, num_frames=num_frames
         )
