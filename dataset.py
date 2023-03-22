@@ -84,9 +84,8 @@ class MyDataset(Dataset):
             max_chunk_length=max_chunk_length,
         )
 
-        print(f"Anchor shape: {anchor.shape}, Positive shape: {positive.shape}, Negative shape: {negative.shape}")
+        #print(f"Anchor shape: {anchor.shape}, Positive shape: {positive.shape}, Negative shape: {negative.shape}")
         return {'anchor': anchor, 'positive': positive, 'negative': negative}
-
 
     def generate_positive(self, anchor, sample_rate):
         # function to generate a positive sample from the anchor
@@ -104,7 +103,6 @@ class MyDataset(Dataset):
                 str(np.random.randint(gain_min, gain_max)),
             ],  # apply 10 db attenuation
             ["speed", f"{speed:.5f}"],  # duration is now 0.5 ~ 2.0 seconds.
-            ["rate", f"{sample_rate}"],
             [
                 "chorus",
                 "0.9",
