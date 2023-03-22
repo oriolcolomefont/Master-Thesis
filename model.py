@@ -1,7 +1,7 @@
 # Import the required libraries
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+import torch.optim as optim
 import pytorch_lightning as pl
 from criterion import TripletLoss
 
@@ -129,5 +129,5 @@ class TripletNet(pl.LightningModule):
         return criterion(anchor, positive, negative)
 
     def configure_optimizers(self):
-        optimizer = optim.AdamW(model.parameters(), lr=0.001, weight_decay=0.01)
+        optimizer = optim.AdamW(self.parameters(), lr=0.001, weight_decay=0.01)
         return optimizer

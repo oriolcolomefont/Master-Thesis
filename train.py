@@ -6,28 +6,19 @@ import pytorch_lightning as pl
 from dataset import MyDataset
 from model import TripletNet, SampleCNN
 
-def pad_waveform(waveform, target_length):
-    current_length = waveform.shape[-1]
-    if current_length < target_length:
-        # Calculate the number of zeros to pad
-        num_zeros = target_length - current_length
-        # Pad the waveform with zeros
-        padded_waveform = F.pad(waveform, (0, num_zeros), mode='constant', value=0)
-        return padded_waveform
-    else:
-        return waveform
+def pad_waveform(waveform, length):
+    padded_waveform = torch.zeros(waveform.shape[0], length)
+    padded_waveform[..., :waveform.shape[-1]] = waveform
+    return padded_waveform
 
 def collate_fn(batch):
     anchors = []
     positives = []
     negatives = []
 
-    # Find the maximum waveform length in the batch
-    max_length = 0
-    for item in batch:
-        max_length = max(max_length, item['anchor'].shape[-1], item['positive'].shape[-1], item['negative'].shape[-1])
+    max_length = max(max(item['anchor'].shape[-1], item['positive'].shape[-1], item['negative'].shape[-1]) for item in batch)
 
-    # Pad all waveforms to the maximum length
+    # Pad all waveforms to the maximum length in the batch
     for item in batch:
         anchors.append(pad_waveform(item['anchor'], max_length))
         positives.append(pad_waveform(item['positive'], max_length))
@@ -47,11 +38,10 @@ def collate_fn(batch):
 
 # Create dataset
 data_path = "datasets/GTZAN/gtzan_genre"
-min_duration = 3  # minimum duration in seconds
-dataset = MyDataset(root_dir=data_path, min_duration=min_duration, resample=22050)
+dataset = MyDataset(root_dir=data_path, resample=22050)
 
 # Create data loader and setup data
-batch_size = 1
+batch_size = 16
 train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True, collate_fn=collate_fn)
 
 # Encoder
@@ -82,7 +72,7 @@ wandb_logger = pl.loggers.WandbLogger(
 wandb_logger.experiment.config["batch_size"] = batch_size
 
 # Initialize trainer and pass wandb_logger
-trainer = pl.Trainer(max_epochs=10, logger=wandb_logger, accumulate_grad_batches=4)
+trainer = pl.Trainer(max_epochs=100, logger=wandb_logger, accumulate_grad_batches=4)
 
 # Start training
 trainer.fit(model, train_loader)

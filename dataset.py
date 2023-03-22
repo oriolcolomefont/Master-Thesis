@@ -2,7 +2,6 @@ import torch
 import torchaudio
 import librosa
 import numpy as np
-import random
 from torch.utils.data import Dataset
 import torchaudio.transforms as T
 import torchaudio.sox_effects as sox
@@ -12,38 +11,39 @@ class MyDataset(Dataset):
     def __init__(
         self,
         root_dir,
-        min_duration,
         resample: int = None,
         default_sample_rate: int = 44100,
+        min_clip_duration: int = 3,
         max_clip_duration: int = 5,
         min_chunk_duration_sec: float = 0.05,
         max_chunk_duration_sec: float = 1.0,
         seed: int = 42
     ):
         self.root_dir = root_dir
-        self.min_duration = min_duration
         self.resample = resample
         self.default_sample_rate = default_sample_rate
+        self.min_clip_duration = min_clip_duration
         self.max_clip_duration = max_clip_duration
         self.min_chunk_duration_sec = min_chunk_duration_sec
         self.max_chunk_duration_sec = max_chunk_duration_sec
         self.file_list = self._load_files()
-        
-        random.seed(seed)
+
         np.random.seed(seed)
+
+    @property
+    def sample_rate(self):
+        return self.resample or self.default_sample_rate
     
     def _load_files(self):
         #filter based on min_length
         filtered_file_list = []
     
         if self.resample is not None:
-             min_length = int(self.min_duration * self.resample)
+            min_length = int(self.min_clip_duration * self.resample)
         else:
-            min_length = int(self.min_duration * self.default_sample_rate)
+            min_length = int(self.min_clip_duration * self.sample_rate)
 
-        file_list = librosa.util.find_files(
-            self.root_dir, ext=['aac', 'au', 'flac', 'm4a', 'mp3', 'ogg', 'wav'],
-        )
+        file_list = librosa.util.find_files(self.root_dir, ext=['aac', 'au', 'flac', 'm4a', 'mp3', 'ogg', 'wav'],)
         for file in file_list:
             try:
                 waveform, _ = torchaudio.load(file)
@@ -56,47 +56,34 @@ class MyDataset(Dataset):
                     raise e
         return filtered_file_list
 
-     
     def __len__(self):
         return len(self.file_list)
     
-    def _resample_waveform(self, waveform, original_sample_rate):
+    def _resample_waveform(self, waveform):
         if self.resample is not None:
-            resampler = T.Resample(original_sample_rate, self.resample)
+            resampler = T.Resample(self.sample_rate, self.resample)
             waveform = resampler(waveform)
             return waveform, self.resample
         else:
-            return waveform, self.default_sample_rate
+            return waveform, self.sample_rate
 
     def __getitem__(self, index):
         filename = self.file_list[index]
-        num_frames = np.random.randint(self.min_duration * self.default_sample_rate, self.max_clip_duration * self.default_sample_rate)
-        waveform, sample_rate = torchaudio.load(
-            filename, frame_offset=0, num_frames=num_frames
-        )
+        waveform, _ = torchaudio.load(filename)
         waveform = waveform.mean(dim=0, keepdim=True)  # convert stereo to mono
 
         # Resample the waveform if the resample parameter is set, otherwise use the default sample rate
-        waveform, sample_rate = self._resample_waveform(waveform, sample_rate)
-
-        # Calculate min and max chunk lengths based on sample rate and duration in seconds
-        min_chunk_length = int(min_chunk_duration_sec * sample_rate)
-        max_chunk_length = int(max_chunk_duration_sec * sample_rate)
+        waveform, _ = self._resample_waveform(waveform)
 
         # generate anchor, positive from anchor and negative from positive
         anchor = waveform
-        positive = self.generate_positive(anchor, sample_rate)
-        negative = self.generate_negative(
-            positive,
-            sample_rate,
-            min_chunk_length=min_chunk_length,
-            max_chunk_length=max_chunk_length,
-        )
+        positive = self.generate_positive(anchor)
+        negative = self.generate_negative(positive)
 
-        #print(f"Anchor shape: {anchor.shape}, Positive shape: {positive.shape}, Negative shape: {negative.shape}")
+        print(f"Anchor shape: {anchor.shape}, Positive shape: {positive.shape}, Negative shape: {negative.shape}")
         return {'anchor': anchor, 'positive': positive, 'negative': negative}
 
-    def generate_positive(self, anchor, sample_rate):
+    def generate_positive(self, anchor):
         # Define the effect parameters using numpy
         gain = np.random.randint(-12, 0)
         pitch = np.random.randint(-1200, 1200)
@@ -127,26 +114,37 @@ class MyDataset(Dataset):
             ["stretch", f"{stretch}"],
             ["tremolo", f"{tremolo_speed}", f"{tremolo_depth}"],
         ]
-        positive, _ = sox.apply_effects_tensor(anchor, sample_rate, effects)
+        positive, _ = sox.apply_effects_tensor(anchor, self.sample_rate, effects)
         positive = positive.mean(dim=0, keepdim=True)  # convert stereo to mono
         return positive
 
-    def generate_negative(
-        self, positive, min_chunk_length, max_chunk_length
-        ):
-        # Add padding if the positive waveform length is smaller than the max_chunk_length
-        if positive.shape[-1] < max_chunk_length:
-            padding_size = max_chunk_length - positive.shape[-1]
-            positive = torch.cat([positive, torch.zeros(positive.shape[:-1] + (padding_size,))], dim=-1)
+    def generate_negative(self, positive):
+        # Get positive length and duration
+        positive_length = positive.shape[-1]
+        positive_duration = positive_length / self.sample_rate
+
+        # Determine the number of chunks based on minimum chunk duration
+        n_chunks = int(positive_duration // self.min_chunk_duration_sec)
+
+        # Calculate the minimum and maximum chunk lengths in samples
+        min_chunk_length = int(self.min_chunk_duration_sec * self.sample_rate)
+        max_chunk_length = int(self.max_chunk_duration_sec * self.sample_rate)
+
+        # Generate random chunk lengths
+        chunk_lengths = np.random.randint(min_chunk_length, max_chunk_length + 1, size=n_chunks - 1)
+        chunk_lengths = np.append(chunk_lengths, positive_length - np.sum(chunk_lengths))
 
         # Split the positive clip into chunks
-        chunks = positive.unfold(-1, max_chunk_length, min_chunk_length)
-        n_chunks = chunks.shape[-2]
+        chunks = [positive[..., start:start + length] for start, length in zip(np.cumsum(np.insert(chunk_lengths, 0, 0)), chunk_lengths)]
 
         # Shuffle the chunks
-        indices = torch.randperm(n_chunks)
-        chunks = chunks[..., indices, :]
+        np.random.shuffle(chunks)
 
-        # Concatenate the shuffled chunks
-        negative = chunks.reshape(chunks.shape[:-2] + (-1,))
+        # Concatenate the shuffled chunks to create the negative example
+        negative = torch.cat(chunks, dim=-1)
+
+        # Check if the positive and negative examples have the same length
+        if positive.shape != negative.shape:
+            raise ValueError(f"Input positive and output negative have different shapes: {positive.shape} vs {negative.shape}")
+
         return negative
