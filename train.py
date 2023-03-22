@@ -40,7 +40,7 @@ def collate_fn(batch):
     # Online triplet mining: Select the hardest negative for each anchor-positive pair
     anchor_positive_distance = (anchors - positives).pow(2).sum(dim=2).sqrt()
     anchor_negative_distance = (anchors.unsqueeze(2) - negatives.unsqueeze(1)).pow(2).sum(dim=3).sqrt()
-    hardest_negative_indices = torch.argmin(anchor_negative_distance - anchor_positive_distance.unsqueeze(2), dim=2)
+    hardest_negative_indices = torch.argmax(anchor_negative_distance - anchor_positive_distance.unsqueeze(2), dim=2)
     hardest_negatives = torch.cat([negatives[i, idx, :].unsqueeze(0) for i, idx in enumerate(hardest_negative_indices)])
 
     return anchors, positives, hardest_negatives
