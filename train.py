@@ -64,16 +64,19 @@ def collate_fn(batch):
 
 
 # Create dataset
-data_path = "datasets/GTZAN/gtzan_genre"
-dataset = MyDataset(root_dir=data_path, resample=22050)
+train_path = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/datasets/GTZAN/GTZAN train"
+val_path = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/datasets/GTZAN/GTZAN validate"
 
-# Create data loader and setup data
+train_set = MyDataset(root_dir=train_path, resample=22050)
+val_set = MyDataset(root_dir=val_path, resample=22050)
+
+# Create data/validation loader and setup data
 batch_size = 8
 train_loader = DataLoader(
-    dataset, batch_size=batch_size, shuffle=True, collate_fn=collate_fn
+    train_set, batch_size=batch_size, shuffle=True, collate_fn=collate_fn
 )
 validation_loader = DataLoader(
-    dataset, batch_size=batch_size, shuffle=False, collate_fn=collate_fn
+    val_set, batch_size=batch_size, shuffle=False, collate_fn=collate_fn
 )
 
 # Encoder
@@ -84,7 +87,7 @@ model = TripletNet(encoder)
 
 # Initialize WandB logger
 wandb_logger = pl.loggers.WandbLogger(
-    name="second overnight run",  # Name of the run (default: None) torchu
+    name="validation run #1",  # Name of the run (default: None) torchu
     id=None,  # ID of the run (default: None)
     project="master-thesis",  # Name of the project to log the run to (default: None)
     save_dir="/home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints",  # Directory to save the logs and checkpoint files (default: None)
@@ -92,18 +95,14 @@ wandb_logger = pl.loggers.WandbLogger(
         "lr": 0.001,
         "batch_size": batch_size,
     },  # Dictionary of hyperparameters and their values (default: None)
-    tags=[
-        "training",
-        "pytorch",
-        "deep learning",
-    ],  # List of tags to apply to the run (default: None)
+    tags=[],  # List of tags to apply to the run (default: None)
 )
 
 # add your batch size to the wandb config
 wandb_logger.experiment.config["batch_size"] = batch_size
 
 # Initialize trainer and pass wandb_logger
-trainer = pl.Trainer(max_epochs=10, logger=wandb_logger, accumulate_grad_batches=4)
+trainer = pl.Trainer(max_epochs=5, logger=wandb_logger, accumulate_grad_batches=4)
 
 # Start training
 trainer.fit(model, train_loader, validation_loader)
