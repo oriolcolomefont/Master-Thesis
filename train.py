@@ -5,7 +5,7 @@ import pytorch_lightning as pl
 from dataset import MyDataset
 from model import TripletNet, SampleCNN
 
-#from lightning.pytorch.callbacks import Callback
+# from lightning.pytorch.callbacks import Callback
 """
 class PrintCallback(Callback):
     def on_train_start(self, trainer, pl_module):
@@ -14,23 +14,32 @@ class PrintCallback(Callback):
         print("Training is done.")
 """
 
+
 def pad_waveform(waveform, length):
     padded_waveform = torch.zeros(waveform.shape[0], length)
-    padded_waveform[..., :waveform.shape[-1]] = waveform
+    padded_waveform[..., : waveform.shape[-1]] = waveform
     return padded_waveform
+
 
 def collate_fn(batch):
     anchors = []
     positives = []
     negatives = []
 
-    max_length = max(max(item['anchor'].shape[-1], item['positive'].shape[-1], item['negative'].shape[-1]) for item in batch)
+    max_length = max(
+        max(
+            item["anchor"].shape[-1],
+            item["positive"].shape[-1],
+            item["negative"].shape[-1],
+        )
+        for item in batch
+    )
 
     # Pad all waveforms to the maximum length in the batch
     for item in batch:
-        anchors.append(pad_waveform(item['anchor'], max_length))
-        positives.append(pad_waveform(item['positive'], max_length))
-        negatives.append(pad_waveform(item['negative'], max_length))
+        anchors.append(pad_waveform(item["anchor"], max_length))
+        positives.append(pad_waveform(item["positive"], max_length))
+        negatives.append(pad_waveform(item["negative"], max_length))
 
     anchors = torch.stack(anchors)
     positives = torch.stack(positives)
@@ -38,11 +47,21 @@ def collate_fn(batch):
 
     # Online triplet mining: Select the hardest negative for each anchor-positive pair
     anchor_positive_distance = (anchors - positives).pow(2).sum(dim=2).sqrt()
-    anchor_negative_distance = (anchors.unsqueeze(2) - negatives.unsqueeze(1)).pow(2).sum(dim=3).sqrt()
-    hardest_negative_indices = torch.argmax(anchor_negative_distance - anchor_positive_distance.unsqueeze(2), dim=2)
-    hardest_negatives = torch.cat([negatives[i, idx, :].unsqueeze(0) for i, idx in enumerate(hardest_negative_indices)])
+    anchor_negative_distance = (
+        (anchors.unsqueeze(2) - negatives.unsqueeze(1)).pow(2).sum(dim=3).sqrt()
+    )
+    hardest_negative_indices = torch.argmax(
+        anchor_negative_distance - anchor_positive_distance.unsqueeze(2), dim=2
+    )
+    hardest_negatives = torch.cat(
+        [
+            negatives[i, idx, :].unsqueeze(0)
+            for i, idx in enumerate(hardest_negative_indices)
+        ]
+    )
 
     return anchors, positives, hardest_negatives
+
 
 # Create dataset
 data_path = "datasets/GTZAN/gtzan_genre"
@@ -50,12 +69,16 @@ dataset = MyDataset(root_dir=data_path, resample=22050)
 
 # Create data loader and setup data
 batch_size = 8
-train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True, collate_fn=collate_fn)
+train_loader = DataLoader(
+    dataset, batch_size=batch_size, shuffle=True, collate_fn=collate_fn
+)
+validation_loader = DataLoader(
+    dataset, batch_size=batch_size, shuffle=False, collate_fn=collate_fn
+)
 
 # Encoder
 encoder = SampleCNN(strides=[3, 3, 3, 3, 3, 3, 3, 3, 3], supervised=False, out_dim=128)
 
-#print(summary(model=encoder))
 # Initialize model
 model = TripletNet(encoder)
 
@@ -83,4 +106,4 @@ wandb_logger.experiment.config["batch_size"] = batch_size
 trainer = pl.Trainer(max_epochs=10, logger=wandb_logger, accumulate_grad_batches=4)
 
 # Start training
-trainer.fit(model, train_loader)
+trainer.fit(model, train_loader, validation_loader)

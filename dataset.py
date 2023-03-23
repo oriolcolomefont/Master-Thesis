@@ -17,7 +17,7 @@ class MyDataset(Dataset):
         max_clip_duration: int = 5,
         min_chunk_duration_sec: float = 0.05,
         max_chunk_duration_sec: float = 1.0,
-        seed: int = 42
+        seed: int = 42,
     ):
         self.root_dir = root_dir
         self.resample = resample
@@ -33,17 +33,20 @@ class MyDataset(Dataset):
     @property
     def sample_rate(self):
         return self.resample or self.default_sample_rate
-    
+
     def _load_files(self):
-        #filter based on min_length
+        # filter based on min_length
         filtered_file_list = []
-    
+
         if self.resample is not None:
             min_length = int(self.min_clip_duration * self.resample)
         else:
             min_length = int(self.min_clip_duration * self.sample_rate)
 
-        file_list = librosa.util.find_files(self.root_dir, ext=['aac', 'au', 'flac', 'm4a', 'mp3', 'ogg', 'wav'],)
+        file_list = librosa.util.find_files(
+            self.root_dir,
+            ext=["aac", "au", "flac", "m4a", "mp3", "ogg", "wav"],
+        )
         for file in file_list:
             try:
                 waveform, _ = torchaudio.load(file)
@@ -58,7 +61,7 @@ class MyDataset(Dataset):
 
     def __len__(self):
         return len(self.file_list)
-    
+
     def _resample_waveform(self, waveform):
         if self.resample is not None:
             resampler = T.Resample(self.sample_rate, self.resample)
@@ -80,8 +83,10 @@ class MyDataset(Dataset):
         positive = self.generate_positive(anchor)
         negative = self.generate_negative(positive)
 
-        print(f"Anchor shape: {anchor.shape}, Positive shape: {positive.shape}, Negative shape: {negative.shape}")
-        return {'anchor': anchor, 'positive': positive, 'negative': negative}
+        print(
+            f"Anchor shape: {anchor.shape}, Positive shape: {positive.shape}, Negative shape: {negative.shape}"
+        )
+        return {"anchor": anchor, "positive": positive, "negative": negative}
 
     def generate_positive(self, anchor):
         # Define the effect parameters using numpy
@@ -131,11 +136,20 @@ class MyDataset(Dataset):
         max_chunk_length = int(self.max_chunk_duration_sec * self.sample_rate)
 
         # Generate random chunk lengths
-        chunk_lengths = np.random.randint(min_chunk_length, max_chunk_length + 1, size=n_chunks - 1)
-        chunk_lengths = np.append(chunk_lengths, positive_length - np.sum(chunk_lengths))
+        chunk_lengths = np.random.randint(
+            min_chunk_length, max_chunk_length + 1, size=n_chunks - 1
+        )
+        chunk_lengths = np.append(
+            chunk_lengths, positive_length - np.sum(chunk_lengths)
+        )
 
         # Split the positive clip into chunks
-        chunks = [positive[..., start:start + length].clone().detach() for start, length in zip(np.cumsum(np.insert(chunk_lengths, 0, 0)), chunk_lengths)]
+        chunks = [
+            positive[..., start : start + length].clone().detach()
+            for start, length in zip(
+                np.cumsum(np.insert(chunk_lengths, 0, 0)), chunk_lengths
+            )
+        ]
 
         # Shuffle the chunks
         np.random.shuffle(chunks)
@@ -144,7 +158,9 @@ class MyDataset(Dataset):
         negative = torch.cat(chunks, dim=-1)
 
         # Check if the positive and negative examples have the same length
-        if  positive.shape != negative.shape:
-            raise ValueError(f"Input positive and output negative have different shapes. Scrambling the positive sample went wrong: {positive.shape} vs {negative.shape}")
+        if positive.shape != negative.shape:
+            raise ValueError(
+                f"Input positive and output negative have different shapes. Scrambling the positive sample went wrong: {positive.shape} vs {negative.shape}"
+            )
 
         return negative

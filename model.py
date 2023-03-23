@@ -6,6 +6,7 @@ import pytorch_lightning as pl
 from criterion import TripletLoss
 
 import wandb
+
 wandb.login()
 
 
@@ -102,11 +103,12 @@ class SampleCNN(Model):
         out = self.sequential(x)
         if self.supervised:
             out = self.dropout(out)
-        #out = torch.avg_pool1d(out, axis=out.size(2)) #TODO check how to implement time distributed pooling layer
-        #out = out.reshape(x.shape[0], out.size(1) * out.size(2))
+        # out = torch.avg_pool1d(out, axis=out.size(2)) #TODO check how to implement time distributed pooling layer
+        # out = out.reshape(x.shape[0], out.size(1) * out.size(2))
         out = torch.mean(out, dim=2)
         logit = self.fc(out)
         return logit
+
 
 class TripletNet(pl.LightningModule):
     def __init__(self, encoder: nn.Module, lr=0.001):
@@ -120,7 +122,9 @@ class TripletNet(pl.LightningModule):
         anchor_embedding = self.encoder(anchor)
         positive_embedding = self.encoder(positive)
         negative_embedding = self.encoder(negative)
-        loss = self.triplet_loss(anchor_embedding, positive_embedding, negative_embedding)
+        loss = self.triplet_loss(
+            anchor_embedding, positive_embedding, negative_embedding
+        )
         self.log("train_loss", loss)
         return loss
 
