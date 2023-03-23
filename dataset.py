@@ -134,8 +134,8 @@ class MyDataset(Dataset):
         chunk_lengths = np.random.randint(min_chunk_length, max_chunk_length + 1, size=n_chunks - 1)
         chunk_lengths = np.append(chunk_lengths, positive_length - np.sum(chunk_lengths))
 
-        # Split the positive clip into chunks
-        chunks = [positive[..., start:start + length] for start, length in zip(np.cumsum(np.insert(chunk_lengths, 0, 0)), chunk_lengths)]
+        # Split the positive clip into chunks and convert them to PyTorch tensors
+        chunks = [torch.tensor(positive[..., start:start + length], dtype=torch.float32) for start, length in zip(np.cumsum(np.insert(chunk_lengths, 0, 0)), chunk_lengths)]
 
         # Shuffle the chunks
         np.random.shuffle(chunks)
