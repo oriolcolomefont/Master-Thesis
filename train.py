@@ -98,7 +98,7 @@ model = TripletNet(encoder)
 
 # Initialize WandB logger
 wandb_logger = pl.loggers.WandbLogger(
-    name="validation run #1",  # Name of the run (default: None) torchu
+    name="validation run #2",  # Name of the run (default: None) torchu
     id=None,  # ID of the run (default: None)
     project="master-thesis",  # Name of the project to log the run to (default: None)
     save_dir="/home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints",  # Directory to save the logs and checkpoint files (default: None)
@@ -113,7 +113,7 @@ wandb_logger = pl.loggers.WandbLogger(
 wandb_logger.experiment.config["batch_size"] = batch_size
 
 # Initialize trainer and pass wandb_logger
-trainer = pl.Trainer(max_epochs=5, logger=wandb_logger, accumulate_grad_batches=4)
+trainer = pl.Trainer(max_epochs=100, logger=wandb_logger, accumulate_grad_batches=4)
 
 # Start training
 trainer.fit(model, train_loader, validation_loader)
