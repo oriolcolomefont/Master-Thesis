@@ -145,6 +145,6 @@ class MyDataset(Dataset):
 
         # Check if the positive and negative examples have the same length
         if  positive.shape != negative.shape:
-            raise ValueError(f"Input positive and output negative have different shapes: {positive.shape} vs {negative.shape}")
+            raise ValueError(f"Input positive and output negative have different shapes. Scrambling the positive sample went wrong: {positive.shape} vs {negative.shape}")
 
         return negative
