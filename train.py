@@ -45,7 +45,7 @@ def collate_fn(batch):
     positives = torch.stack(positives)
     negatives = torch.stack(negatives)
 
-    # Online triplet mining: Select the hardest negative for each anchor-positive pair
+    # Online triplet mining: select the hardest negative for each anchor-positive pair
     anchor_positive_distance = (anchors - positives).pow(2).sum(dim=2).sqrt()
     anchor_negative_distance = (
         (anchors.unsqueeze(2) - negatives.unsqueeze(1)).pow(2).sum(dim=3).sqrt()
@@ -60,12 +60,23 @@ def collate_fn(batch):
         ]
     )
 
+    # Print useful information
+    print(f"Batch size: {len(batch)}")
+    print(f"Max sequence length in batch: {max_length}")
+    print(f"Anchors shape: {anchors.shape}")
+    print(f"Positives shape: {positives.shape}")
+    print(f"Hardest negatives shape: {hardest_negatives.shape}")
+
     return anchors, positives, hardest_negatives
 
 
 # Create dataset
-train_path = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/datasets/GTZAN/GTZAN train"
-val_path = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/datasets/GTZAN/GTZAN validate"
+train_path = (
+    "/home/oriol_colome_font_epidemicsound_/Master-Thesis/datasets/GTZAN/GTZAN train"
+)
+val_path = (
+    "/home/oriol_colome_font_epidemicsound_/Master-Thesis/datasets/GTZAN/GTZAN validate"
+)
 
 train_set = MyDataset(root_dir=train_path, resample=22050)
 val_set = MyDataset(root_dir=val_path, resample=22050)
