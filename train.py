@@ -1,10 +1,18 @@
 import torch
 from torch.utils.data import DataLoader
-import torch.nn.functional as F
 import pytorch_lightning as pl
 
 from dataset import MyDataset
 from model import TripletNet, SampleCNN
+
+#from lightning.pytorch.callbacks import Callback
+"""
+class PrintCallback(Callback):
+    def on_train_start(self, trainer, pl_module):
+        print("Training is started!")
+    def on_train_end(self, trainer, pl_module):
+        print("Training is done.")
+"""
 
 def pad_waveform(waveform, length):
     padded_waveform = torch.zeros(waveform.shape[0], length)
