@@ -11,37 +11,26 @@ class MyDataset(Dataset):
     def __init__(
         self,
         root_dir,
-        resample: int = None,
-        default_sample_rate: int = 44100,
-        min_clip_duration: int = 3,
-        max_clip_duration: int = 5,
+        sample_rate: int = 44100,
+        clip_duration: float = 3.0,
         min_chunk_duration_sec: float = 0.05,
         max_chunk_duration_sec: float = 1.0,
         seed: int = 42,
     ):
         self.root_dir = root_dir
-        self.resample = resample
-        self.default_sample_rate = default_sample_rate
-        self.min_clip_duration = min_clip_duration
-        self.max_clip_duration = max_clip_duration
+        self.sample_rate = sample_rate
+        self.clip_duration = clip_duration
         self.min_chunk_duration_sec = min_chunk_duration_sec
         self.max_chunk_duration_sec = max_chunk_duration_sec
         self.file_list = self._load_files()
 
         np.random.seed(seed)
 
-    @property
-    def sample_rate(self):
-        return self.resample or self.default_sample_rate
-
     def _load_files(self):
         # filter based on min_length
         filtered_file_list = []
 
-        if self.resample is not None:
-            min_length = int(self.min_clip_duration * self.resample)
-        else:
-            min_length = int(self.min_clip_duration * self.sample_rate)
+        min_length = int(self.clip_duration * self.sample_rate)
 
         file_list = librosa.util.find_files(
             self.root_dir,
@@ -49,8 +38,7 @@ class MyDataset(Dataset):
         )
         for file in file_list:
             try:
-                waveform, _ = torchaudio.load(file)
-                if waveform.shape[-1] >= min_length:
+                if torchaudio.info(file).num_frames >= min_length:
                     filtered_file_list.append(file)
             except RuntimeError as e:
                 if "Invalid data found when processing input" in str(e):
@@ -62,30 +50,29 @@ class MyDataset(Dataset):
     def __len__(self):
         return len(self.file_list)
 
-    def _resample_waveform(self, waveform):
-        if self.resample is not None:
-            resampler = T.Resample(self.sample_rate, self.resample)
+    def _resample_waveform(self, waveform, current_sample_rate):
+        if self.sample_rate != current_sample_rate:
+            resampler = T.Resample(current_sample_rate, self.sample_rate)
             waveform = resampler(waveform)
-            return waveform, self.resample
-        else:
-            return waveform, self.sample_rate
+        return waveform, self.sample_rate
 
     def __getitem__(self, index):
         filename = self.file_list[index]
-        waveform, _ = torchaudio.load(filename)
+        metadata = torchaudio.info(filename)
+        num_frames = int(self.clip_duration * metadata.sample_rate)
+        frame_offset = np.random.randint(0, metadata.num_frames - num_frames)
+        
+        waveform, _ = torchaudio.load(filename, frame_offset=frame_offset, num_frames=num_frames)
         waveform = waveform.mean(dim=0, keepdim=True)  # convert stereo to mono
 
         # Resample the waveform if the resample parameter is set, otherwise use the default sample rate
-        waveform, _ = self._resample_waveform(waveform)
+        waveform, _ = self._resample_waveform(waveform, metadata.sample_rate)
 
         # generate anchor, positive from anchor and negative from positive
         anchor = waveform
         positive = self.generate_positive(anchor)
         negative = self.generate_negative(positive)
 
-        print(
-            f"Anchor shape: {anchor.shape}, Positive shape: {positive.shape}, Negative shape: {negative.shape}"
-        )
         return {"anchor": anchor, "positive": positive, "negative": negative}
 
     def generate_positive(self, anchor):

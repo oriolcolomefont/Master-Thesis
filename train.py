@@ -1,6 +1,8 @@
 import torch
 from torch.utils.data import DataLoader
 import pytorch_lightning as pl
+from pytorch_lightning.callbacks import ModelCheckpoint
+import torch.nn.functional as F
 
 from dataset import MyDataset
 from model import TripletNet, SampleCNN
@@ -16,8 +18,7 @@ class PrintCallback(Callback):
 
 
 def pad_waveform(waveform, length):
-    padded_waveform = torch.zeros(waveform.shape[0], length)
-    padded_waveform[..., : waveform.shape[-1]] = waveform
+    padded_waveform = F.pad(waveform, (0, length - waveform.shape[-1]), "constant", 0)
     return padded_waveform
 
 
@@ -34,7 +35,6 @@ def collate_fn(batch):
         )
         for item in batch
     )
-
     # Pad all waveforms to the maximum length in the batch
     for item in batch:
         anchors.append(pad_waveform(item["anchor"], max_length))
@@ -71,16 +71,16 @@ val_path = (
     "/home/oriol_colome_font_epidemicsound_/Master-Thesis/datasets/GTZAN/GTZAN validate"
 )
 
-train_set = MyDataset(root_dir=train_path, resample=22050)
-val_set = MyDataset(root_dir=val_path, resample=22050)
+train_set = MyDataset(root_dir=train_path, sample_rate=22050)
+val_set = MyDataset(root_dir=val_path, sample_rate=22050)
 
 # Create data/validation loader and setup data
-batch_size = 8
+batch_size = 16
 train_loader = DataLoader(
-    train_set, batch_size=batch_size, shuffle=True, collate_fn=collate_fn, num_workers=16
+    train_set, batch_size=batch_size, shuffle=True, collate_fn=collate_fn, num_workers=16, drop_last=True
 )
 validation_loader = DataLoader(
-    val_set, batch_size=batch_size, shuffle=False, collate_fn=collate_fn, num_workers=16
+    val_set, batch_size=batch_size, shuffle=False, collate_fn=collate_fn, num_workers=16,drop_last=True
 )
 
 # Encoder
@@ -97,6 +97,7 @@ wandb_logger = pl.loggers.WandbLogger(
     config={
         "lr": 0.001,
         "batch_size": batch_size,
+        "sample_rate": train_set.sample_rate,
     },  # Dictionary of hyperparameters and their values (default: None)
     tags=[],  # List of tags to apply to the run (default: None)
 )
@@ -105,7 +106,7 @@ wandb_logger = pl.loggers.WandbLogger(
 wandb_logger.experiment.config["batch_size"] = batch_size
 
 # Initialize trainer and pass wandb_logger
-trainer = pl.Trainer(max_epochs=10, logger=wandb_logger, accumulate_grad_batches=4)
+trainer = pl.Trainer(max_epochs=10, logger=wandb_logger, callbacks=[ModelCheckpoint(dirpath="./runs")])
 
 # Start training
 trainer.fit(model, train_loader, validation_loader)
