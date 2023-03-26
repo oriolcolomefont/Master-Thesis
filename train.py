@@ -60,13 +60,6 @@ def collate_fn(batch):
         ]
     )
 
-    # Print useful information
-    print(f"Batch size: {len(batch)}")
-    print(f"Max sequence length in batch: {max_length}")
-    print(f"Anchors shape: {anchors.shape}")
-    print(f"Positives shape: {positives.shape}")
-    print(f"Hardest negatives shape: {hardest_negatives.shape}")
-
     return anchors, positives, hardest_negatives
 
 
@@ -84,10 +77,10 @@ val_set = MyDataset(root_dir=val_path, resample=22050)
 # Create data/validation loader and setup data
 batch_size = 8
 train_loader = DataLoader(
-    train_set, batch_size=batch_size, shuffle=True, collate_fn=collate_fn
+    train_set, batch_size=batch_size, shuffle=True, collate_fn=collate_fn, num_workers=16
 )
 validation_loader = DataLoader(
-    val_set, batch_size=batch_size, shuffle=False, collate_fn=collate_fn
+    val_set, batch_size=batch_size, shuffle=False, collate_fn=collate_fn, num_workers=16
 )
 
 # Encoder
@@ -98,9 +91,8 @@ model = TripletNet(encoder)
 
 # Initialize WandB logger
 wandb_logger = pl.loggers.WandbLogger(
-    name="validation run #2",  # Name of the run (default: None) torchu
-    id=None,  # ID of the run (default: None)
     project="master-thesis",  # Name of the project to log the run to (default: None)
+    log_model=True,  # Log model topology (default: False)
     save_dir="/home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints",  # Directory to save the logs and checkpoint files (default: None)
     config={
         "lr": 0.001,
@@ -113,7 +105,7 @@ wandb_logger = pl.loggers.WandbLogger(
 wandb_logger.experiment.config["batch_size"] = batch_size
 
 # Initialize trainer and pass wandb_logger
-trainer = pl.Trainer(max_epochs=100, logger=wandb_logger, accumulate_grad_batches=4)
+trainer = pl.Trainer(max_epochs=10, logger=wandb_logger, accumulate_grad_batches=4)
 
 # Start training
 trainer.fit(model, train_loader, validation_loader)

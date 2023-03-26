@@ -127,6 +127,17 @@ class TripletNet(pl.LightningModule):
         )
         self.log("train_loss", loss)
         return loss
+    
+    def validation_step(self, batch, batch_idx):
+        anchor, positive, negative = batch  # batch is now a tuple
+        anchor_embedding = self.encoder(anchor)
+        positive_embedding = self.encoder(positive)
+        negative_embedding = self.encoder(negative)
+        loss = self.triplet_loss(
+            anchor_embedding, positive_embedding, negative_embedding
+        )
+        self.log("val_loss", loss)
+        return loss
 
     def triplet_loss(self, anchor, positive, negative):
         criterion = TripletLoss(margin=1.0)
