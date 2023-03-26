@@ -71,11 +71,11 @@ val_path = (
     "/home/oriol_colome_font_epidemicsound_/Master-Thesis/datasets/GTZAN/GTZAN validate"
 )
 
-train_set = MyDataset(root_dir=train_path, sample_rate=22050)
-val_set = MyDataset(root_dir=val_path, sample_rate=22050)
+train_set = MyDataset(root_dir=train_path, sample_rate=16000)
+val_set = MyDataset(root_dir=val_path, sample_rate=16000)
 
 # Create data/validation loader and setup data
-batch_size = 16
+batch_size = 32
 train_loader = DataLoader(
     train_set,
     batch_size=batch_size,
@@ -117,7 +117,7 @@ wandb_logger.experiment.config["batch_size"] = batch_size
 
 # Initialize trainer and pass wandb_logger
 trainer = pl.Trainer(
-    max_epochs=500, logger=wandb_logger, callbacks=[ModelCheckpoint(dirpath="./runs")]
+    max_epochs=100, logger=wandb_logger, callbacks=[ModelCheckpoint(dirpath="./runs")]
 )
 
 # Start training

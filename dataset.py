@@ -12,7 +12,7 @@ class MyDataset(Dataset):
         self,
         root_dir,
         sample_rate: int = 44100,
-        clip_duration: float = 3.0,
+        clip_duration: float = 5.0,
         min_chunk_duration_sec: float = 0.05,
         max_chunk_duration_sec: float = 1.0,
         seed: int = 42,
