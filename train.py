@@ -77,10 +77,20 @@ val_set = MyDataset(root_dir=val_path, sample_rate=22050)
 # Create data/validation loader and setup data
 batch_size = 16
 train_loader = DataLoader(
-    train_set, batch_size=batch_size, shuffle=True, collate_fn=collate_fn, num_workers=16, drop_last=True
+    train_set,
+    batch_size=batch_size,
+    shuffle=True,
+    collate_fn=collate_fn,
+    num_workers=16,
+    drop_last=True,
 )
 validation_loader = DataLoader(
-    val_set, batch_size=batch_size, shuffle=False, collate_fn=collate_fn, num_workers=16,drop_last=True
+    val_set,
+    batch_size=batch_size,
+    shuffle=False,
+    collate_fn=collate_fn,
+    num_workers=16,
+    drop_last=True,
 )
 
 # Encoder
@@ -106,7 +116,9 @@ wandb_logger = pl.loggers.WandbLogger(
 wandb_logger.experiment.config["batch_size"] = batch_size
 
 # Initialize trainer and pass wandb_logger
-trainer = pl.Trainer(max_epochs=10, logger=wandb_logger, callbacks=[ModelCheckpoint(dirpath="./runs")])
+trainer = pl.Trainer(
+    max_epochs=500, logger=wandb_logger, callbacks=[ModelCheckpoint(dirpath="./runs")]
+)
 
 # Start training
 trainer.fit(model, train_loader, validation_loader)

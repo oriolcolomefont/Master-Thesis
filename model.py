@@ -127,7 +127,7 @@ class TripletNet(pl.LightningModule):
         )
         self.log("train_loss", loss)
         return loss
-    
+
     def validation_step(self, batch, batch_idx):
         anchor, positive, negative = batch  # batch is now a tuple
         anchor_embedding = self.encoder(anchor)

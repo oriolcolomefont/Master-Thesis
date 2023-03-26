@@ -61,8 +61,10 @@ class MyDataset(Dataset):
         metadata = torchaudio.info(filename)
         num_frames = int(self.clip_duration * metadata.sample_rate)
         frame_offset = np.random.randint(0, metadata.num_frames - num_frames)
-        
-        waveform, _ = torchaudio.load(filename, frame_offset=frame_offset, num_frames=num_frames)
+
+        waveform, _ = torchaudio.load(
+            filename, frame_offset=frame_offset, num_frames=num_frames
+        )
         waveform = waveform.mean(dim=0, keepdim=True)  # convert stereo to mono
 
         # Resample the waveform if the resample parameter is set, otherwise use the default sample rate
@@ -74,6 +76,25 @@ class MyDataset(Dataset):
         negative = self.generate_negative(positive)
 
         return {"anchor": anchor, "positive": positive, "negative": negative}
+
+    def add_noise_with_snr(self, waveform, snr_range):
+        # Generate white noise
+        noise = torch.normal(0, 1, waveform.shape)
+
+        # Calculate signal and noise power
+        signal_power = torch.sum(waveform**2)
+        noise_power = torch.sum(noise**2)
+
+        # Calculate the scaling factor for the noise
+        scale_factor = torch.sqrt(signal_power / (noise_power * 10 ** (snr_range / 10)))
+
+        # Scale the noise
+        scaled_noise = noise * scale_factor
+
+        # Add noise to the signal
+        noisy_waveform = waveform + scaled_noise
+
+        return noisy_waveform
 
     def generate_positive(self, anchor):
         # Define the effect parameters using numpy
@@ -94,6 +115,7 @@ class MyDataset(Dataset):
         speed = np.random.uniform(0.7, 1.3)
         tremolo_speed = np.random.uniform(0.1, 100)
         tremolo_depth = np.random.randint(1, 101)
+        snr_range = np.random.randint(12, 100)
 
         # Define the effect chain using f-strings
         effects = [
@@ -108,7 +130,7 @@ class MyDataset(Dataset):
         ]
         positive, _ = sox.apply_effects_tensor(anchor, self.sample_rate, effects)
         positive = positive.mean(dim=0, keepdim=True)  # convert stereo to mono
-        return positive
+        return self.add_noise_with_snr(positive, snr_range=snr_range)
 
     def generate_negative(self, positive):
         # Get positive length and duration
