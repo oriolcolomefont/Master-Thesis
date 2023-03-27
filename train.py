@@ -1,8 +1,6 @@
-import torch
 from torch.utils.data import DataLoader
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint
-import torch.nn.functional as F
 
 from dataset import MyDataset
 from model import TripletNet, SampleCNN
@@ -64,9 +62,7 @@ wandb_logger.experiment.config["batch_size"] = batch_size
 
 # Initialize trainer and pass wandb_logger
 trainer = pl.Trainer(
-    max_epochs=100,
-    logger=wandb_logger,
-    callbacks=[ModelCheckpoint(dirpath="./runs wandb")],
+    max_epochs=100, logger=wandb_logger, callbacks=[ModelCheckpoint(dirpath="./runs wandb")]
 )
 
 # Start training
