@@ -24,6 +24,7 @@ val_set = MyDataset(root_dir=val_path, sample_rate=16000)
 
 # Create data/validation loader and setup data
 batch_size = 16
+
 train_loader = DataLoader(
     train_set,
     batch_size=batch_size,
@@ -57,12 +58,10 @@ wandb_logger = pl.loggers.WandbLogger(
         "batch_size": batch_size,
         "sample_rate": train_set.sample_rate,
     },  # Dictionary of hyperparameters and their values (default: None)
-    tags=[],  # List of tags to apply to the run (default: None)
 )
 
 # add your batch size to the wandb config
-# wandb_logger.experiment.config["batch_size"] = batch_size
-
+#wandb_logger.experiment.config["batch_size"] = batch_size
 
 # Create callbacks
 callbacks = [

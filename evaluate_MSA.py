@@ -1,4 +1,4 @@
-from model import TripletNet, SampleCNN
+from model import SampleCNN
 from msaf import config
 from msaf.base import Features
 
