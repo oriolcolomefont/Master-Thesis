@@ -74,6 +74,7 @@ class MyDataset(Dataset):
         anchor = waveform
         positive = self.generate_positive(anchor)
         negative = self.generate_negative(positive)
+        #negative_from_anchor = self.generate_negative(anchor)
 
         return {"anchor": anchor, "positive": positive, "negative": negative}
 

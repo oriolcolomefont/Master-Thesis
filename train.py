@@ -62,8 +62,14 @@ wandb_logger.experiment.config["batch_size"] = batch_size
 
 # Initialize trainer and pass wandb_logger
 trainer = pl.Trainer(
-    max_epochs=100, logger=wandb_logger, callbacks=[ModelCheckpoint(dirpath="./runs wandb")]
+    max_epochs=100,
+    logger=wandb_logger,
+    callbacks=[ModelCheckpoint(dirpath="./runs wandb")],
 )
 
 # Start training
 trainer.fit(model, train_loader, validation_loader)
+
+# perform an evaluation epoch over the validation set, outside of the training loop, using validate(). 
+# This might be useful if you want to collect new metrics from a model right at its initialization or after it has already been trained.
+trainer.validate(model=model, dataloaders=validation_loader)
