@@ -23,7 +23,7 @@ train_set = MyDataset(root_dir=train_path, sample_rate=16000)
 val_set = MyDataset(root_dir=val_path, sample_rate=16000)
 
 # Create data/validation loader and setup data
-batch_size = 16
+batch_size = 32
 
 train_loader = DataLoader(
     train_set,
@@ -65,7 +65,7 @@ wandb_logger = pl.loggers.WandbLogger(
 
 # Create callbacks
 callbacks = [
-    EarlyStopping(monitor="val_loss", patience=10, verbose=True, mode="min"),
+    EarlyStopping(monitor="val_loss", patience=50, verbose=True, mode="min"),
     ModelCheckpoint(dirpath="./runs wandb"),
 ]
 
@@ -76,7 +76,7 @@ trainer = pl.Trainer(
     callbacks=callbacks,
     log_every_n_steps=batch_size,
     logger=wandb_logger,
-    max_epochs=10,
+    max_epochs=100,
     precision="16-mixed",
     strategy="ddp")
 
