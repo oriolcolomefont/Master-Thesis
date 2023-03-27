@@ -1,10 +1,7 @@
 from torch.utils.data import DataLoader
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import (
-    BatchSizeFinder,
     EarlyStopping,
-    LearningRateFinder,
-    ModelSummary,
     ModelCheckpoint,
 )
 
@@ -26,7 +23,7 @@ train_set = MyDataset(root_dir=train_path, sample_rate=16000)
 val_set = MyDataset(root_dir=val_path, sample_rate=16000)
 
 # Create data/validation loader and setup data
-batch_size = 32
+batch_size = 16
 train_loader = DataLoader(
     train_set,
     batch_size=batch_size,
@@ -64,29 +61,24 @@ wandb_logger = pl.loggers.WandbLogger(
 )
 
 # add your batch size to the wandb config
-wandb_logger.experiment.config["batch_size"] = batch_size
+# wandb_logger.experiment.config["batch_size"] = batch_size
+
 
 # Create callbacks
 callbacks = [
-    BatchSizeFinder(),
-    EarlyStopping(),
-    LearningRateFinder(),
-    ModelSummary(),
+    EarlyStopping(monitor="val_loss", patience=10, verbose=True, mode="min"),
     ModelCheckpoint(dirpath="./runs wandb"),
 ]
 
 # Initialize trainer and pass wandb_logger
 trainer = pl.Trainer(
-    max_epochs=100,
-    devices=2,
     accelerator="gpu",
-    logger=wandb_logger,
+    devices=2,
     callbacks=callbacks,
-)
+    log_every_n_steps=batch_size,
+    logger=wandb_logger,
+    max_epochs=10,
+    strategy="ddp")
 
 # Start training
 trainer.fit(model, train_loader, validation_loader)
-
-# perform an evaluation epoch over the validation set, outside of the training loop, using validate().
-# This might be useful if you want to collect new metrics from a model right at its initialization or after it has already been trained.
-trainer.validate(model=model, dataloaders=validation_loader)
