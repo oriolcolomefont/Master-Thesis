@@ -77,6 +77,7 @@ trainer = pl.Trainer(
     log_every_n_steps=batch_size,
     logger=wandb_logger,
     max_epochs=10,
+    precision="16-mixed",
     strategy="ddp")
 
 # Start training

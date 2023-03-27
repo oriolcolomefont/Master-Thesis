@@ -1,6 +1,7 @@
 from model import SampleCNN
 from msaf import config
 from msaf.base import Features
+import torch
 
 
 class Embedding(Features):
@@ -24,9 +25,12 @@ class Embedding(Features):
         return "embedding"
 
     def compute_features(self):
+        # convert audio data to PyTorch tensor
+        audio_tensor = torch.from_numpy(self._audio)
+
         # extract embedding
         print(self._audio.shape)
-        embedding = self.model(self._audio)
+        embedding = self.model(audio_tensor[None, :])
         return embedding
 
 
