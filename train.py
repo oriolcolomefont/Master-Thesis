@@ -19,8 +19,11 @@ val_path = (
     "/home/oriol_colome_font_epidemicsound_/Master-Thesis/datasets/GTZAN/GTZAN validate"
 )
 
+#test_path =
+
 train_set = MyDataset(root_dir=train_path, sample_rate=16000)
 val_set = MyDataset(root_dir=val_path, sample_rate=16000)
+#test_set = MyDataset(root_dir=test_path, sample_rate=16000)
 
 # Create data/validation loader and setup data
 batch_size = 32
@@ -41,6 +44,8 @@ validation_loader = DataLoader(
     num_workers=16,
     drop_last=True,
 )
+
+#test_dataloader
 
 # Encoder
 encoder = SampleCNN(strides=[3, 3, 3, 3, 3, 3, 3, 3, 3], supervised=False, out_dim=128)
@@ -65,7 +70,7 @@ wandb_logger = pl.loggers.WandbLogger(
 
 # Create callbacks
 callbacks = [
-    EarlyStopping(monitor="val_loss", patience=50, verbose=True, mode="min"),
+    EarlyStopping(monitor="val_loss", patience=200, verbose=True, mode="min"),
     ModelCheckpoint(dirpath="./runs wandb"),
 ]
 
@@ -76,9 +81,11 @@ trainer = pl.Trainer(
     callbacks=callbacks,
     log_every_n_steps=batch_size,
     logger=wandb_logger,
-    max_epochs=100,
+    max_epochs=1000,
     precision="16-mixed",
     strategy="ddp")
 
 # Start training
 trainer.fit(model, train_loader, validation_loader)
+
+#trainer.test(test_dataloader)

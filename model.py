@@ -32,15 +32,16 @@ class Model(nn.Module):
 
 
 class SampleCNN(Model):
-    def __init__(self, strides, supervised, out_dim):
+    def __init__(self, strides, supervised, out_dim, device=None):
         super(SampleCNN, self).__init__()
 
         self.strides = strides
         self.supervised = supervised
+        self.device = device if device else torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.sequential = [
             nn.Sequential(
                 nn.Conv1d(
-                    in_channels=1, out_channels=128, kernel_size=3, stride=3, padding=0
+                    in_channels=1, out_channels=128, kernel_size=80, stride=3, padding=0
                 ),
                 nn.BatchNorm1d(128),
                 nn.ReLU(),
@@ -138,6 +139,15 @@ class TripletNet(pl.LightningModule):
         )
         self.log('val_loss', val_loss, sync_dist=True)
         return val_loss
+    
+    def test_step(self, batch, batch_idx):
+        anchor, positive, negative = batch  # batch is now a tuple
+        anchor_embedding = self.encoder(anchor)
+        positive_embedding = self.encoder(positive)
+        negative_embedding = self.encoder(negative)
+        test_loss = self.triplet_loss(anchor_embedding, positive_embedding, negative_embedding)
+        self.log('test_loss', test_loss, sync_dist=True)
+        return test_loss
 
     def triplet_loss(self, anchor, positive, negative):
         criterion = TripletLoss(margin=1.0)
