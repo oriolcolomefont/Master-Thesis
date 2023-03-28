@@ -55,6 +55,27 @@ class MyDataset(Dataset):
             resampler = T.Resample(current_sample_rate, self.sample_rate)
             waveform = resampler(waveform)
         return waveform, self.sample_rate
+    
+    def compute_average_bpm(self):
+        total_bpm = 0
+        n_files = 0
+
+        for file in self.file_list:
+            try:
+                # Load the audio file
+                waveform, sample_rate = librosa.load(file, sr=self.sample_rate)
+
+                # Estimate the BPM using librosa
+                bpm, _ = librosa.beat.tempo(waveform, sr=sample_rate, aggregate=None)
+                total_bpm += bpm
+                n_files += 1
+            except Exception as e:
+                print(f"Error processing file {file}: {e}")
+
+        # Calculate the average BPM
+        average_bpm = total_bpm / n_files
+
+        return average_bpm
 
     def __getitem__(self, index):
         filename = self.file_list[index]
