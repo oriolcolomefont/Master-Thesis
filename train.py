@@ -1,9 +1,10 @@
 from torch.utils.data import DataLoader
-import pytorch_lightning as pl
+from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import (
     EarlyStopping,
     ModelCheckpoint,
 )
+from pytorch_lightning.loggers import WandbLogger
 
 from dataset import MyDataset
 from model import TripletNet, SampleCNN
@@ -54,19 +55,18 @@ encoder = SampleCNN(strides=[3, 3, 3, 3, 3, 3, 3, 3, 3], supervised=False, out_d
 model = TripletNet(encoder)
 
 # Initialize WandB logger
-wandb_logger = pl.loggers.WandbLogger(
+wandb_logger = WandbLogger(
+    experiment=None,
     project="master-thesis",  # Name of the project to log the run to (default: None)
-    log_model=True,  # Log model topology (default: False)
-    save_dir="/home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints",  # Directory to save the logs and checkpoint files (default: None)
-    config={
-        "lr": 0.001,
-        "batch_size": batch_size,
-        "sample_rate": train_set.sample_rate,
-    },  # Dictionary of hyperparameters and their values (default: None)
-)
+    log_model=True,  #Log model checkpoints at the end of training
+    save_dir="/home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints",
+    )
 
 # add your batch size to the wandb config
-# wandb_logger.experiment.config["batch_size"] = batch_size
+#wandb_logger.experiment.config["batch_size"] = batch_size
+
+# log gradients, parameter histogram and model topology
+wandb_logger.watch(model, log="all")
 
 # Create callbacks
 callbacks = [
@@ -75,7 +75,7 @@ callbacks = [
 ]
 
 # Initialize trainer and pass wandb_logger
-trainer = pl.Trainer(
+trainer = Trainer(
     accelerator="gpu",
     devices=2,
     callbacks=callbacks,
