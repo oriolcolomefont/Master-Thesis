@@ -55,7 +55,7 @@ class MyDataset(Dataset):
             resampler = T.Resample(current_sample_rate, self.sample_rate)
             waveform = resampler(waveform)
         return waveform, self.sample_rate
-    
+
     def compute_average_bpm(self):
         total_bpm = 0
         n_files = 0

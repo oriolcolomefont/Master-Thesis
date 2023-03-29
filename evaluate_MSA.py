@@ -7,40 +7,42 @@ import numpy as np
 
 class Embedding(Features):
     """This class computes embeddings of an audio signal using a pre-trained SampleCNN model."""
-    
+
     def __init__(
         self, file_struct, feat_type, sr=config.sample_rate, hop_length=config.hop_size
     ):
         super().__init__(
             file_struct=file_struct, sr=sr, hop_length=hop_length, feat_type=feat_type
         )
-        
-        self.model = SampleCNN(strides=[3, 3, 3, 3, 3, 3, 3, 3, 3], supervised=False, out_dim=128)
+
+        self.model = SampleCNN(
+            strides=[3, 3, 3, 3, 3, 3, 3, 3, 3], supervised=False, out_dim=128
+        )
         self.target_length = 729
-        
+
         self.model.eval()
 
     @classmethod
     def get_id(cls):
         """Identifier of these features."""
         return "embedding"
-    
+
     def pad_or_truncate_audio(self, audio, target_length):
         """Helper method to pad or truncate the input audio to the target length."""
-    
+
         audio_length = len(audio)
-    
+
         if audio_length < target_length:
             # Pad the audio with zeros at the end
             padding = np.zeros(target_length - audio_length)
             padded_audio = np.concatenate((audio, padding))
             return padded_audio
-    
+
         elif audio_length > target_length:
             # Truncate the audio to the target length
             truncated_audio = audio[:target_length]
             return truncated_audio
-    
+
         else:
             # If the audio length is already equal to the target length, return the original audio
             return audio
@@ -48,7 +50,7 @@ class Embedding(Features):
     def compute_features(self):
         """Compute the embeddings of the audio signal using the SampleCNN model."""
         audio = self.pad_or_truncate_audio(self._audio, self.target_length)
-        #convert it to a 2D mono tensor of shape (1, samples), you could use the torch.from_numpy() and unsqueeze() functions as follows:
+        # convert it to a 2D mono tensor of shape (1, samples), you could use the torch.from_numpy() and unsqueeze() functions as follows:
         audio_tensor = torch.from_numpy(audio).unsqueeze(0)
         embedding = self.model(audio_tensor)
         embedding_np = self.detach_to_cpu(embedding)
