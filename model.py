@@ -45,7 +45,7 @@ class SampleCNN(Model):
         self.sequential = [
             nn.Sequential(
                 nn.Conv1d(
-                    in_channels=1, out_channels=128, kernel_size=80, stride=3, padding=0
+                    in_channels=1, out_channels=128, kernel_size=3, stride=3, padding=0
                 ),
                 nn.BatchNorm1d(128),
                 nn.ReLU(),
