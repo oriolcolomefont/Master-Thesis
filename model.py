@@ -119,7 +119,7 @@ class TripletNet(pl.LightningModule):
         super().__init__()
         
         # log hyperparameters
-        self.save_hyperparameters()
+        self.save_hyperparameters(ignore=['encoder'])
         self.encoder = encoder
 
     def forward(self, x):

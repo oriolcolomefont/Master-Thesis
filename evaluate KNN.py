@@ -1,63 +1,75 @@
-import os
 import torch
 import torchaudio
 import librosa
-from torchaudio.transforms import Resample
 from sklearn.metrics.pairwise import cosine_similarity
-from IPython.display import Audio, display
+from IPython.display import Audio
 
 from model import TripletNet, SampleCNN
 
 # Load the checkpoint file
-CKPT_PATH = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/runs wandb/epoch=0-step=28.ckpt"
+CKPT_PATH = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/runs wandb/example-epoch=00-val_loss=1.00.ckpt"
 
 # all init args were saved to the checkpoint
 checkpoint = torch.load(CKPT_PATH)
-print(checkpoint.keys())
+
+# Create the model and move it to the GPU
+encoder = SampleCNN(strides=[3, 3, 3, 3, 3, 3, 3, 3, 3], supervised=False, out_dim=128)
+model = TripletNet(encoder)
+
+#Copy parameters and buffers from state_dict into this module and its descendants.
+model.load_state_dict(checkpoint["state_dict"])
+print("Model loaded")
 
 # Preprocess the input audio
-input_audio_path = librosa.example('nutcracker')
+input_audio_path = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/Track No01.mp3"
 input_audio, sampling_rate = torchaudio.load(input_audio_path)
+input_audio = input_audio.mean(dim=0, keepdim=True)  # convert stereo to mono
 input_audio = input_audio.unsqueeze(0)
+
 print("Input audio loaded")
+print(input_audio.shape)
 
 # Obtain embeddings for the input audio
-input_audio_embedding = new_model(input_audio).detach().numpy()
-print("Input audio embedding obtained")
+input_audio_embedding = model(input_audio).detach().numpy()
+print("Input audio embedding obtained: ", input_audio_embedding.shape)
 
 # Calculate the similarity between the input audio and the audio files in the folder
-folder_path = "path/to/your/folder/with/audio/files"
+folder_path = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/datasets/GTZAN/gtzan_genre"
 audio_files = librosa.util.find_files(
             folder_path,
             ext=["aac", "au", "flac", "m4a", "mp3", "ogg", "wav"],
         )
+print(f"Found {len(audio_files)} audio files in the specified folder path.")
 
-similarity_scores = []
+similarities = []
 for audio_file in audio_files:
-    audio_path = os.path.join(folder_path, audio_file)
-
-    # Check if the file is an audio file
     try:
-        torchaudio.info(audio_path)
-    except RuntimeError:
+        audio, sr = torchaudio.load(audio_file)
+        print(audio.shape)
+    except Exception as e:
+        print(f"Error loading audio file '{audio_file}': {e}")
         continue
 
-    audio, sr = torchaudio.load(audio_path)
+    # Calculate the duration of the audio
+    duration = audio.shape[1] / sr
 
-    # Resample the audio if the sampling rate is different
-    if sr != sampling_rate:
-        resampler = Resample(sr, sampling_rate)
-        audio = resampler(audio)
+    # Skip the audio if its duration is less than 3 seconds
+    if duration < 3:
+        print(f"Discarding audio file '{audio_file}' due to {duration} shorter than 3 seconds.")
+        continue
 
     audio = audio.unsqueeze(0)
     audio_embedding = model(audio).detach().numpy()
     similarity = cosine_similarity(input_audio_embedding, audio_embedding)
-    similarity_scores.append((audio_file, similarity[0][0]))
+    similarities.append((audio_file, similarity[0][0]))
 
-# Retrieve the audio file with the highest similarity
-most_similar_audio_file = max(similarity_scores, key=lambda x: x[1])[0]
-print(f"Most similar audio file: {most_similar_audio_file}")
+# Sort the audio files by their similarity to the input audio
+similarities.sort(key=lambda x: x[1], reverse=True)
 
-# Display the most similar audio
-most_similar_audio_path = os.path.join(folder_path, most_similar_audio_file)
-display(Audio(most_similar_audio_path))
+# Display the sorted audio files and their similarity scores
+for audio_file, similarity in similarities:
+    print(f"File: {audio_file}, Similarity: {similarity}")
+
+# Print the most similar audio file and its similarity score
+most_similar_audio, most_similar_similarity = similarities[0]
+print(f"\nMost similar audio file: {most_similar_audio}, Similarity: {most_similar_similarity}")

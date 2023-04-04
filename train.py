@@ -2,8 +2,6 @@ from torch.utils.data import DataLoader
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
-from pytorch_lightning.utilities.rank_zero import rank_zero_only
-
 from dataset import MyDataset
 from model import TripletNet, SampleCNN
 
@@ -68,6 +66,7 @@ callbacks = [
     EarlyStopping(monitor="val_loss", patience=10, verbose=True, mode="min"),
     ModelCheckpoint(
         dirpath="./runs wandb",
+        filename="example-{epoch:02d}-{val_loss:.2f}",
         monitor="val_loss",
         mode="min",
         save_top_k=1,
@@ -84,6 +83,7 @@ trainer = Trainer(
     enable_progress_bar=True,
     callbacks=callbacks,
     logger=wandb_logger,
+    log_every_n_steps=10,
     max_epochs=1,
     precision="16-mixed",
     strategy="ddp",
@@ -91,6 +91,6 @@ trainer = Trainer(
 
 # Start training
 trainer.fit(model, train_loader, validation_loader)
-trainer.save_checkpoint(filepath="./runs wandb/example.ckpt", weights_only=False, storage_options=None)
+#trainer.save_checkpoint(filepath="./runs wandb/example.ckpt", weights_only=False, storage_options=None)
 
 # trainer.test(test_dataloader)
