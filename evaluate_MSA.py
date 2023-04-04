@@ -15,11 +15,12 @@ class Embedding(Features):
             file_struct=file_struct, sr=sr, hop_length=hop_length, feat_type=feat_type
         )
 
-        self.model = SampleCNN(
+        self.encoder = SampleCNN(
             strides=[3, 3, 3, 3, 3, 3, 3, 3, 3], supervised=False, out_dim=128
         )
-        self.target_length = 729
+        self.encoder.eval()
 
+        self.model = TripletNet(self.encoder)
         self.model.eval()
 
     @classmethod
@@ -27,42 +28,23 @@ class Embedding(Features):
         """Identifier of these features."""
         return "embedding"
 
-    def pad_or_truncate_audio(self, audio, target_length):
-        """Helper method to pad or truncate the input audio to the target length."""
-
-        audio_length = len(audio)
-
-        if audio_length < target_length:
-            # Pad the audio with zeros at the end
-            padding = np.zeros(target_length - audio_length)
-            padded_audio = np.concatenate((audio, padding))
-            return padded_audio
-
-        elif audio_length > target_length:
-            # Truncate the audio to the target length
-            truncated_audio = audio[:target_length]
-            return truncated_audio
-
-        else:
-            # If the audio length is already equal to the target length, return the original audio
-            return audio
-
     def compute_features(self):
         """Compute the embeddings of the audio signal using the SampleCNN model."""
-        audio = self.pad_or_truncate_audio(self._audio, self.target_length)
         # convert it to a 2D mono tensor of shape (1, samples), you could use the torch.from_numpy() and unsqueeze() functions as follows:
-        audio_tensor = torch.from_numpy(audio).unsqueeze(0)
-        embedding = self.model(audio_tensor)
-        embedding_np = self.detach_to_cpu(embedding)
+        audio_tensor = torch.from_numpy(self._audio)
 
-        N = embedding_np.shape[1] // config.hop_size
-        F = embedding_np.shape[-1]
-        embedding_reshape = embedding_np.reshape(N, F)
+        window_size = 5 * 16000
+        embeddings = []
+        for i in range(0, audio_tensor.shape[0] - window_size, config.hop_size):
+            x = audio_tensor[i : i + window_size]
+            if x.shape[0] < window_size:
+                break
+            embedding = self.model(x[None, :])[0]
+            embedding_np = embedding.detach().cpu().numpy()
+            embeddings.append(embedding_np)
+        print(embeddings)
+        embedding_np = np.stack(embeddings, axis=0)
 
-        return embedding_reshape
-
-    def detach_to_cpu(self, embedding):
-        embedding_np = embedding.detach().cpu().numpy()
         return embedding_np
 
 

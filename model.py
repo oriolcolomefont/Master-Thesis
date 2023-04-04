@@ -18,7 +18,7 @@ The embedding_size parameter specifies the size of the output embedding space.
 We have defined a simple architecture with three convolutional layers, followed by max pooling, and two fully connected layers.
 """
 
-
+"""
 class Model(nn.Module):
     def __init__(self):
         super(Model, self).__init__()
@@ -29,9 +29,10 @@ class Model(nn.Module):
             # if m.bias is not None:
             #     nn.init.xavier_uniform_(m.bias)
             nn.init.kaiming_uniform_(m.weight, mode="fan_in", nonlinearity="relu")
+"""
 
 
-class SampleCNN(Model):
+class SampleCNN(nn.Module):
     def __init__(self, strides, supervised, out_dim, device=None):
         super(SampleCNN, self).__init__()
 
@@ -108,19 +109,21 @@ class SampleCNN(Model):
         out = self.sequential(x)
         if self.supervised:
             out = self.dropout(out)
-        # out = torch.avg_pool1d(out, axis=out.size(2)) #TODO check how to implement time distributed pooling layer
-        # out = out.reshape(x.shape[0], out.size(1) * out.size(2))
         out = torch.mean(out, dim=2)
         logit = self.fc(out)
         return logit
 
 
 class TripletNet(pl.LightningModule):
-    def __init__(self, encoder: nn.Module, lr=0.001):
+    def __init__(self, encoder=SampleCNN, lr=0.001):
         super().__init__()
+        
         # log hyperparameters
-        self.save_hyperparameters(ignore=["encoder"])
+        self.save_hyperparameters()
         self.encoder = encoder
+
+    def forward(self, x):
+        return self.encoder(x)
 
     def training_step(self, batch, batch_idx):
         anchor, positive, negative = batch  # batch is now a tuple
@@ -130,7 +133,7 @@ class TripletNet(pl.LightningModule):
         train_loss = self.triplet_loss(
             anchor_embedding, positive_embedding, negative_embedding
         )
-        self.log("val_loss", train_loss, sync_dist=True)
+        self.log("val_loss", train_loss, sync_dist=True, rank_zero_only=True)
         return train_loss
 
     def validation_step(self, batch, batch_idx):
@@ -141,7 +144,7 @@ class TripletNet(pl.LightningModule):
         val_loss = self.triplet_loss(
             anchor_embedding, positive_embedding, negative_embedding
         )
-        self.log("val_loss", val_loss, sync_dist=True)
+        self.log("val_loss", val_loss, sync_dist=True, rank_zero_only=True)
         return val_loss
 
     def test_step(self, batch, batch_idx):
@@ -152,7 +155,7 @@ class TripletNet(pl.LightningModule):
         test_loss = self.triplet_loss(
             anchor_embedding, positive_embedding, negative_embedding
         )
-        self.log("test_loss", test_loss, sync_dist=True)
+        self.log("test_loss", test_loss, sync_dist=True, rank_zero_only=True)
         return test_loss
 
     def triplet_loss(self, anchor, positive, negative):

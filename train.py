@@ -1,10 +1,8 @@
 from torch.utils.data import DataLoader
 from pytorch_lightning import Trainer
-from pytorch_lightning.callbacks import (
-    EarlyStopping,
-    ModelCheckpoint,
-)
+from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
+from pytorch_lightning.utilities.rank_zero import rank_zero_only
 
 from dataset import MyDataset
 from model import TripletNet, SampleCNN
@@ -27,7 +25,7 @@ val_set = MyDataset(root_dir=val_path, sample_rate=16000)
 # test_set = MyDataset(root_dir=test_path, sample_rate=16000)
 
 # Create data/validation loader and setup data
-batch_size = 32
+batch_size = 16
 
 train_loader = DataLoader(
     train_set,
@@ -58,35 +56,41 @@ model = TripletNet(encoder)
 wandb_logger = WandbLogger(
     experiment=None,
     project="master-thesis",  # Name of the project to log the run to (default: None)
-    log_model=True,  #Log model checkpoints at the end of training
+    log_model=True,  # Log model checkpoints at the end of training
     save_dir="/home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints",
-    )
-
-# add your batch size to the wandb config
-#wandb_logger.experiment.config["batch_size"] = batch_size
+)
 
 # log gradients, parameter histogram and model topology
 wandb_logger.watch(model, log="all")
 
 # Create callbacks
 callbacks = [
-    EarlyStopping(monitor="val_loss", patience=1000, verbose=True, mode="min"),
-    ModelCheckpoint(dirpath="./runs wandb"),
+    EarlyStopping(monitor="val_loss", patience=10, verbose=True, mode="min"),
+    ModelCheckpoint(
+        dirpath="./runs wandb",
+        monitor="val_loss",
+        mode="min",
+        save_top_k=1,
+        save_weights_only=False,
+    ),
 ]
 
 # Initialize trainer and pass wandb_logger
 trainer = Trainer(
     accelerator="gpu",
+    default_root_dir="./runs wandb",
     devices=2,
+    enable_checkpointing=True,
+    enable_progress_bar=True,
     callbacks=callbacks,
-    log_every_n_steps=batch_size,
     logger=wandb_logger,
-    max_epochs=100,
+    max_epochs=1,
     precision="16-mixed",
     strategy="ddp",
 )
 
 # Start training
 trainer.fit(model, train_loader, validation_loader)
+trainer.save_checkpoint(filepath="./runs wandb/example.ckpt", weights_only=False, storage_options=None)
 
 # trainer.test(test_dataloader)
