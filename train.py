@@ -65,7 +65,7 @@ wandb_logger.watch(model, log="all")
 callbacks = [
     EarlyStopping(monitor="val_loss", patience=10, verbose=True, mode="min"),
     ModelCheckpoint(
-        dirpath="./runs wandb",
+        dirpath="./checkpoints",
         filename="example-{epoch:02d}-{val_loss:.2f}",
         monitor="val_loss",
         mode="min",
@@ -77,14 +77,14 @@ callbacks = [
 # Initialize trainer and pass wandb_logger
 trainer = Trainer(
     accelerator="gpu",
-    default_root_dir="./runs wandb",
+    default_root_dir="./checkpoints",
     devices=2,
     enable_checkpointing=True,
     enable_progress_bar=True,
     callbacks=callbacks,
     logger=wandb_logger,
     log_every_n_steps=10,
-    max_epochs=1,
+    max_epochs=10,
     precision="16-mixed",
     strategy="ddp",
 )

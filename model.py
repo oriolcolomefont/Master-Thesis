@@ -9,15 +9,6 @@ import wandb
 
 wandb.login()
 
-
-# Define the triplet network model by inheriting from pl.LightningModule.
-
-"""
-We are using a convolutional neural network to extract features from raw audio signals. 
-The embedding_size parameter specifies the size of the output embedding space. 
-We have defined a simple architecture with three convolutional layers, followed by max pooling, and two fully connected layers.
-"""
-
 """
 class Model(nn.Module):
     def __init__(self):

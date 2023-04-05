@@ -7,7 +7,7 @@ from IPython.display import Audio
 from model import TripletNet, SampleCNN
 
 # Load the checkpoint file
-CKPT_PATH = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/runs wandb/example-epoch=00-val_loss=1.00.ckpt"
+CKPT_PATH = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/checkpoints/example-epoch=02-val_loss=0.82.ckpt"
 
 # all init args were saved to the checkpoint
 checkpoint = torch.load(CKPT_PATH)
@@ -16,7 +16,7 @@ checkpoint = torch.load(CKPT_PATH)
 encoder = SampleCNN(strides=[3, 3, 3, 3, 3, 3, 3, 3, 3], supervised=False, out_dim=128)
 model = TripletNet(encoder)
 
-#Copy parameters and buffers from state_dict into this module and its descendants.
+# Copy parameters and buffers from state_dict into this module and its descendants.
 model.load_state_dict(checkpoint["state_dict"])
 print("Model loaded")
 

@@ -1,6 +1,7 @@
 from model import SampleCNN, TripletNet
 from msaf import config
 from msaf.base import Features
+
 import torch
 import numpy as np
 
@@ -15,12 +16,9 @@ class Embedding(Features):
             file_struct=file_struct, sr=sr, hop_length=hop_length, feat_type=feat_type
         )
 
-        self.encoder = SampleCNN(
+        self.model = TripletNet(SampleCNN(
             strides=[3, 3, 3, 3, 3, 3, 3, 3, 3], supervised=False, out_dim=128
-        )
-        self.encoder.eval()
-
-        self.model = TripletNet(self.encoder)
+        ))
         self.model.eval()
 
     @classmethod
@@ -30,29 +28,35 @@ class Embedding(Features):
 
     def compute_features(self):
         """Compute the embeddings of the audio signal using the SampleCNN model."""
-        # convert it to a 2D mono tensor of shape (1, samples), you could use the torch.from_numpy() and unsqueeze() functions as follows:
-        audio_tensor = torch.from_numpy(self._audio)
+        input_audio = self._audio
+        # Convert the NumPy array to a PyTorch tensor
+        input_audio_tensor = torch.from_numpy(input_audio)
 
-        window_size = 5 * 16000
-        embeddings = []
-        for i in range(0, audio_tensor.shape[0] - window_size, config.hop_size):
-            x = audio_tensor[i : i + window_size]
-            if x.shape[0] < window_size:
-                break
-            embedding = self.model(x[None, :])[0]
-            embedding_np = embedding.detach().cpu().numpy()
-            embeddings.append(embedding_np)
-        print(embeddings)
-        embedding_np = np.stack(embeddings, axis=0)
+        # Add a new dimension at position 0 to make it a 2D tensor
+        input_torch_tensor = input_audio_tensor.unsqueeze(0)
 
-        return embedding_np
+        print(input_torch_tensor.shape)  # Output: torch.Size([1, N])
 
+        audio_embedding = self.model(input_torch_tensor).detach().numpy()
 
+        window_size = 128
+        hop_length = self.hop_length
+        num_frames = (len(audio_embedding) - window_size) // hop_length + 1
+
+        features = np.zeros((num_frames, window_size))
+
+        for i in range(num_frames):
+            start = i * hop_length
+            end = start + window_size
+            features[i, :] = audio_embedding[start:end]
+
+        return features
+    
 # Simple MSAF example
 import msaf
 
 # 1. Select audio file
-audio_file = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/datasets/GTZAN/gtzan_genre/genres/disco/disco.00006.wav"
+audio_file = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/Track No01.mp3"
 
 # 2. Segment the file using the default MSAF parameters (this might take a few seconds)
 boundaries, labels = msaf.process(audio_file, feature="embedding")
