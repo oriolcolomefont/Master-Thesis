@@ -23,7 +23,7 @@ val_set = MyDataset(root_dir=val_path, sample_rate=16000)
 # test_set = MyDataset(root_dir=test_path, sample_rate=16000)
 
 # Create data/validation loader and setup data
-batch_size = 16
+batch_size = 8
 
 train_loader = DataLoader(
     train_set,
@@ -59,11 +59,11 @@ wandb_logger = WandbLogger(
 )
 
 # log gradients, parameter histogram and model topology
-wandb_logger.watch(model, log="all")
+wandb_logger.watch(model, log="all", log_graph=False)
 
 # Create callbacks
 callbacks = [
-    EarlyStopping(monitor="val_loss", patience=10, verbose=True, mode="min"),
+    EarlyStopping(monitor="val_loss", patience=500, verbose=True, mode="min"),
     ModelCheckpoint(
         dirpath="./checkpoints",
         filename="example-{epoch:02d}-{val_loss:.2f}",
@@ -84,7 +84,7 @@ trainer = Trainer(
     callbacks=callbacks,
     logger=wandb_logger,
     log_every_n_steps=10,
-    max_epochs=10,
+    max_epochs=500,
     precision="16-mixed",
     strategy="ddp",
 )

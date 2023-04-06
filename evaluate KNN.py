@@ -2,12 +2,11 @@ import torch
 import torchaudio
 import librosa
 from sklearn.metrics.pairwise import cosine_similarity
-from IPython.display import Audio
 
 from model import TripletNet, SampleCNN
 
 # Load the checkpoint file
-CKPT_PATH = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/checkpoints/example-epoch=02-val_loss=0.82.ckpt"
+CKPT_PATH = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/checkpoints/example-epoch=458-val_loss=0.33.ckpt"
 
 # all init args were saved to the checkpoint
 checkpoint = torch.load(CKPT_PATH)
@@ -20,8 +19,8 @@ model = TripletNet(encoder)
 model.load_state_dict(checkpoint["state_dict"])
 print("Model loaded")
 
-# Preprocess the input audio
-input_audio_path = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/Track No01.mp3"
+# Load and preprocess the input audio
+input_audio_path = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/tests/positive_noisy_disco79.wav"
 input_audio, sampling_rate = torchaudio.load(input_audio_path)
 input_audio = input_audio.mean(dim=0, keepdim=True)  # convert stereo to mono
 input_audio = input_audio.unsqueeze(0)
@@ -34,7 +33,7 @@ input_audio_embedding = model(input_audio).detach().numpy()
 print("Input audio embedding obtained: ", input_audio_embedding.shape)
 
 # Calculate the similarity between the input audio and the audio files in the folder
-folder_path = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/datasets/GTZAN/gtzan_genre"
+folder_path = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/datasets/GTZAN/GTZAN train"
 audio_files = librosa.util.find_files(
             folder_path,
             ext=["aac", "au", "flac", "m4a", "mp3", "ogg", "wav"],
