@@ -24,9 +24,9 @@ class Model(nn.Module):
 
 #I need to rewrite the SampleCNN class to accept 2D data
 
-class SampleCNN(nn.Module):
+class SampleCNN2D(nn.Module):
     def __init__(self, strides, supervised, out_dim, device=None):
-        super(SampleCNN, self).__init__()
+        super(SampleCNN2D, self).__init__()
 
         self.strides = strides
         self.supervised = supervised
@@ -107,9 +107,8 @@ class SampleCNN(nn.Module):
 
 # Define the triplet network model by inheriting from pl.LightningModule.
 
-
-class TripletNet(pl.LightningModule):
-    def __init__(self, encoder=SampleCNN, lr=0.001):
+class TripletNet2D(pl.LightningModule):
+    def __init__(self, encoder=SampleCNN2D, lr=0.001):
         super().__init__()
         
         # log hyperparameters
