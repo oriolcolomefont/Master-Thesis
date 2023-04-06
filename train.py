@@ -63,7 +63,7 @@ wandb_logger.watch(model, log="all", log_graph=False)
 
 # Create callbacks
 callbacks = [
-    EarlyStopping(monitor="val_loss", patience=500, verbose=True, mode="min"),
+    EarlyStopping(monitor="val_loss", patience=10, verbose=True, mode="min"),
     ModelCheckpoint(
         dirpath="./checkpoints",
         filename="example-{epoch:02d}-{val_loss:.2f}",
@@ -84,13 +84,10 @@ trainer = Trainer(
     callbacks=callbacks,
     logger=wandb_logger,
     log_every_n_steps=10,
-    max_epochs=500,
+    max_epochs=10,
     precision="16-mixed",
     strategy="ddp",
 )
 
 # Start training
 trainer.fit(model, train_loader, validation_loader)
-#trainer.save_checkpoint(filepath="./runs wandb/example.ckpt", weights_only=False, storage_options=None)
-
-# trainer.test(test_dataloader)

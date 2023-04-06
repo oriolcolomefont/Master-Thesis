@@ -117,7 +117,7 @@ class TripletNet(pl.LightningModule):
         return self.encoder(x)
 
     def training_step(self, batch, batch_idx):
-        anchor, positive, negative = batch  # batch is now a tuple
+        anchor, positive, negative = batch
         anchor_embedding = self.encoder(anchor)
         positive_embedding = self.encoder(positive)
         negative_embedding = self.encoder(negative)
@@ -128,7 +128,7 @@ class TripletNet(pl.LightningModule):
         return train_loss
 
     def validation_step(self, batch, batch_idx):
-        anchor, positive, negative = batch  # batch is now a tuple
+        anchor, positive, negative = batch
         anchor_embedding = self.encoder(anchor)
         positive_embedding = self.encoder(positive)
         negative_embedding = self.encoder(negative)
@@ -139,7 +139,7 @@ class TripletNet(pl.LightningModule):
         return val_loss
 
     def test_step(self, batch, batch_idx):
-        anchor, positive, negative = batch  # batch is now a tuple
+        anchor, positive, negative = batch
         anchor_embedding = self.encoder(anchor)
         positive_embedding = self.encoder(positive)
         negative_embedding = self.encoder(negative)

@@ -97,7 +97,11 @@ class MyDataset(Dataset):
         negative = self.generate_negative(positive)
         # negative_from_anchor = self.generate_negative(anchor)
 
-        return {"anchor": anchor, "positive": positive, "negative": negative}
+        return {
+            "anchor": anchor,
+            "positive": positive,
+            "negative": negative,
+            }
 
     def add_noise_with_snr(self, waveform, snr_range):
         # Generate white noise
