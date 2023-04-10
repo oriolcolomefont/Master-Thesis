@@ -22,7 +22,8 @@ class Model(nn.Module):
             nn.init.kaiming_uniform_(m.weight, mode="fan_in", nonlinearity="relu")
 """
 
-#I need to rewrite the SampleCNN class to accept 2D data
+# I need to rewrite the SampleCNN class to accept 2D data
+
 
 class SampleCNN2D(nn.Module):
     def __init__(self, strides, supervised, out_dim, device=None):
@@ -38,7 +39,11 @@ class SampleCNN2D(nn.Module):
         self.sequential = [
             nn.Sequential(
                 nn.Conv2d(
-                    in_channels=1, out_channels=128, kernel_size=(3, 3), stride=(3, 3), padding=(0, 0)
+                    in_channels=1,
+                    out_channels=128,
+                    kernel_size=(3, 3),
+                    stride=(3, 3),
+                    padding=(0, 0),
                 ),
                 nn.BatchNorm2d(128),
                 nn.ReLU(),
@@ -105,14 +110,16 @@ class SampleCNN2D(nn.Module):
         logit = self.fc(out)
         return logit
 
+
 # Define the triplet network model by inheriting from pl.LightningModule.
+
 
 class TripletNet2D(pl.LightningModule):
     def __init__(self, encoder=SampleCNN2D, lr=0.001):
         super().__init__()
-        
+
         # log hyperparameters
-        self.save_hyperparameters(ignore=['encoder'])
+        self.save_hyperparameters(ignore=["encoder"])
         self.encoder = encoder
 
     def forward(self, x):
@@ -156,5 +163,7 @@ class TripletNet2D(pl.LightningModule):
         return criterion(anchor, positive, negative)
 
     def configure_optimizers(self):
-        optimizer = optim.AdamW(self.parameters(), lr=self.hparams.lr, weight_decay=0.01)
+        optimizer = optim.AdamW(
+            self.parameters(), lr=self.hparams.lr, weight_decay=0.01
+        )
         return optimizer

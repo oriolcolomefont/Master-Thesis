@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import pytorch_lightning as pl
-from criterion import TripletLoss
+from criterion import TripletLoss, ContrastiveLoss
 
 import wandb
 
@@ -106,52 +106,91 @@ class SampleCNN(nn.Module):
 
 
 class TripletNet(pl.LightningModule):
-    def __init__(self, encoder=SampleCNN, lr=0.001):
+    def __init__(
+        self, strides, supervised, out_dim, loss_type="triplet", *args, **kwargs
+    ):
         super().__init__()
-        
+
         # log hyperparameters
-        self.save_hyperparameters(ignore=['encoder'])
-        self.encoder = encoder
+        self.save_hyperparameters(ignore=["encoder"])
+        self.encoder = SampleCNN(strides, supervised, out_dim)
+        self.loss_type = loss_type
 
     def forward(self, x):
         return self.encoder(x)
 
     def training_step(self, batch, batch_idx):
-        anchor, positive, negative = batch
-        anchor_embedding = self.encoder(anchor)
-        positive_embedding = self.encoder(positive)
-        negative_embedding = self.encoder(negative)
-        train_loss = self.triplet_loss(
-            anchor_embedding, positive_embedding, negative_embedding
-        )
-        self.log("val_loss", train_loss, sync_dist=True, rank_zero_only=True)
+        if self.loss_type == "triplet":
+            anchor, positive, negative = batch
+            anchor_embedding = self.encoder(anchor)
+            positive_embedding = self.encoder(positive)
+            negative_embedding = self.encoder(negative)
+            loss_function = self.get_loss_function()
+            train_loss = loss_function(
+                anchor_embedding, positive_embedding, negative_embedding
+            )
+        else:  # self.loss_type == "contrastive":
+            sample1, sample2, label = batch
+            sample1_embedding = self.encoder(sample1)
+            sample2_embedding = self.encoder(sample2)
+            loss_function = self.get_loss_function()
+            train_loss = loss_function(sample1_embedding, sample2_embedding, label)
+        self.log("train_loss", train_loss, sync_dist=True, rank_zero_only=True)
         return train_loss
 
     def validation_step(self, batch, batch_idx):
-        anchor, positive, negative = batch
-        anchor_embedding = self.encoder(anchor)
-        positive_embedding = self.encoder(positive)
-        negative_embedding = self.encoder(negative)
-        val_loss = self.triplet_loss(
-            anchor_embedding, positive_embedding, negative_embedding
-        )
+        if self.loss_type == "triplet":
+            anchor, positive, negative = batch
+            anchor_embedding = self.encoder(anchor)
+            positive_embedding = self.encoder(positive)
+            negative_embedding = self.encoder(negative)
+            loss_function = self.get_loss_function()
+            val_loss = loss_function(
+                anchor_embedding, positive_embedding, negative_embedding
+            )
+        else:  # self.loss_type == "contrastive":
+            sample1, sample2, label = batch
+            sample1_embedding = self.encoder(sample1)
+            sample2_embedding = self.encoder(sample2)
+            loss_function = self.get_loss_function()
+            val_loss = loss_function(sample1_embedding, sample2_embedding, label)
         self.log("val_loss", val_loss, sync_dist=True, rank_zero_only=True)
         return val_loss
 
     def test_step(self, batch, batch_idx):
-        anchor, positive, negative = batch
-        anchor_embedding = self.encoder(anchor)
-        positive_embedding = self.encoder(positive)
-        negative_embedding = self.encoder(negative)
-        test_loss = self.triplet_loss(
-            anchor_embedding, positive_embedding, negative_embedding
-        )
+        if self.loss_type == "triplet":
+            anchor, positive, negative = batch
+            anchor_embedding = self.encoder(anchor)
+            positive_embedding = self.encoder(positive)
+            negative_embedding = self.encoder(negative)
+            loss_function = self.get_loss_function()
+            test_loss = loss_function(
+                anchor_embedding, positive_embedding, negative_embedding
+            )
+        else:  # self.loss_type == "contrastive":
+            sample1, sample2, label = batch
+            sample1_embedding = self.encoder(sample1)
+            sample2_embedding = self.encoder(sample2)
+            loss_function = self.get_loss_function()
+            test_loss = loss_function(sample1_embedding, sample2_embedding, label)
         self.log("test_loss", test_loss, sync_dist=True, rank_zero_only=True)
         return test_loss
+
+    def get_loss_function(self):
+        if self.loss_type == "triplet":
+            return TripletLoss(margin=0.2)
+        elif self.loss_type == "contrastive":
+            return ContrastiveLoss(margin=1.0)
+        else:
+            raise ValueError(f"Invalid loss type: {self.loss_type}")
 
     def triplet_loss(self, anchor, positive, negative):
         criterion = TripletLoss(margin=1.0)
         return criterion(anchor, positive, negative)
+
+    def contrastive_loss(self, anchor, positive, label):
+        criterion = ContrastiveLoss(margin=1.0)
+        return criterion(anchor, positive, label)
 
     def configure_optimizers(self):
         optimizer = optim.AdamW(self.parameters(), lr=0.001, weight_decay=0.01)

@@ -42,13 +42,13 @@ validation_loader = DataLoader(
     drop_last=True,
 )
 
-# test_dataloader
-
 # Encoder
-encoder = SampleCNN(strides=[3, 3, 3, 3, 3, 3, 3, 3, 3], supervised=False, out_dim=128)
+encoder = SampleCNN2D(
+    strides=[3, 3, 3, 3, 3, 3, 3, 3, 3], supervised=False, out_dim=128
+)
 
 # Initialize model
-model = TripletNet(encoder)
+model = TripletNet2D(encoder)
 
 # Initialize WandB logger
 wandb_logger = WandbLogger(
@@ -91,6 +91,3 @@ trainer = Trainer(
 
 # Start training
 trainer.fit(model, train_loader, validation_loader)
-#trainer.save_checkpoint(filepath="./runs wandb/example.ckpt", weights_only=False, storage_options=None)
-
-# trainer.test(test_dataloader)

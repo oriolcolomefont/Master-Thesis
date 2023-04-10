@@ -11,6 +11,7 @@ class MyDataset(Dataset):
     def __init__(
         self,
         root_dir,
+        loss_type: str = "triplet",
         sample_rate: int = 44100,
         clip_duration: float = 16.0,
         min_chunk_duration_sec: float = 0.05,
@@ -18,6 +19,7 @@ class MyDataset(Dataset):
         seed: int = 42,
     ):
         self.root_dir = root_dir
+        self.loss_type = loss_type
         self.sample_rate = sample_rate
         self.clip_duration = clip_duration
         self.min_chunk_duration_sec = min_chunk_duration_sec
@@ -94,14 +96,27 @@ class MyDataset(Dataset):
         # generate anchor, positive from anchor and negative from positive
         anchor = waveform
         positive = self.generate_positive(anchor)
-        negative = self.generate_negative(positive)
+        negative = self.generate_negative(anchor)
         # negative_from_anchor = self.generate_negative(anchor)
 
-        return {
-            "anchor": anchor,
-            "positive": positive,
-            "negative": negative,
+        if self.loss_type == "triplet":
+            return {
+                "anchor": anchor,
+                "positive": positive,
+                "negative": negative,
             }
+        elif self.loss_type == "contrastive":
+            # Implement how you want to return samples for contrastive loss
+            # For example, return pairs of samples and a label indicating if they are similar or dissimilar
+            return {
+                "anchor": anchor,
+                "positive": positive,
+                "label": torch.tensor(0, dtype=torch.float32),  # Similar pair
+                "negative": negative,
+                "label_neg": torch.tensor(1, dtype=torch.float32),  # Dissimilar pair
+            }
+        else:
+            raise ValueError(f"Invalid loss type: {self.loss_type}")
 
     def add_noise_with_snr(self, waveform, snr_range):
         # Generate white noise
@@ -137,8 +152,8 @@ class MyDataset(Dataset):
             np.random.choice(["-s", "-t"]),
         ]
         drive = np.random.randint(0, 30)
-        stretch = round(np.random.uniform(0.8, 1.2), 1)
-        speed = np.random.uniform(0.7, 1.3)
+        stretch = round(np.random.uniform(0.9, 1.1), 1)
+        speed = np.random.uniform(0.9, 1.1)
         tremolo_speed = np.random.uniform(0.1, 100)
         tremolo_depth = np.random.randint(1, 101)
         snr_range = np.random.randint(12, 100)
@@ -158,13 +173,13 @@ class MyDataset(Dataset):
         positive = positive.mean(dim=0, keepdim=True)  # convert stereo to mono
         return self.add_noise_with_snr(positive, snr_range=snr_range)
 
-    def generate_negative(self, positive):
-        # Get positive length and duration
-        positive_length = positive.shape[-1]
-        positive_duration = positive_length / self.sample_rate
+    def generate_negative(self, anchor):
+        # Get anchor length and duration
+        anchor_length = anchor.shape[-1]
+        anchor_duration = anchor_length / self.sample_rate
 
         # Determine the number of chunks based on minimum chunk duration
-        n_chunks = int(positive_duration // self.min_chunk_duration_sec)
+        n_chunks = int(anchor_duration // self.min_chunk_duration_sec)
 
         # Calculate the minimum and maximum chunk lengths in samples
         min_chunk_length = int(self.min_chunk_duration_sec * self.sample_rate)
@@ -175,12 +190,12 @@ class MyDataset(Dataset):
             min_chunk_length, max_chunk_length + 1, size=n_chunks - 1
         )
         chunk_lengths = np.append(
-            chunk_lengths, positive_length - np.sum(chunk_lengths)
+            chunk_lengths, anchor_length - np.sum(chunk_lengths)
         )
 
-        # Split the positive clip into chunks
+        # Split the anchor clip into chunks
         chunks = [
-            positive[..., start : start + length].clone().detach()
+            anchor[..., start : start + length].clone().detach()
             for start, length in zip(
                 np.cumsum(np.insert(chunk_lengths, 0, 0)), chunk_lengths
             )
@@ -193,7 +208,7 @@ class MyDataset(Dataset):
         negative = torch.cat(chunks, dim=-1)
 
         # Check if the positive and negative examples have the same length
-        if positive.shape != negative.shape:
+        if anchor.shape != negative.shape:
             raise ValueError(
                 f"Input positive and output negative have different shapes. Scrambling the positive sample went wrong: {positive.shape} vs {negative.shape}"
             )

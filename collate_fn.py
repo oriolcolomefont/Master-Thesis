@@ -2,12 +2,21 @@ import torch
 import torch.nn.functional as F
 
 
+def collate_fn(batch, loss_type):
+    if loss_type == "triplet":
+        return collate_fn_triplet(batch)
+    elif loss_type == "contrastive":
+        return collate_fn_contrastive(batch)
+    else:
+        raise ValueError(f"Invalid loss type: {loss_type}")
+
+
 def pad_waveform(waveform, length):
     padded_waveform = F.pad(waveform, (0, length - waveform.shape[-1]), "constant", 0)
     return padded_waveform
 
 
-def collate_fn(batch):
+def collate_fn_triplet(batch):
     anchors = []
     positives = []
     negatives = []
@@ -46,3 +55,34 @@ def collate_fn(batch):
     )
 
     return anchors, positives, hardest_negatives
+
+
+def collate_fn_contrastive(batch):
+    samples1 = []
+    samples2 = []
+    labels = []
+
+    max_length = max(
+        max(
+            item["anchor"].shape[-1],
+            item["positive"].shape[-1],
+            item["negative"].shape[-1],
+        )
+        for item in batch
+    )
+
+    # Pad all waveforms to the maximum length in the batch
+    for item in batch:
+        samples1.append(pad_waveform(item["anchor"], max_length))
+        samples2.append(pad_waveform(item["positive"], max_length))
+        labels.append(item["label"])
+
+        samples1.append(pad_waveform(item["anchor"], max_length))
+        samples2.append(pad_waveform(item["negative"], max_length))
+        labels.append(item["label_neg"])
+
+    samples1 = torch.stack(samples1)
+    samples2 = torch.stack(samples2)
+    labels = torch.tensor(labels, dtype=torch.float32)
+
+    return samples1, samples2, labels

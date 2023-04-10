@@ -3,17 +3,21 @@ import torchaudio
 import librosa
 from sklearn.metrics.pairwise import cosine_similarity
 
-from model import TripletNet, SampleCNN
+from model import TripletNet
 
 # Load the checkpoint file
-CKPT_PATH = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/checkpoints/example-epoch=458-val_loss=0.33.ckpt"
+CKPT_PATH = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/checkpoints/example-epoch=19-val_loss=0.07.ckpt"
 
 # all init args were saved to the checkpoint
 checkpoint = torch.load(CKPT_PATH)
 
 # Create the model and move it to the GPU
-encoder = SampleCNN(strides=[3, 3, 3, 3, 3, 3, 3, 3, 3], supervised=False, out_dim=128)
-model = TripletNet(encoder)
+model = TripletNet(
+    strides=[3, 3, 3, 3, 3, 3, 3, 3, 3],
+    supervised=False,
+    out_dim=128,
+    loss_type="contrastive",
+)
 
 # Copy parameters and buffers from state_dict into this module and its descendants.
 model.load_state_dict(checkpoint["state_dict"])
@@ -33,11 +37,11 @@ input_audio_embedding = model(input_audio).detach().numpy()
 print("Input audio embedding obtained: ", input_audio_embedding.shape)
 
 # Calculate the similarity between the input audio and the audio files in the folder
-folder_path = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/datasets/GTZAN/GTZAN train"
+folder_path = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/datasets/GTZAN/GTZAN train/disco"
 audio_files = librosa.util.find_files(
-            folder_path,
-            ext=["aac", "au", "flac", "m4a", "mp3", "ogg", "wav"],
-        )
+    folder_path,
+    ext=["aac", "au", "flac", "m4a", "mp3", "ogg", "wav"],
+)
 print(f"Found {len(audio_files)} audio files in the specified folder path.")
 
 similarities = []
@@ -54,7 +58,9 @@ for audio_file in audio_files:
 
     # Skip the audio if its duration is less than 3 seconds
     if duration < 3:
-        print(f"Discarding audio file '{audio_file}' due to {duration} shorter than 3 seconds.")
+        print(
+            f"Discarding audio file '{audio_file}' due to {duration} shorter than 3 seconds."
+        )
         continue
 
     audio = audio.unsqueeze(0)
@@ -71,4 +77,6 @@ for audio_file, similarity in similarities:
 
 # Print the most similar audio file and its similarity score
 most_similar_audio, most_similar_similarity = similarities[0]
-print(f"\nMost similar audio file: {most_similar_audio}, Similarity: {most_similar_similarity}")
+print(
+    f"\nMost similar audio file: {most_similar_audio}, Similarity: {most_similar_similarity}"
+)

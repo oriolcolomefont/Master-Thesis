@@ -1,9 +1,21 @@
 import torch
 import torch.nn.functional as F
 
-def pad_waveform(waveform, shape):
-    padded_waveform = F.pad(waveform, (0, shape[-1] - waveform.shape[-1], 0, shape[-2] - waveform.shape[-2]), "constant", 0)
-    return padded_waveform
+
+def pad_mel_spectogram(mel_spectogram, shape):
+    padded_mel_spectogram = F.pad(
+        mel_spectogram,
+        (
+            0,
+            shape[-1] - mel_spectogram.shape[-1],
+            0,
+            shape[-2] - mel_spectogram.shape[-2],
+        ),
+        "constant",
+        0,
+    )
+    return padded_mel_spectogram
+
 
 def collate_fn(batch):
     anchors = []
@@ -20,9 +32,9 @@ def collate_fn(batch):
     )
     # Pad all waveforms to the maximum length in the batch
     for item in batch:
-        anchors.append(pad_waveform(item["anchor"], max_shape))
-        positives.append(pad_waveform(item["positive"], max_shape))
-        negatives.append(pad_waveform(item["negative"], max_shape))
+        anchors.append(pad_mel_spectogram(item["anchor"], max_shape))
+        positives.append(pad_mel_spectogram(item["positive"], max_shape))
+        negatives.append(pad_mel_spectogram(item["negative"], max_shape))
 
     anchors = torch.stack(anchors)
     positives = torch.stack(positives)

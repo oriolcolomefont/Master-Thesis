@@ -16,9 +16,11 @@ class Embedding(Features):
             file_struct=file_struct, sr=sr, hop_length=hop_length, feat_type=feat_type
         )
 
-        self.model = TripletNet(SampleCNN(
-            strides=[3, 3, 3, 3, 3, 3, 3, 3, 3], supervised=False, out_dim=128
-        ))
+        self.model = TripletNet(
+            SampleCNN(
+                strides=[3, 3, 3, 3, 3, 3, 3, 3, 3], supervised=False, out_dim=128
+            )
+        )
         self.model.eval()
 
     @classmethod
@@ -51,7 +53,8 @@ class Embedding(Features):
             features[i, :] = audio_embedding[start:end]
 
         return features
-    
+
+
 # Simple MSAF example
 import msaf
 

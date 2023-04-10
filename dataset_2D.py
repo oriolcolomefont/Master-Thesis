@@ -76,7 +76,7 @@ class MyDataset2D(Dataset):
         average_bpm = total_bpm / n_files
 
         return average_bpm
-    
+
     def compute_mel_spectrogram(self, waveform):
         mel_spectrogram_transform = T.MelSpectrogram(
             sample_rate=self.sample_rate,
@@ -85,7 +85,9 @@ class MyDataset2D(Dataset):
             n_mels=128,
         )
         mel_spectrogram = mel_spectrogram_transform(waveform)
-        mel_spectrogram = torch.log(mel_spectrogram + 1e-9)  # Adding small constant to avoid log(0)
+        mel_spectrogram = torch.log(
+            mel_spectrogram + 1e-9
+        )  # Adding small constant to avoid log(0)
         return mel_spectrogram
 
     def __getitem__(self, index):
@@ -117,7 +119,6 @@ class MyDataset2D(Dataset):
             "positive": positive_mel_spec,
             "negative": negative_mel_spec,
         }
-
 
     def add_noise_with_snr(self, waveform, snr_range):
         # Generate white noise
