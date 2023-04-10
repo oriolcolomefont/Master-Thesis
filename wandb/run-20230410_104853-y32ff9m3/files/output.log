@@ -1,0 +1,13 @@
+
+Skipping invalid file: /home/oriol_colome_font_epidemicsound_/Master-Thesis/datasets/GTZAN/GTZAN train/jazz/jazz.00054.wav
+/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/loggers/wandb.py:395: UserWarning: There is a wandb run already in progress and newly created instances of `WandbLogger` will reuse this run. If this is not desired, call `wandb.finish()` before instantiating `WandbLogger`.
+  rank_zero_warn(
+Using 16bit Automatic Mixed Precision (AMP)
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+Traceback (most recent call last):
+  File "/home/oriol_colome_font_epidemicsound_/Master-Thesis/train.py", line 112, in <module>
+    inputs, targets = batch
+ValueError: too many values to unpack (expected 2)

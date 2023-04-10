@@ -178,20 +178,12 @@ class TripletNet(pl.LightningModule):
 
     def get_loss_function(self):
         if self.loss_type == "triplet":
-            return TripletLoss(margin=0.2)
+            return TripletLoss()
         elif self.loss_type == "contrastive":
-            return ContrastiveLoss(margin=1.0)
+            return ContrastiveLoss()
         else:
             raise ValueError(f"Invalid loss type: {self.loss_type}")
 
-    def triplet_loss(self, anchor, positive, negative):
-        criterion = TripletLoss(margin=1.0)
-        return criterion(anchor, positive, negative)
-
-    def contrastive_loss(self, anchor, positive, label):
-        criterion = ContrastiveLoss(margin=1.0)
-        return criterion(anchor, positive, label)
-
     def configure_optimizers(self):
-        optimizer = optim.AdamW(self.parameters(), lr=0.001, weight_decay=0.01)
+        optimizer = optim.AdamW(self.parameters(), lr=0.0003, weight_decay=0.01)
         return optimizer

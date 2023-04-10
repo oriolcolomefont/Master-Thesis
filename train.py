@@ -10,7 +10,6 @@ import wandb
 
 from collate_fn import collate_fn
 
-
 # Create dataset
 train_path = (
     "/home/oriol_colome_font_epidemicsound_/Master-Thesis/datasets/GTZAN/GTZAN train"
@@ -21,8 +20,8 @@ val_path = (
 
 # test_path =
 
-train_set = MyDataset(root_dir=train_path, sample_rate=16000, loss_type="contrastive")
-val_set = MyDataset(root_dir=val_path, sample_rate=16000, loss_type="contrastive")
+train_set = MyDataset(root_dir=train_path, sample_rate=16000, loss_type="triplet")
+val_set = MyDataset(root_dir=val_path, sample_rate=16000, loss_type="triplet")
 # test_set = MyDataset(root_dir=test_path, sample_rate=16000)
 
 # Create data/validation loader and setup data
@@ -50,7 +49,7 @@ model = TripletNet(
     strides=[3, 3, 3, 3, 3, 3, 3, 3, 3],
     supervised=False,
     out_dim=128,
-    loss_type="contrastive",
+    loss_type="triplet",
 )
 
 # Initialize WandB logger
@@ -71,11 +70,11 @@ date = datetime.date.today().strftime("%Y-%m-%d")
 run_name = wandb.run.name if wandb.run else "local-run"
 
 # Define the filename for the checkpoint
-filename = f"run-{run_name}-{date}-{{epoch:02d}}-{{val_loss:.2f}}"
+filename = f"run-{run_name}-{date}-{{epoch:02d}}-{{val_loss:.2f}}-{model.loss_type}"
 
 # Create callbacks
 callbacks = [
-    EarlyStopping(monitor="val_loss", patience=20, verbose=True, mode="min"),
+    EarlyStopping(monitor="val_loss", patience=100, verbose=True, mode="min"),
     ModelCheckpoint(
         dirpath="./checkpoints",
         filename=filename,
@@ -96,7 +95,7 @@ trainer = Trainer(
     callbacks=callbacks,
     logger=wandb_logger,
     log_every_n_steps=10,
-    max_epochs=50,
+    max_epochs=100,
     precision="16-mixed",
     strategy="ddp",
 )

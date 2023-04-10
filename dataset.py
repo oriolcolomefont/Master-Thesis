@@ -93,11 +93,10 @@ class MyDataset(Dataset):
         # Resample the waveform if the resample parameter is set, otherwise use the default sample rate
         waveform, _ = self._resample_waveform(waveform, metadata.sample_rate)
 
-        # generate anchor, positive from anchor and negative from positive
+        # generate anchor, positive from anchor and negative from anchor
         anchor = waveform
         positive = self.generate_positive(anchor)
         negative = self.generate_negative(anchor)
-        # negative_from_anchor = self.generate_negative(anchor)
 
         if self.loss_type == "triplet":
             return {
@@ -106,8 +105,7 @@ class MyDataset(Dataset):
                 "negative": negative,
             }
         elif self.loss_type == "contrastive":
-            # Implement how you want to return samples for contrastive loss
-            # For example, return pairs of samples and a label indicating if they are similar or dissimilar
+            # return pairs of samples and a label indicating if they are similar or dissimilar
             return {
                 "anchor": anchor,
                 "positive": positive,

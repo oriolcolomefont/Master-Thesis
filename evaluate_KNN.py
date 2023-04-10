@@ -6,7 +6,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from model import TripletNet
 
 # Load the checkpoint file
-CKPT_PATH = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/checkpoints/example-epoch=19-val_loss=0.07.ckpt"
+CKPT_PATH = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/checkpoints/example-epoch=43-val_loss=0.05.ckpt"
 
 # all init args were saved to the checkpoint
 checkpoint = torch.load(CKPT_PATH)
