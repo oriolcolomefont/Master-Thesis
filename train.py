@@ -25,7 +25,7 @@ val_set = MyDataset(root_dir=val_path, sample_rate=16000, loss_type="triplet")
 # test_set = MyDataset(root_dir=test_path, sample_rate=16000)
 
 # Create data/validation loader and setup data
-batch_size = 16
+batch_size = 8
 
 train_loader = DataLoader(
     dataset=train_set,

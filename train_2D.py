@@ -3,10 +3,12 @@ from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
 from dataset_2D import MyDataset2D
-from model_2D import TripletNet2D, SampleCNN2D
+from model_2D import TripletNet2D
+
+import datetime
+import wandb
 
 from collate_fn_2D import collate_fn
-
 
 # Create dataset
 train_path = (
@@ -18,37 +20,37 @@ val_path = (
 
 # test_path =
 
-train_set = MyDataset2D(root_dir=train_path, sample_rate=16000)
-val_set = MyDataset2D(root_dir=val_path, sample_rate=16000)
+train_set = MyDataset2D(root_dir=train_path, sample_rate=16000, loss_type="triplet")
+val_set = MyDataset2D(root_dir=val_path, sample_rate=16000, loss_type="triplet")
 # test_set = MyDataset(root_dir=test_path, sample_rate=16000)
 
 # Create data/validation loader and setup data
 batch_size = 8
 
 train_loader = DataLoader(
-    train_set,
+    dataset=train_set,
     batch_size=batch_size,
     shuffle=True,
-    collate_fn=collate_fn,
+    collate_fn=lambda b: collate_fn(b, loss_type=train_set.loss_type),
     num_workers=16,
     drop_last=True,
 )
 validation_loader = DataLoader(
-    val_set,
+    dataset=val_set,
     batch_size=batch_size,
     shuffle=False,
-    collate_fn=collate_fn,
+    collate_fn=lambda b: collate_fn(b, loss_type=val_set.loss_type),
     num_workers=16,
     drop_last=True,
 )
 
-# Encoder
-encoder = SampleCNN2D(
-    strides=[3, 3, 3, 3, 3, 3, 3, 3, 3], supervised=False, out_dim=128
-)
-
 # Initialize model
-model = TripletNet2D(encoder)
+model = TripletNet2D(
+    strides=[3, 3, 3, 3, 3, 3, 3, 3, 3],
+    supervised=False,
+    out_dim=128,
+    loss_type="triplet",
+)
 
 # Initialize WandB logger
 wandb_logger = WandbLogger(
@@ -59,14 +61,23 @@ wandb_logger = WandbLogger(
 )
 
 # log gradients, parameter histogram and model topology
-wandb_logger.watch(model, log="all", log_graph=False)
+wandb_logger.watch(model, log="gradients", log_graph=False)
+
+# Get the current date
+date = datetime.date.today().strftime("%Y-%m-%d")
+
+# Get the name of the WandB run
+run_name = wandb.run.name if wandb.run else "local-run"
+
+# Define the filename for the checkpoint
+filename = f"run-{run_name}-{date}-{{epoch:02d}}-{{val_loss:.2f}}-{model.loss_type}"
 
 # Create callbacks
 callbacks = [
-    EarlyStopping(monitor="val_loss", patience=10, verbose=True, mode="min"),
+    EarlyStopping(monitor="val_loss", patience=800, verbose=True, mode="min"),
     ModelCheckpoint(
         dirpath="./checkpoints",
-        filename="example-{epoch:02d}-{val_loss:.2f}",
+        filename=filename,
         monitor="val_loss",
         mode="min",
         save_top_k=1,
@@ -78,13 +89,13 @@ callbacks = [
 trainer = Trainer(
     accelerator="gpu",
     default_root_dir="./checkpoints",
-    devices=2,
+    devices=4,
     enable_checkpointing=True,
     enable_progress_bar=True,
     callbacks=callbacks,
     logger=wandb_logger,
     log_every_n_steps=10,
-    max_epochs=10,
+    max_epochs=1000,
     precision="16-mixed",
     strategy="ddp",
 )

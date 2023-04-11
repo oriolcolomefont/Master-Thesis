@@ -9,22 +9,30 @@ import torchaudio.sox_effects as sox
 
 class MyDataset2D(Dataset):
     def __init__(
-        self,
-        root_dir,
-        sample_rate: int = 44100,
-        clip_duration: float = 5.0,
-        min_chunk_duration_sec: float = 0.05,
-        max_chunk_duration_sec: float = 1.0,
-        seed: int = 42,
-    ):
-        self.root_dir = root_dir
-        self.sample_rate = sample_rate
-        self.clip_duration = clip_duration
-        self.min_chunk_duration_sec = min_chunk_duration_sec
-        self.max_chunk_duration_sec = max_chunk_duration_sec
-        self.file_list = self._load_files()
+            self,
+            root_dir,
+            loss_type: str = "triplet",
+            sample_rate: int = 44100,
+            clip_duration: float = 5.0,
+            min_chunk_duration_sec: float = 0.05,
+            max_chunk_duration_sec: float = 1.0,
+            n_fft: int = 2048,
+            hop_length: int = 512,
+            n_mels: int = 128,
+            seed: int = 42,
+        ):
+            self.root_dir = root_dir
+            self.loss_type = loss_type
+            self.sample_rate = sample_rate
+            self.clip_duration = clip_duration
+            self.min_chunk_duration_sec = min_chunk_duration_sec
+            self.max_chunk_duration_sec = max_chunk_duration_sec
+            self.n_fft = n_fft
+            self.hop_length = hop_length
+            self.n_mels = n_mels
+            self.file_list = self._load_files()
 
-        np.random.seed(seed)
+            np.random.seed(seed)
 
     def _load_files(self):
         # filter based on min_length
@@ -76,18 +84,15 @@ class MyDataset2D(Dataset):
         average_bpm = total_bpm / n_files
 
         return average_bpm
-
+    
     def compute_mel_spectrogram(self, waveform):
         mel_spectrogram_transform = T.MelSpectrogram(
             sample_rate=self.sample_rate,
-            n_fft=2048,
-            hop_length=512,
-            n_mels=128,
+            n_fft=self.n_fft,
+            hop_length=self.hop_length,
+            n_mels=self.n_mels,
         )
         mel_spectrogram = mel_spectrogram_transform(waveform)
-        mel_spectrogram = torch.log(
-            mel_spectrogram + 1e-9
-        )  # Adding small constant to avoid log(0)
         return mel_spectrogram
 
     def __getitem__(self, index):
@@ -104,21 +109,33 @@ class MyDataset2D(Dataset):
         # Resample the waveform if the resample parameter is set, otherwise use the default sample rate
         waveform, _ = self._resample_waveform(waveform, metadata.sample_rate)
 
-        # Generate anchor, positive from anchor, and negative from positive
+        # generate anchor, positive from anchor and negative from anchor
         anchor = waveform
         positive = self.generate_positive(anchor)
-        negative = self.generate_negative(positive)
+        negative = self.generate_negative(anchor)
 
-        # Compute mel-spectrograms for anchor, positive, and negative
-        anchor_mel_spec = self.compute_mel_spectrogram(anchor)
-        positive_mel_spec = self.compute_mel_spectrogram(positive)
-        negative_mel_spec = self.compute_mel_spectrogram(negative)
+        # Compute mel-spectrograms
+        anchor_mel = self.compute_mel_spectrogram(anchor)
+        positive_mel = self.compute_mel_spectrogram(positive)
+        negative_mel = self.compute_mel_spectrogram(negative)
 
-        return {
-            "anchor": anchor_mel_spec,
-            "positive": positive_mel_spec,
-            "negative": negative_mel_spec,
-        }
+        if self.loss_type == "triplet":
+            return {
+                "anchor": anchor_mel,
+                "positive": positive_mel,
+                "negative": negative_mel,
+            }
+        elif self.loss_type == "contrastive":
+            # return pairs of samples and a label indicating if they are similar or dissimilar
+            return {
+                "anchor": anchor_mel,
+                "positive": positive_mel,
+                "label": torch.tensor(0, dtype=torch.float32),  # Similar pair
+                "negative": negative_mel,
+                "label_neg": torch.tensor(1, dtype=torch.float32),  # Dissimilar pair
+            }
+        else:
+            raise ValueError(f"Invalid loss type: {self.loss_type}")
 
     def add_noise_with_snr(self, waveform, snr_range):
         # Generate white noise
@@ -154,8 +171,8 @@ class MyDataset2D(Dataset):
             np.random.choice(["-s", "-t"]),
         ]
         drive = np.random.randint(0, 30)
-        stretch = round(np.random.uniform(0.8, 1.2), 1)
-        speed = np.random.uniform(0.7, 1.3)
+        stretch = round(np.random.uniform(0.9, 1.1), 1)
+        speed = np.random.uniform(0.9, 1.1)
         tremolo_speed = np.random.uniform(0.1, 100)
         tremolo_depth = np.random.randint(1, 101)
         snr_range = np.random.randint(12, 100)
@@ -175,13 +192,13 @@ class MyDataset2D(Dataset):
         positive = positive.mean(dim=0, keepdim=True)  # convert stereo to mono
         return self.add_noise_with_snr(positive, snr_range=snr_range)
 
-    def generate_negative(self, positive):
-        # Get positive length and duration
-        positive_length = positive.shape[-1]
-        positive_duration = positive_length / self.sample_rate
+    def generate_negative(self, anchor):
+        # Get anchor length and duration
+        anchor_length = anchor.shape[-1]
+        anchor_duration = anchor_length / self.sample_rate
 
         # Determine the number of chunks based on minimum chunk duration
-        n_chunks = int(positive_duration // self.min_chunk_duration_sec)
+        n_chunks = int(anchor_duration // self.min_chunk_duration_sec)
 
         # Calculate the minimum and maximum chunk lengths in samples
         min_chunk_length = int(self.min_chunk_duration_sec * self.sample_rate)
@@ -192,12 +209,12 @@ class MyDataset2D(Dataset):
             min_chunk_length, max_chunk_length + 1, size=n_chunks - 1
         )
         chunk_lengths = np.append(
-            chunk_lengths, positive_length - np.sum(chunk_lengths)
+            chunk_lengths, anchor_length - np.sum(chunk_lengths)
         )
 
-        # Split the positive clip into chunks
+        # Split the anchor clip into chunks
         chunks = [
-            positive[..., start : start + length].clone().detach()
+            anchor[..., start : start + length].clone().detach()
             for start, length in zip(
                 np.cumsum(np.insert(chunk_lengths, 0, 0)), chunk_lengths
             )
@@ -210,7 +227,7 @@ class MyDataset2D(Dataset):
         negative = torch.cat(chunks, dim=-1)
 
         # Check if the positive and negative examples have the same length
-        if positive.shape != negative.shape:
+        if anchor.shape != negative.shape:
             raise ValueError(
                 f"Input positive and output negative have different shapes. Scrambling the positive sample went wrong: {positive.shape} vs {negative.shape}"
             )
