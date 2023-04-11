@@ -8,7 +8,7 @@ from model import TripletNet
 import datetime
 import wandb
 
-from collate_fn import collate_fn
+from collate_fn import collate_fn 
 
 # Create dataset
 train_path = (
@@ -25,7 +25,7 @@ val_set = MyDataset(root_dir=val_path, sample_rate=16000, loss_type="triplet")
 # test_set = MyDataset(root_dir=test_path, sample_rate=16000)
 
 # Create data/validation loader and setup data
-batch_size = 8
+batch_size = 16
 
 train_loader = DataLoader(
     dataset=train_set,
@@ -61,7 +61,7 @@ wandb_logger = WandbLogger(
 )
 
 # log gradients, parameter histogram and model topology
-wandb_logger.watch(model, log="all", log_graph=False)
+wandb_logger.watch(model, log="gradients", log_graph=False)
 
 # Get the current date
 date = datetime.date.today().strftime("%Y-%m-%d")
@@ -74,7 +74,7 @@ filename = f"run-{run_name}-{date}-{{epoch:02d}}-{{val_loss:.2f}}-{model.loss_ty
 
 # Create callbacks
 callbacks = [
-    EarlyStopping(monitor="val_loss", patience=100, verbose=True, mode="min"),
+    EarlyStopping(monitor="val_loss", patience=800, verbose=True, mode="min"),
     ModelCheckpoint(
         dirpath="./checkpoints",
         filename=filename,
@@ -89,13 +89,13 @@ callbacks = [
 trainer = Trainer(
     accelerator="gpu",
     default_root_dir="./checkpoints",
-    devices=2,
+    devices=4,
     enable_checkpointing=True,
     enable_progress_bar=True,
     callbacks=callbacks,
     logger=wandb_logger,
     log_every_n_steps=10,
-    max_epochs=100,
+    max_epochs=1000,
     precision="16-mixed",
     strategy="ddp",
 )

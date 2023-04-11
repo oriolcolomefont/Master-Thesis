@@ -13,7 +13,7 @@ class MyDataset(Dataset):
         root_dir,
         loss_type: str = "triplet",
         sample_rate: int = 44100,
-        clip_duration: float = 16.0,
+        clip_duration: float = 15.0,
         min_chunk_duration_sec: float = 0.05,
         max_chunk_duration_sec: float = 1.0,
         seed: int = 42,

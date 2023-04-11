@@ -9,21 +9,17 @@ import wandb
 
 wandb.login()
 
-"""
+
 class Model(nn.Module):
     def __init__(self):
         super(Model, self).__init__()
 
     def initialize(self, m):
         if isinstance(m, (nn.Conv1d)):
-            # nn.init.xavier_uniform_(m.weight)
-            # if m.bias is not None:
-            #     nn.init.xavier_uniform_(m.bias)
             nn.init.kaiming_uniform_(m.weight, mode="fan_in", nonlinearity="relu")
-"""
 
 
-class SampleCNN(nn.Module):
+class SampleCNN(Model):
     def __init__(self, strides, supervised, out_dim, device=None):
         super(SampleCNN, self).__init__()
 
@@ -185,5 +181,5 @@ class TripletNet(pl.LightningModule):
             raise ValueError(f"Invalid loss type: {self.loss_type}")
 
     def configure_optimizers(self):
-        optimizer = optim.AdamW(self.parameters(), lr=0.0003, weight_decay=0.01)
+        optimizer = optim.AdamW(self.parameters(), lr=0.0003)
         return optimizer
