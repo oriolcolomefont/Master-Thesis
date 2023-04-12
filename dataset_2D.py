@@ -9,30 +9,30 @@ import torchaudio.sox_effects as sox
 
 class MyDataset2D(Dataset):
     def __init__(
-            self,
-            root_dir,
-            loss_type: str = "triplet",
-            sample_rate: int = 44100,
-            clip_duration: float = 5.0,
-            min_chunk_duration_sec: float = 0.05,
-            max_chunk_duration_sec: float = 1.0,
-            n_fft: int = 2048,
-            hop_length: int = 512,
-            n_mels: int = 128,
-            seed: int = 42,
-        ):
-            self.root_dir = root_dir
-            self.loss_type = loss_type
-            self.sample_rate = sample_rate
-            self.clip_duration = clip_duration
-            self.min_chunk_duration_sec = min_chunk_duration_sec
-            self.max_chunk_duration_sec = max_chunk_duration_sec
-            self.n_fft = n_fft
-            self.hop_length = hop_length
-            self.n_mels = n_mels
-            self.file_list = self._load_files()
+        self,
+        root_dir,
+        loss_type: str = "triplet",
+        sample_rate: int = 44100,
+        clip_duration: float = 16.0,
+        min_chunk_duration_sec: float = 0.05,
+        max_chunk_duration_sec: float = 1.0,
+        n_fft: int = 2048,
+        hop_length: int = 512,
+        n_mels: int = 128,
+        seed: int = 42,
+    ):
+        self.root_dir = root_dir
+        self.loss_type = loss_type
+        self.sample_rate = sample_rate
+        self.clip_duration = clip_duration
+        self.min_chunk_duration_sec = min_chunk_duration_sec
+        self.max_chunk_duration_sec = max_chunk_duration_sec
+        self.n_fft = n_fft
+        self.hop_length = hop_length
+        self.n_mels = n_mels
+        self.file_list = self._load_files()
 
-            np.random.seed(seed)
+        np.random.seed(seed)
 
     def _load_files(self):
         # filter based on min_length
@@ -84,7 +84,7 @@ class MyDataset2D(Dataset):
         average_bpm = total_bpm / n_files
 
         return average_bpm
-    
+
     def compute_mel_spectrogram(self, waveform):
         mel_spectrogram_transform = T.MelSpectrogram(
             sample_rate=self.sample_rate,
@@ -208,9 +208,7 @@ class MyDataset2D(Dataset):
         chunk_lengths = np.random.randint(
             min_chunk_length, max_chunk_length + 1, size=n_chunks - 1
         )
-        chunk_lengths = np.append(
-            chunk_lengths, anchor_length - np.sum(chunk_lengths)
-        )
+        chunk_lengths = np.append(chunk_lengths, anchor_length - np.sum(chunk_lengths))
 
         # Split the anchor clip into chunks
         chunks = [

@@ -13,7 +13,7 @@ class MyDataset(Dataset):
         root_dir,
         loss_type: str = "triplet",
         sample_rate: int = 44100,
-        clip_duration: float = 15.0,
+        clip_duration: float = 8.0,
         min_chunk_duration_sec: float = 0.05,
         max_chunk_duration_sec: float = 1.0,
         seed: int = 42,
@@ -187,9 +187,7 @@ class MyDataset(Dataset):
         chunk_lengths = np.random.randint(
             min_chunk_length, max_chunk_length + 1, size=n_chunks - 1
         )
-        chunk_lengths = np.append(
-            chunk_lengths, anchor_length - np.sum(chunk_lengths)
-        )
+        chunk_lengths = np.append(chunk_lengths, anchor_length - np.sum(chunk_lengths))
 
         # Split the anchor clip into chunks
         chunks = [
@@ -208,7 +206,7 @@ class MyDataset(Dataset):
         # Check if the positive and negative examples have the same length
         if anchor.shape != negative.shape:
             raise ValueError(
-                f"Input positive and output negative have different shapes. Scrambling the positive sample went wrong: {positive.shape} vs {negative.shape}"
+                f"Input positive and output negative have different shapes. Scrambling the positive sample went wrong: {anchor.shape} vs {negative.shape}"
             )
 
         return negative

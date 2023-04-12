@@ -8,7 +8,7 @@ from model import TripletNet
 import datetime
 import wandb
 
-from collate_fn import collate_fn 
+from collate_fn import collate_fn
 
 # Create dataset
 train_path = (
@@ -25,7 +25,7 @@ val_set = MyDataset(root_dir=val_path, sample_rate=16000, loss_type="triplet")
 # test_set = MyDataset(root_dir=test_path, sample_rate=16000)
 
 # Create data/validation loader and setup data
-batch_size = 8
+batch_size = 16
 
 train_loader = DataLoader(
     dataset=train_set,
@@ -57,7 +57,7 @@ wandb_logger = WandbLogger(
     experiment=None,
     project="master-thesis",  # Name of the project to log the run to (default: None)
     log_model=True,  # Log model checkpoints at the end of training
-    save_dir="/home/oriol_colome_font_epidemicsound_/Master-Thesis-1/runs/runs and checkpoints",
+    save_dir="./wandb",  # Directory to save the logs to (default: None)
 )
 
 # log gradients, parameter histogram and model topology
@@ -74,7 +74,7 @@ filename = f"run-{run_name}-{date}-{{epoch:02d}}-{{val_loss:.2f}}-{model.loss_ty
 
 # Create callbacks
 callbacks = [
-    EarlyStopping(monitor="val_loss", patience=800, verbose=True, mode="min"),
+    EarlyStopping(monitor="val_loss", patience=1000, verbose=True, mode="min"),
     ModelCheckpoint(
         dirpath="./checkpoints",
         filename=filename,

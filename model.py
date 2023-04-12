@@ -9,7 +9,7 @@ import wandb
 
 wandb.login()
 
-
+"""
 class Model(nn.Module):
     def __init__(self):
         super(Model, self).__init__()
@@ -17,9 +17,10 @@ class Model(nn.Module):
     def initialize(self, m):
         if isinstance(m, (nn.Conv1d)):
             nn.init.kaiming_uniform_(m.weight, mode="fan_in", nonlinearity="relu")
+"""
 
 
-class SampleCNN(Model):
+class SampleCNN(nn.Module):
     def __init__(self, strides, supervised, out_dim, device=None):
         super(SampleCNN, self).__init__()
 
@@ -131,6 +132,7 @@ class TripletNet(pl.LightningModule):
             sample2_embedding = self.encoder(sample2)
             loss_function = self.get_loss_function()
             train_loss = loss_function(sample1_embedding, sample2_embedding, label)
+        # Return the loss value for logging
         self.log("train_loss", train_loss, sync_dist=True, rank_zero_only=True)
         return train_loss
 

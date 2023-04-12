@@ -33,7 +33,11 @@ class SampleCNN2D(Model):
         self.sequential = [
             nn.Sequential(
                 nn.Conv2d(
-                    in_channels=1, out_channels=128, kernel_size=(1, 3), stride=(1, 3), padding=(0, 0)
+                    in_channels=1,
+                    out_channels=128,
+                    kernel_size=(3, 3),
+                    stride=(1, 3),
+                    padding=(0, 0),
                 ),
                 nn.BatchNorm2d(128),
                 nn.ReLU(),

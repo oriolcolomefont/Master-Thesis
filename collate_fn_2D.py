@@ -12,7 +12,9 @@ def collate_fn(batch, loss_type):
 
 
 def pad_mel_spectrogram(mel_spectrogram, length):
-    padded_mel_spectrogram = F.pad(mel_spectrogram, (0, length - mel_spectrogram.shape[-1]), "constant", 0)
+    padded_mel_spectrogram = F.pad(
+        mel_spectrogram, (0, length - mel_spectrogram.shape[-1]), "constant", 0
+    )
     return padded_mel_spectrogram
 
 

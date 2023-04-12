@@ -32,7 +32,7 @@ train_loader = DataLoader(
     batch_size=batch_size,
     shuffle=True,
     collate_fn=lambda b: collate_fn(b, loss_type=train_set.loss_type),
-    num_workers=16,
+    num_workers=8,
     drop_last=True,
 )
 validation_loader = DataLoader(
@@ -40,7 +40,7 @@ validation_loader = DataLoader(
     batch_size=batch_size,
     shuffle=False,
     collate_fn=lambda b: collate_fn(b, loss_type=val_set.loss_type),
-    num_workers=16,
+    num_workers=8,
     drop_last=True,
 )
 
