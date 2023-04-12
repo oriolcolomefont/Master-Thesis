@@ -20,8 +20,6 @@ for directory in directories:
 # Create a pandas DataFrame with the audio file paths
 audio_df = pd.DataFrame(audio_files, columns=['file_path'])
 
-
-
 #Set the output directory for the CSV file
 output_directory = "/home/oriol_colome_font_epidemicsound_/Master-Thesis"
 

@@ -4,6 +4,7 @@ from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
 from dataset_msd import MyDatasetMSD
 from model import TripletNet
+import pandas as pd
 
 from sklearn.model_selection import train_test_split
 
@@ -12,16 +13,16 @@ import wandb
 
 from collate_fn import collate_fn
 
-# Create dataset
-audio_df = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/msd_audio_files_limit=1000.csv"
+# Path to csv file
+csv_file_path = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/msd_audio_files_limit=1000.csv"
 
+audio_df = pd.read_csv(csv_file_path)
 
-# Assuming you have a DataFrame named 'audio_df'
+# Assuming we have a DataFrame named 'audio_df'
 train_df, val_df = train_test_split(audio_df, test_size=0.2, random_state=42)
 
 train_set = MyDatasetMSD(input_df=train_df, sample_rate=16000, loss_type="triplet")
 val_set = MyDatasetMSD(input_df=val_df, sample_rate=16000, loss_type="triplet")
-# test_set = MyDataset(root_dir=test_path, sample_rate=16000)
 
 # Create data/validation loader and setup data
 batch_size = 16

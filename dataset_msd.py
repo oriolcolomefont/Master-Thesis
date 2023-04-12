@@ -1,7 +1,9 @@
 import torch
 import torchaudio
 import librosa
+import pandas as pd
 import numpy as np
+
 from torch.utils.data import Dataset
 import torchaudio.transforms as T
 import torchaudio.sox_effects as sox
@@ -18,7 +20,7 @@ class MyDatasetMSD(Dataset):
         max_chunk_duration_sec: float = 1.0,
         seed: int = 42,
     ):
-        self.input_df = input_df,
+        self.input_df = input_df
         self.loss_type = loss_type
         self.sample_rate = sample_rate
         self.clip_duration = clip_duration
@@ -34,6 +36,11 @@ class MyDatasetMSD(Dataset):
 
         min_length = int(self.clip_duration * self.sample_rate)
 
+        if not isinstance(self.input_df, pd.DataFrame):
+            raise ValueError("input_df must be a Pandas DataFrame")
+        if 'file_path' not in self.input_df.columns:
+            raise ValueError("input_df must contain a 'file_path' column")      
+        
         file_list = self.input_df['file_path'].tolist()
         for file in file_list:
             try:
