@@ -1,0 +1,105 @@
+Using 16bit Automatic Mixed Precision (AMP)
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+Initializing distributed: GLOBAL_RANK: 0, MEMBER: 1/4
+----------------------------------------------------------------------------------------------------
+distributed_backend=nccl
+All distributed processes registered. Starting with 4 processes
+----------------------------------------------------------------------------------------------------
+/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/callbacks/model_checkpoint.py:612: UserWarning: Checkpoint directory /home/oriol_colome_font_epidemicsound_/Master-Thesis/checkpoints exists and is not empty.
+  rank_zero_warn(f"Checkpoint directory {dirpath} exists and is not empty.")
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3]
+  | Name    | Type      | Params
+--------------------------------------
+0 | encoder | SampleCNN | 2.4 M
+--------------------------------------
+2.4 M     Trainable params
+0         Non-trainable params
+2.4 M     Total params
+9.737     Total estimated model params size (MB)
+
+
+Sanity Checking DataLoader 0:   0%|                                                                                                                                                                                                                      | 0/2 [00:00<?, ?it/s]
+Epoch 0:   0%|                                                                                                                                                                                                                                          | 0/62 [00:00<?, ?it/s]
+Traceback (most recent call last):
+  File "/home/oriol_colome_font_epidemicsound_/Master-Thesis/train_msd.py", line 104, in <module>
+    trainer.fit(model, train_loader, validation_loader)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/trainer/trainer.py", line 520, in fit
+    call._call_and_handle_interrupt(
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/trainer/call.py", line 42, in _call_and_handle_interrupt
+    return trainer.strategy.launcher.launch(trainer_fn, *args, trainer=trainer, **kwargs)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/strategies/launchers/subprocess_script.py", line 92, in launch
+    return function(*args, **kwargs)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/trainer/trainer.py", line 559, in _fit_impl
+    self._run(model, ckpt_path=ckpt_path)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/trainer/trainer.py", line 935, in _run
+    results = self._run_stage()
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/trainer/trainer.py", line 978, in _run_stage
+    self.fit_loop.run()
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/loops/fit_loop.py", line 201, in run
+    self.advance()
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/loops/fit_loop.py", line 354, in advance
+    self.epoch_loop.run(self._data_fetcher)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/loops/training_epoch_loop.py", line 133, in run
+    self.advance(data_fetcher)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/loops/training_epoch_loop.py", line 218, in advance
+    batch_output = self.automatic_optimization.run(trainer.optimizers[0], kwargs)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/loops/optimization/automatic.py", line 185, in run
+    self._optimizer_step(kwargs.get("batch_idx", 0), closure)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/loops/optimization/automatic.py", line 261, in _optimizer_step
+    call._call_lightning_module_hook(
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/trainer/call.py", line 142, in _call_lightning_module_hook
+    output = fn(*args, **kwargs)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/core/module.py", line 1266, in optimizer_step
+    optimizer.step(closure=optimizer_closure)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/core/optimizer.py", line 158, in step
+    step_output = self._strategy.optimizer_step(self._optimizer, closure, **kwargs)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/strategies/ddp.py", line 257, in optimizer_step
+    optimizer_output = super().optimizer_step(optimizer, closure, model, **kwargs)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/strategies/strategy.py", line 224, in optimizer_step
+    return self.precision_plugin.optimizer_step(optimizer, model=model, closure=closure, **kwargs)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/plugins/precision/amp.py", line 70, in optimizer_step
+    closure_result = closure()
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/loops/optimization/automatic.py", line 140, in __call__
+    self._result = self.closure(*args, **kwargs)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/loops/optimization/automatic.py", line 126, in closure
+    step_output = self._step_fn()
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/loops/optimization/automatic.py", line 308, in _training_step
+    training_step_output = call._call_strategy_hook(trainer, "training_step", *kwargs.values())
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/trainer/call.py", line 288, in _call_strategy_hook
+    output = fn(*args, **kwargs)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/strategies/ddp.py", line 329, in training_step
+    return self.model(*args, **kwargs)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1194, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/torch/nn/parallel/distributed.py", line 1040, in forward
+    output = self._run_ddp_forward(*inputs, **kwargs)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/torch/nn/parallel/distributed.py", line 1000, in _run_ddp_forward
+    return module_to_run(*inputs[0], **kwargs[0])
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1194, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/pytorch_lightning/overrides/base.py", line 90, in forward
+    output = self._forward_module.training_step(*inputs, **kwargs)
+  File "/home/oriol_colome_font_epidemicsound_/Master-Thesis/model.py", line 124, in training_step
+    negative_embedding = self.encoder(negative)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1194, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/home/oriol_colome_font_epidemicsound_/Master-Thesis/model.py", line 97, in forward
+    out = self.sequential(x)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1194, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/torch/nn/modules/container.py", line 204, in forward
+    input = module(input)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1194, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/torch/nn/modules/container.py", line 204, in forward
+    input = module(input)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1194, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/torch/nn/modules/activation.py", line 102, in forward
+    return F.relu(input, inplace=self.inplace)
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/torch/nn/functional.py", line 1457, in relu
+    result = torch.relu(input)
+torch.cuda.OutOfMemoryError: CUDA out of memory. Tried to allocate 736.00 MiB (GPU 0; 14.56 GiB total capacity; 13.25 GiB already allocated; 52.50 MiB free; 13.39 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF

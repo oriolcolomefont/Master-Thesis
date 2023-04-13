@@ -1,0 +1,28 @@
+2023-04-13 08:56:18,051 INFO    MainThread:29988 [wandb_setup.py:_flush():76] Configure stats pid to 29988
+2023-04-13 08:56:18,051 INFO    MainThread:29988 [wandb_setup.py:_flush():76] Loading settings from /home/oriol_colome_font_epidemicsound_/.config/wandb/settings
+2023-04-13 08:56:18,051 INFO    MainThread:29988 [wandb_setup.py:_flush():76] Loading settings from /home/oriol_colome_font_epidemicsound_/Master-Thesis/wandb/settings
+2023-04-13 08:56:18,051 INFO    MainThread:29988 [wandb_setup.py:_flush():76] Loading settings from environment variables: {}
+2023-04-13 08:56:18,051 INFO    MainThread:29988 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program_relpath': 'train_msd.py', 'program': '/home/oriol_colome_font_epidemicsound_/Master-Thesis/train_msd.py'}
+2023-04-13 08:56:18,052 INFO    MainThread:29988 [wandb_init.py:_log_setup():506] Logging user logs to ./wandb/wandb/run-20230413_085618-p4gbd1hq/logs/debug.log
+2023-04-13 08:56:18,052 INFO    MainThread:29988 [wandb_init.py:_log_setup():507] Logging internal logs to ./wandb/wandb/run-20230413_085618-p4gbd1hq/logs/debug-internal.log
+2023-04-13 08:56:18,052 INFO    MainThread:29988 [wandb_init.py:init():546] calling init triggers
+2023-04-13 08:56:18,052 INFO    MainThread:29988 [wandb_init.py:init():552] wandb.init called with sweep_config: {}
+config: {}
+2023-04-13 08:56:18,052 INFO    MainThread:29988 [wandb_init.py:init():602] starting backend
+2023-04-13 08:56:18,052 INFO    MainThread:29988 [wandb_init.py:init():606] setting up manager
+2023-04-13 08:56:18,053 INFO    MainThread:29988 [backend.py:_multiprocessing_setup():106] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2023-04-13 08:56:18,055 INFO    MainThread:29988 [wandb_init.py:init():613] backend started and connected
+2023-04-13 08:56:18,057 INFO    MainThread:29988 [wandb_init.py:init():701] updated telemetry
+2023-04-13 08:56:18,073 INFO    MainThread:29988 [wandb_init.py:init():741] communicating run to backend with 60.0 second timeout
+2023-04-13 08:56:18,534 INFO    MainThread:29988 [wandb_run.py:_on_init():2133] communicating current version
+2023-04-13 08:56:18,590 INFO    MainThread:29988 [wandb_run.py:_on_init():2142] got version response upgrade_message: "wandb version 0.14.2 is available!  To upgrade, please run:\n $ pip install wandb --upgrade"
+
+2023-04-13 08:56:18,590 INFO    MainThread:29988 [wandb_init.py:init():789] starting run threads in backend
+2023-04-13 08:56:18,703 INFO    MainThread:29988 [wandb_run.py:_console_start():2114] atexit reg
+2023-04-13 08:56:18,704 INFO    MainThread:29988 [wandb_run.py:_redirect():1969] redirect: SettingsConsole.WRAP_RAW
+2023-04-13 08:56:18,704 INFO    MainThread:29988 [wandb_run.py:_redirect():2034] Wrapping output streams.
+2023-04-13 08:56:18,704 INFO    MainThread:29988 [wandb_run.py:_redirect():2059] Redirects installed.
+2023-04-13 08:56:18,705 INFO    MainThread:29988 [wandb_init.py:init():831] run started, returning control to user process
+2023-04-13 08:56:18,706 INFO    MainThread:29988 [wandb_watch.py:watch():51] Watching
+2023-04-13 08:56:25,479 INFO    MainThread:29988 [wandb_run.py:_config_callback():1251] config_cb None None {'strides': [3, 3, 3, 3, 3, 3, 3, 3, 3], 'supervised': False, 'out_dim': 128, 'loss_type': 'triplet'}
+2023-04-13 09:00:05,251 WARNING MsgRouterThr:29988 [router.py:message_loop():77] message_loop has been closed

@@ -21,8 +21,8 @@ audio_df = pd.read_csv(csv_file_path)
 # Assuming we have a DataFrame named 'audio_df'
 train_df, val_df = train_test_split(audio_df, test_size=0.2, random_state=42)
 
-train_set = MyDatasetMSD(input_df=train_df, sample_rate=16000, loss_type="triplet")
-val_set = MyDatasetMSD(input_df=val_df, sample_rate=16000, loss_type="triplet")
+train_set = MyDatasetMSD(input_df=train_df, clip_duration=8.0, sample_rate=16000, loss_type="triplet")
+val_set = MyDatasetMSD(input_df=val_df, clip_duration=8.0, sample_rate=16000, loss_type="triplet")
 
 # Create data/validation loader and setup data
 batch_size = 32

@@ -30,17 +30,10 @@ class MyDatasetMSD(Dataset):
 
         np.random.seed(seed)
 
-    def _load_files(self):
-        # filter based on min_length
-        filtered_file_list = []
-
+    def _load_files(self): 
         min_length = int(self.clip_duration * self.sample_rate)
-
-        if not isinstance(self.input_df, pd.DataFrame):
-            raise ValueError("input_df must be a Pandas DataFrame")
-        if 'file_path' not in self.input_df.columns:
-            raise ValueError("input_df must contain a 'file_path' column")      
         
+        filtered_file_list = []
         file_list = self.input_df['file_path'].tolist()
         for file in file_list:
             try:
