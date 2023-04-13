@@ -10,7 +10,7 @@ directories = [os.path.join(base_directory, d) for d in os.listdir(base_director
 
 
 # Limit the number of pieces to find
-limit = 1000
+limit = 10000
 
 # Find all audio files in the directories
 audio_files = []

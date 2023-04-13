@@ -14,7 +14,7 @@ import wandb
 from collate_fn import collate_fn
 
 # Path to csv file
-csv_file_path = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/msd_audio_files_limit=1000.csv"
+csv_file_path = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/msd_audio_files_limit=10000.csv"
 
 audio_df = pd.read_csv(csv_file_path)
 
@@ -25,7 +25,7 @@ train_set = MyDatasetMSD(input_df=train_df, sample_rate=16000, loss_type="triple
 val_set = MyDatasetMSD(input_df=val_df, sample_rate=16000, loss_type="triplet")
 
 # Create data/validation loader and setup data
-batch_size = 16
+batch_size = 32
 
 train_loader = DataLoader(
     dataset=train_set,

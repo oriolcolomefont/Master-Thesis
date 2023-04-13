@@ -6,7 +6,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from model import TripletNet
 
 # Load the checkpoint file
-CKPT_PATH = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/checkpoints/run-super-leaf-263-2023-04-12-epoch=47-val_loss=0.02-triplet.ckpt"
+CKPT_PATH = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/checkpoints/run-happy-lake-272-2023-04-12-epoch=573-val_loss=0.04-triplet.ckpt"
 
 # all init args were saved to the checkpoint
 checkpoint = torch.load(CKPT_PATH)
@@ -33,7 +33,7 @@ print("Input audio loaded")
 print(input_audio.shape)
 
 # Obtain embeddings for the input audio
-input_audio_embedding = model(input_audio).detach().numpy()
+input_audio_embedding = model(input_audio[:, :, :8*sampling_rate]).detach().numpy()
 print("Input audio embedding obtained: ", input_audio_embedding.shape)
 
 # Calculate the similarity between the input audio and the audio files in the folder
