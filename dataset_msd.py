@@ -30,11 +30,11 @@ class MyDatasetMSD(Dataset):
 
         np.random.seed(seed)
 
-    def _load_files(self): 
+    def _load_files(self):
         min_length = int(self.clip_duration * self.sample_rate)
-        
+
         filtered_file_list = []
-        file_list = self.input_df['file_path'].tolist()
+        file_list = self.input_df["file_path"].tolist()
         for file in file_list:
             try:
                 if torchaudio.info(file).num_frames >= min_length:

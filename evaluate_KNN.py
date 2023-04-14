@@ -24,7 +24,7 @@ model.load_state_dict(checkpoint["state_dict"])
 print("Model loaded")
 
 # Load and preprocess the input audio
-input_audio_path = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/datasets/GTZAN/gtzan_genre/genres/disco/disco.00005.wav"
+input_audio_path = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/datasets/GTZAN/gtzan_genre/genres/disco/disco.00040.wav"
 input_audio, sampling_rate = torchaudio.load(input_audio_path)
 input_audio = input_audio.mean(dim=0, keepdim=True)  # convert stereo to mono
 input_audio = input_audio.unsqueeze(0)
@@ -33,7 +33,7 @@ print("Input audio loaded")
 print(input_audio.shape)
 
 # Obtain embeddings for the input audio
-input_audio_embedding = model(input_audio[:, :, :8*sampling_rate]).detach().numpy()
+input_audio_embedding = model(input_audio[:, :, : 8 * sampling_rate]).detach().numpy()
 print("Input audio embedding obtained: ", input_audio_embedding.shape)
 
 # Calculate the similarity between the input audio and the audio files in the folder

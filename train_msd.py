@@ -14,18 +14,22 @@ import wandb
 from collate_fn import collate_fn
 
 # Path to csv file
-csv_file_path = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/msd_audio_files_limit=10000.csv"
+csv_file_path = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/msd_audio_files_limit=1000.csv"
 
 audio_df = pd.read_csv(csv_file_path)
 
 # Assuming we have a DataFrame named 'audio_df'
 train_df, val_df = train_test_split(audio_df, test_size=0.2, random_state=42)
 
-train_set = MyDatasetMSD(input_df=train_df, clip_duration=8.0, sample_rate=16000, loss_type="triplet")
-val_set = MyDatasetMSD(input_df=val_df, clip_duration=8.0, sample_rate=16000, loss_type="triplet")
+train_set = MyDatasetMSD(
+    input_df=train_df, clip_duration=15.0, sample_rate=16000, loss_type="triplet"
+)
+val_set = MyDatasetMSD(
+    input_df=val_df, clip_duration=15.0, sample_rate=16000, loss_type="triplet"
+)
 
 # Create data/validation loader and setup data
-batch_size = 32
+batch_size = 8
 
 train_loader = DataLoader(
     dataset=train_set,
@@ -74,7 +78,7 @@ filename = f"run-{run_name}-{date}-{{epoch:02d}}-{{val_loss:.2f}}-{model.loss_ty
 
 # Create callbacks
 callbacks = [
-    EarlyStopping(monitor="val_loss", patience=1000, verbose=True, mode="min"),
+    EarlyStopping(monitor="val_loss", patience=10000, verbose=True, mode="min"),
     ModelCheckpoint(
         dirpath="./checkpoints",
         filename=filename,
@@ -95,7 +99,7 @@ trainer = Trainer(
     callbacks=callbacks,
     logger=wandb_logger,
     log_every_n_steps=10,
-    max_epochs=1000,
+    max_epochs=10000,
     precision="16-mixed",
     strategy="ddp",
 )
