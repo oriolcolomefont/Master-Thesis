@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/home/oriol_colome_font_epidemicsound_/Master-Thesis/train.py", line 67, in <module>
+    wandb.config.strides = model.strides
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1269, in __getattr__
+    raise AttributeError("'{}' object has no attribute '{}'".format(
+AttributeError: 'TripletNet' object has no attribute 'strides'

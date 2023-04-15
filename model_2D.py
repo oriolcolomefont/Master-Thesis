@@ -36,7 +36,7 @@ class SampleCNN2D(Model):
                     in_channels=1,
                     out_channels=128,
                     kernel_size=(3, 3),
-                    stride=(1, 3),
+                    stride=(1, 1),
                     padding=(0, 0),
                 ),
                 nn.BatchNorm2d(128),

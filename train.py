@@ -18,14 +18,15 @@ val_path = (
     "/home/oriol_colome_font_epidemicsound_/Master-Thesis/datasets/GTZAN/GTZAN validate"
 )
 
-# test_path =
-
-train_set = MyDataset(root_dir=train_path, sample_rate=16000, loss_type="triplet")
-val_set = MyDataset(root_dir=val_path, sample_rate=16000, loss_type="triplet")
-# test_set = MyDataset(root_dir=test_path, sample_rate=16000)
+train_set = MyDataset(
+    root_dir=train_path, clip_duration=8.0, sample_rate=16000, loss_type="triplet"
+)
+val_set = MyDataset(
+    root_dir=val_path, clip_duration=8.0, sample_rate=16000, loss_type="triplet"
+)
 
 # Create data/validation loader and setup data
-batch_size = 16
+batch_size = 8
 
 train_loader = DataLoader(
     dataset=train_set,
@@ -63,6 +64,20 @@ wandb_logger = WandbLogger(
 # log gradients, parameter histogram and model topology
 wandb_logger.watch(model, log="gradients", log_graph=False)
 
+# init
+wandb.init()
+
+# Model parameters
+wandb.config.strides = [3, 3, 3, 3, 3, 3, 3, 3, 3]
+wandb.config.out_dim = 128
+wandb.config.loss_type = model.loss_type
+
+# Dataloader parameters
+wandb.config.batch_size = batch_size
+wandb.config.num_workers = train_loader.num_workers
+wandb.config.clip_duration = train_loader.dataset.clip_duration
+wandb.config.sample_rate = train_loader.dataset.sample_rate
+
 # Get the current date
 date = datetime.date.today().strftime("%Y-%m-%d")
 
@@ -95,7 +110,7 @@ trainer = Trainer(
     callbacks=callbacks,
     logger=wandb_logger,
     log_every_n_steps=10,
-    max_epochs=1000,
+    max_epochs=10,
     precision="16-mixed",
     strategy="ddp",
 )

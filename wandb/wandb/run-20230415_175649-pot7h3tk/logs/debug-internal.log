@@ -1,0 +1,141 @@
+2023-04-15 17:56:49,560 INFO    StreamThr :1970 [internal.py:wandb_internal():87] W&B internal server running at pid: 1970, started at: 2023-04-15 17:56:49.559536
+2023-04-15 17:56:49,563 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status
+2023-04-15 17:56:49,565 INFO    WriterThread:1970 [datastore.py:open_for_write():85] open: ./wandb/wandb/run-20230415_175649-pot7h3tk/run-pot7h3tk.wandb
+2023-04-15 17:56:49,568 DEBUG   SenderThread:1970 [sender.py:send():336] send: header
+2023-04-15 17:56:49,587 DEBUG   SenderThread:1970 [sender.py:send():336] send: run
+2023-04-15 17:56:49,591 INFO    SenderThread:1970 [sender.py:_maybe_setup_resume():722] checking resume status for None/master-thesis/pot7h3tk
+2023-04-15 17:56:50,331 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: check_version
+2023-04-15 17:56:50,332 INFO    SenderThread:1970 [dir_watcher.py:__init__():219] watching files in: ./wandb/wandb/run-20230415_175649-pot7h3tk/files
+2023-04-15 17:56:50,332 INFO    SenderThread:1970 [sender.py:_start_run_threads():1078] run started: pot7h3tk with start time 1681581409.555835
+2023-04-15 17:56:50,333 DEBUG   SenderThread:1970 [sender.py:send_request():363] send_request: summary_record
+2023-04-15 17:56:50,333 INFO    SenderThread:1970 [sender.py:_save_file():1332] saving file wandb-summary.json with policy end
+2023-04-15 17:56:50,334 DEBUG   SenderThread:1970 [sender.py:send_request():363] send_request: check_version
+2023-04-15 17:56:50,426 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: run_start
+2023-04-15 17:56:50,436 DEBUG   HandlerThread:1970 [system_info.py:__init__():31] System info init
+2023-04-15 17:56:50,436 DEBUG   HandlerThread:1970 [system_info.py:__init__():46] System info init done
+2023-04-15 17:56:50,436 INFO    HandlerThread:1970 [system_monitor.py:start():183] Starting system monitor
+2023-04-15 17:56:50,437 INFO    SystemMonitor:1970 [system_monitor.py:_start():147] Starting system asset monitoring threads
+2023-04-15 17:56:50,437 INFO    HandlerThread:1970 [system_monitor.py:probe():204] Collecting system info
+2023-04-15 17:56:50,437 INFO    SystemMonitor:1970 [interfaces.py:start():187] Started cpu monitoring
+2023-04-15 17:56:50,438 INFO    SystemMonitor:1970 [interfaces.py:start():187] Started disk monitoring
+2023-04-15 17:56:50,439 INFO    SystemMonitor:1970 [interfaces.py:start():187] Started gpu monitoring
+2023-04-15 17:56:50,439 INFO    SystemMonitor:1970 [interfaces.py:start():187] Started memory monitoring
+2023-04-15 17:56:50,440 INFO    SystemMonitor:1970 [interfaces.py:start():187] Started network monitoring
+2023-04-15 17:56:50,466 DEBUG   HandlerThread:1970 [system_info.py:probe():195] Probing system
+2023-04-15 17:56:50,478 DEBUG   HandlerThread:1970 [system_info.py:_probe_git():180] Probing git
+2023-04-15 17:56:50,499 DEBUG   HandlerThread:1970 [system_info.py:_probe_git():188] Probing git done
+2023-04-15 17:56:50,499 DEBUG   HandlerThread:1970 [system_info.py:probe():240] Probing system done
+2023-04-15 17:56:50,499 DEBUG   HandlerThread:1970 [system_monitor.py:probe():213] {'os': 'Linux-4.19.0-23-cloud-amd64-x86_64-with-glibc2.28', 'python': '3.9.16', 'heartbeatAt': '2023-04-15T17:56:50.467039', 'startedAt': '2023-04-15T17:56:49.551065', 'docker': None, 'cuda': None, 'args': (), 'state': 'running', 'program': '/home/oriol_colome_font_epidemicsound_/Master-Thesis/train_msd.py', 'codePath': 'train_msd.py', 'git': {'remote': 'https://github.com/oriolcolomefont/Master-Thesis.git', 'commit': 'da55a65a60d1250ff11725114d0072f6f3bdcd61'}, 'email': 'oriolcolomefont@gmail.com', 'root': '/home/oriol_colome_font_epidemicsound_/Master-Thesis', 'host': 'oriol-vm', 'username': 'oriol_colome_font_epidemicsound_', 'executable': '/opt/conda/envs/master_thesis/bin/python', 'cpu_count': 8, 'cpu_count_logical': 16, 'cpu_freq': {'current': 2000.1379999999992, 'min': 0.0, 'max': 0.0}, 'cpu_freq_per_core': [{'current': 2000.138, 'min': 0.0, 'max': 0.0}, {'current': 2000.138, 'min': 0.0, 'max': 0.0}, {'current': 2000.138, 'min': 0.0, 'max': 0.0}, {'current': 2000.138, 'min': 0.0, 'max': 0.0}, {'current': 2000.138, 'min': 0.0, 'max': 0.0}, {'current': 2000.138, 'min': 0.0, 'max': 0.0}, {'current': 2000.138, 'min': 0.0, 'max': 0.0}, {'current': 2000.138, 'min': 0.0, 'max': 0.0}, {'current': 2000.138, 'min': 0.0, 'max': 0.0}, {'current': 2000.138, 'min': 0.0, 'max': 0.0}, {'current': 2000.138, 'min': 0.0, 'max': 0.0}, {'current': 2000.138, 'min': 0.0, 'max': 0.0}, {'current': 2000.138, 'min': 0.0, 'max': 0.0}, {'current': 2000.138, 'min': 0.0, 'max': 0.0}, {'current': 2000.138, 'min': 0.0, 'max': 0.0}, {'current': 2000.138, 'min': 0.0, 'max': 0.0}], 'disk': {'total': 98.18611526489258, 'used': 70.0388298034668}, 'gpu': 'Tesla T4', 'gpu_count': 4, 'gpu_devices': [{'name': 'Tesla T4', 'memory_total': 16106127360}, {'name': 'Tesla T4', 'memory_total': 16106127360}, {'name': 'Tesla T4', 'memory_total': 16106127360}, {'name': 'Tesla T4', 'memory_total': 16106127360}], 'memory': {'total': 58.975955963134766}}
+2023-04-15 17:56:50,500 INFO    HandlerThread:1970 [system_monitor.py:probe():214] Finished collecting system info
+2023-04-15 17:56:50,500 INFO    HandlerThread:1970 [system_monitor.py:probe():217] Publishing system info
+2023-04-15 17:56:50,500 DEBUG   HandlerThread:1970 [system_info.py:_save_pip():51] Saving list of pip packages installed into the current environment
+2023-04-15 17:56:50,501 DEBUG   HandlerThread:1970 [system_info.py:_save_pip():67] Saving pip packages done
+2023-04-15 17:56:50,501 DEBUG   HandlerThread:1970 [system_info.py:_save_conda():74] Saving list of conda packages installed into the current environment
+2023-04-15 17:56:50,505 ERROR   HandlerThread:1970 [system_info.py:_save_conda():85] Error saving conda packages: [Errno 2] No such file or directory: 'conda'
+Traceback (most recent call last):
+  File "/opt/conda/envs/master_thesis/lib/python3.9/site-packages/wandb/sdk/internal/system/system_info.py", line 81, in _save_conda
+    subprocess.call(
+  File "/opt/conda/envs/master_thesis/lib/python3.9/subprocess.py", line 349, in call
+    with Popen(*popenargs, **kwargs) as p:
+  File "/opt/conda/envs/master_thesis/lib/python3.9/subprocess.py", line 951, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/opt/conda/envs/master_thesis/lib/python3.9/subprocess.py", line 1821, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'conda'
+2023-04-15 17:56:50,507 DEBUG   HandlerThread:1970 [system_info.py:_save_conda():86] Saving conda packages done
+2023-04-15 17:56:50,508 INFO    HandlerThread:1970 [system_monitor.py:probe():219] Finished publishing system info
+2023-04-15 17:56:50,513 DEBUG   SenderThread:1970 [sender.py:send():336] send: files
+2023-04-15 17:56:50,514 INFO    SenderThread:1970 [sender.py:_save_file():1332] saving file wandb-metadata.json with policy now
+2023-04-15 17:56:50,525 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: stop_status
+2023-04-15 17:56:50,525 DEBUG   SenderThread:1970 [sender.py:send():336] send: telemetry
+2023-04-15 17:56:50,526 DEBUG   SenderThread:1970 [sender.py:send():336] send: metric
+2023-04-15 17:56:50,527 DEBUG   SenderThread:1970 [sender.py:send():336] send: telemetry
+2023-04-15 17:56:50,527 DEBUG   SenderThread:1970 [sender.py:send():336] send: metric
+2023-04-15 17:56:50,527 WARNING SenderThread:1970 [sender.py:send_metric():1283] Seen metric with glob (shouldn't happen)
+2023-04-15 17:56:50,527 DEBUG   SenderThread:1970 [sender.py:send():336] send: telemetry
+2023-04-15 17:56:50,527 DEBUG   SenderThread:1970 [sender.py:send_request():363] send_request: stop_status
+2023-04-15 17:56:51,139 INFO    wandb-upload_0:1970 [upload_job.py:push():138] Uploaded file /var/tmp/tmpdi06xc2gwandb/4n9z8ikf-wandb-metadata.json
+2023-04-15 17:56:51,336 INFO    Thread-13 :1970 [dir_watcher.py:_on_file_created():278] file/dir created: ./wandb/wandb/run-20230415_175649-pot7h3tk/files/wandb-metadata.json
+2023-04-15 17:56:51,336 INFO    Thread-13 :1970 [dir_watcher.py:_on_file_created():278] file/dir created: ./wandb/wandb/run-20230415_175649-pot7h3tk/files/requirements.txt
+2023-04-15 17:56:51,337 INFO    Thread-13 :1970 [dir_watcher.py:_on_file_created():278] file/dir created: ./wandb/wandb/run-20230415_175649-pot7h3tk/files/conda-environment.yaml
+2023-04-15 17:56:51,337 INFO    Thread-13 :1970 [dir_watcher.py:_on_file_created():278] file/dir created: ./wandb/wandb/run-20230415_175649-pot7h3tk/files/output.log
+2023-04-15 17:56:51,337 INFO    Thread-13 :1970 [dir_watcher.py:_on_file_created():278] file/dir created: ./wandb/wandb/run-20230415_175649-pot7h3tk/files/wandb-summary.json
+2023-04-15 17:56:53,334 INFO    Thread-13 :1970 [dir_watcher.py:_on_file_modified():295] file/dir modified: ./wandb/wandb/run-20230415_175649-pot7h3tk/files/output.log
+2023-04-15 17:56:54,683 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:56:59,684 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:57:04,703 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:57:09,735 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:57:14,743 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:57:19,746 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:57:20,379 INFO    Thread-13 :1970 [dir_watcher.py:_on_file_modified():295] file/dir modified: ./wandb/wandb/run-20230415_175649-pot7h3tk/files/config.yaml
+2023-04-15 17:57:24,956 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:57:29,957 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:57:34,958 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:57:39,959 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:57:44,960 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:57:49,961 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:57:50,441 DEBUG   SystemMonitor:1970 [system_monitor.py:_start():161] Starting system metrics aggregation loop
+2023-04-15 17:57:50,442 DEBUG   SenderThread:1970 [sender.py:send():336] send: stats
+2023-04-15 17:57:55,443 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:58:00,444 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:58:05,456 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:58:10,471 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:58:15,487 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:58:20,444 DEBUG   SenderThread:1970 [sender.py:send():336] send: stats
+2023-04-15 17:58:21,445 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:58:26,446 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:58:31,447 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:58:36,448 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:58:41,449 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:58:46,450 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:58:50,445 DEBUG   SenderThread:1970 [sender.py:send():336] send: stats
+2023-04-15 17:58:52,447 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:58:57,447 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:58:58,191 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: keepalive
+2023-04-15 17:58:59,448 INFO    Thread-13 :1970 [dir_watcher.py:_on_file_modified():295] file/dir modified: ./wandb/wandb/run-20230415_175649-pot7h3tk/files/output.log
+2023-04-15 17:59:03,233 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:59:03,761 DEBUG   SenderThread:1970 [sender.py:send():336] send: config
+2023-04-15 17:59:05,472 INFO    Thread-13 :1970 [dir_watcher.py:_on_file_modified():295] file/dir modified: ./wandb/wandb/run-20230415_175649-pot7h3tk/files/output.log
+2023-04-15 17:59:06,476 INFO    Thread-13 :1970 [dir_watcher.py:_on_file_modified():295] file/dir modified: ./wandb/wandb/run-20230415_175649-pot7h3tk/files/output.log
+2023-04-15 17:59:08,839 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:59:13,192 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: stop_status
+2023-04-15 17:59:13,199 DEBUG   SenderThread:1970 [sender.py:send_request():363] send_request: stop_status
+2023-04-15 17:59:14,512 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:59:19,524 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:59:20,447 DEBUG   SenderThread:1970 [sender.py:send():336] send: stats
+2023-04-15 17:59:25,458 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:59:26,499 INFO    Thread-13 :1970 [dir_watcher.py:_on_file_modified():295] file/dir modified: ./wandb/wandb/run-20230415_175649-pot7h3tk/files/config.yaml
+2023-04-15 17:59:28,200 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: stop_status
+2023-04-15 17:59:28,201 DEBUG   SenderThread:1970 [sender.py:send_request():363] send_request: stop_status
+2023-04-15 17:59:31,438 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:59:36,439 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:59:41,440 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:59:43,193 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: stop_status
+2023-04-15 17:59:43,194 DEBUG   SenderThread:1970 [sender.py:send_request():363] send_request: stop_status
+2023-04-15 17:59:44,511 INFO    Thread-13 :1970 [dir_watcher.py:_on_file_modified():295] file/dir modified: ./wandb/wandb/run-20230415_175649-pot7h3tk/files/output.log
+2023-04-15 17:59:46,512 INFO    Thread-13 :1970 [dir_watcher.py:_on_file_modified():295] file/dir modified: ./wandb/wandb/run-20230415_175649-pot7h3tk/files/output.log
+2023-04-15 17:59:47,238 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:59:50,448 DEBUG   SenderThread:1970 [sender.py:send():336] send: stats
+2023-04-15 17:59:52,449 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:59:57,450 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 17:59:58,193 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: stop_status
+2023-04-15 17:59:58,193 DEBUG   SenderThread:1970 [sender.py:send_request():363] send_request: stop_status
+2023-04-15 18:00:03,416 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 18:00:08,420 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 18:00:13,203 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: stop_status
+2023-04-15 18:00:13,204 DEBUG   SenderThread:1970 [sender.py:send_request():363] send_request: stop_status
+2023-04-15 18:00:13,432 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 18:00:14,568 INFO    Thread-13 :1970 [dir_watcher.py:_on_file_modified():295] file/dir modified: ./wandb/wandb/run-20230415_175649-pot7h3tk/files/output.log
+2023-04-15 18:00:18,464 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 18:00:20,450 DEBUG   SenderThread:1970 [sender.py:send():336] send: stats
+2023-04-15 18:00:24,451 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 18:00:28,196 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: stop_status
+2023-04-15 18:00:28,196 DEBUG   SenderThread:1970 [sender.py:send_request():363] send_request: stop_status
+2023-04-15 18:00:29,457 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 18:00:34,458 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 18:00:39,459 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 18:00:43,196 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: stop_status
+2023-04-15 18:00:43,197 DEBUG   SenderThread:1970 [sender.py:send_request():363] send_request: stop_status
+2023-04-15 18:00:45,387 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 18:00:50,388 DEBUG   HandlerThread:1970 [handler.py:handle_request():144] handle_request: status_report
+2023-04-15 18:00:50,452 DEBUG   SenderThread:1970 [sender.py:send():336] send: stats
