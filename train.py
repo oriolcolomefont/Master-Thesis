@@ -81,7 +81,7 @@ callbacks = [
         filename=filename,
         monitor="val_loss",
         mode="min",
-        save_top_k=1,
+        save_top_k=10,
         save_weights_only=False,
     ),
 ]
