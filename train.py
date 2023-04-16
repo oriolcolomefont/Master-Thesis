@@ -19,10 +19,10 @@ val_path = (
 )
 
 train_set = MyDataset(
-    root_dir=train_path, clip_duration=8.0, sample_rate=16000, loss_type="triplet"
+    root_dir=train_path, clip_duration=15.0, sample_rate=16000, loss_type="triplet"
 )
 val_set = MyDataset(
-    root_dir=val_path, clip_duration=8.0, sample_rate=16000, loss_type="triplet"
+    root_dir=val_path, clip_duration=15.0, sample_rate=16000, loss_type="triplet"
 )
 
 # Create data/validation loader and setup data
@@ -64,20 +64,6 @@ wandb_logger = WandbLogger(
 # log gradients, parameter histogram and model topology
 wandb_logger.watch(model, log="gradients", log_graph=False)
 
-# init
-wandb.init()
-
-# Model parameters
-wandb.config.strides = [3, 3, 3, 3, 3, 3, 3, 3, 3]
-wandb.config.out_dim = 128
-wandb.config.loss_type = model.loss_type
-
-# Dataloader parameters
-wandb.config.batch_size = batch_size
-wandb.config.num_workers = train_loader.num_workers
-wandb.config.clip_duration = train_loader.dataset.clip_duration
-wandb.config.sample_rate = train_loader.dataset.sample_rate
-
 # Get the current date
 date = datetime.date.today().strftime("%Y-%m-%d")
 
@@ -89,7 +75,7 @@ filename = f"run-{run_name}-{date}-{{epoch:02d}}-{{val_loss:.2f}}-{model.loss_ty
 
 # Create callbacks
 callbacks = [
-    EarlyStopping(monitor="val_loss", patience=1000, verbose=True, mode="min"),
+    EarlyStopping(monitor="val_loss", patience=10000, verbose=True, mode="min"),
     ModelCheckpoint(
         dirpath="./checkpoints",
         filename=filename,
@@ -110,7 +96,7 @@ trainer = Trainer(
     callbacks=callbacks,
     logger=wandb_logger,
     log_every_n_steps=10,
-    max_epochs=10,
+    max_epochs=10000,
     precision="16-mixed",
     strategy="ddp",
 )
