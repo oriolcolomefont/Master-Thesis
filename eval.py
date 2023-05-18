@@ -5,7 +5,7 @@ import numpy as np
 from tqdm import tqdm
 import mir_eval
 import pandas as pd
-from features_copy import Embeddiogram
+from features import Embeddiogram
 
 sns.set(style="dark")
 
@@ -14,6 +14,7 @@ ANNOTATIONS_DIR = "/home/jupyter/Master-Thesis/datasets/SALAMI/references"
 FEATURE = "embeddiogram"
 BOUNDARIES_ID = msaf.config.default_bound_id
 LABELS_ID = msaf.config.default_label_id
+EVAL_WINDOW = 0.5  # The maximum allowed deviation for a correct boundary (in seconds)
 
 
 def get_audio_and_annot_files(audio_dir, annotations_dir):
@@ -64,11 +65,8 @@ def process_audio_file(audio_file_path, annot_file_path, feature_name):
     return boundaries, labels, annot_intervals, annot_labels
 
 
-def evaluate_segmentation(boundaries, labels, annot_intervals, annot_labels):
+def evaluate_segmentation(boundaries, labels, annot_intervals, annot_labels, eval_window):
     # Evaluate boundary detection
-    eval_window = (
-        0.5  # The maximum allowed deviation for a correct boundary (in seconds)
-    )
     p, r, f = mir_eval.segment.detection(
         reference_intervals=annot_intervals,
         estimated_intervals=boundaries,
@@ -133,7 +131,7 @@ def main():
 
             # Evaluate segmentation
             evaluation_results = evaluate_segmentation(
-                estimated_intervals, results[1], reference_intervals, results[3]
+                estimated_intervals, results[1], reference_intervals, results[3], EVAL_WINDOW
             )
             print(evaluation_results)
 
