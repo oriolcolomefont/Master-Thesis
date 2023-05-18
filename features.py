@@ -144,18 +144,16 @@ class Embeddiogram(Features):
         return normalized_embeddiogram.T
 
     def process_audio_slices_chunk(self, gpu_device_id, slice_chunk):
-        # Add the directory containing my model.py file to the system path
-        sys.path.append("/home/jupyter/Master-Thesis/")
 
         # Import the model.py module using importlib
         spec = importlib.util.spec_from_file_location(
-            "model", "/home/jupyter/Master-Thesis/model.py"
+            "model", "./model.py"
         )
         model_module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(model_module)
 
         # Load the checkpoint file
-        CKPT_PATH = "/home/jupyter/Master-Thesis/checkpoints/run-solar-sound-307-2023-04-20-epoch=127-val_loss=0.03-triplet.ckpt"
+        CKPT_PATH = "./checkpoints/run-solar-sound-307-2023-04-20-epoch=127-val_loss=0.03-triplet.ckpt"
         checkpoint = torch.load(CKPT_PATH)
 
         # Set the current device to the specified GPU

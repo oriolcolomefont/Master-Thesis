@@ -22,7 +22,7 @@ wandb.login(
 )
 
 FILE_LIST_PATH = (
-    "/home/jupyter/Master-Thesis/datasets/MSD/MSD_audio_limit=all_progress100.csv"
+    "./datasets/MSD/MSD_audio_limit=all_progress100.csv"
 )
 DATASET_NAME = "Million Song Dataset"
 
@@ -200,10 +200,14 @@ def train_model(model, train_loader, validation_loader, wandb_logger):
     wandb.finish()
 
 
-if __name__ == "__main__":
+def main():
     file_list = load_file_list(FILE_LIST_PATH)
     train_files, val_files = train_test_split(file_list, test_size=0.2, random_state=42)
     train_set, val_set = get_train_val_datasets(train_files, val_files)
     train_loader, validation_loader = create_data_loaders(train_set, val_set)
     model, wandb_logger = init_model_and_logger(config)
     train_model(model, train_loader, validation_loader, wandb_logger)
+
+
+if __name__ == "__main__":
+    main()

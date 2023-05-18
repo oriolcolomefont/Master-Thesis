@@ -30,7 +30,7 @@ def process_audio_file(audio_file):
 
 
 # Load the checkpoint file
-CKPT_PATH = "/home/jupyter/Master-Thesis/checkpoints/run-valiant-darkness-40-2023-05-02-epoch=09-val_loss=0.18-triplet.ckpt"
+CKPT_PATH = "./checkpoints/run-valiant-darkness-40-2023-05-02-epoch=09-val_loss=0.18-triplet.ckpt"
 checkpoint = torch.load(CKPT_PATH)
 
 # Create the model
@@ -47,7 +47,7 @@ print("Model loaded")
 
 # Load and preprocess the input audio
 input_audio_path = (
-    "/home/jupyter/Master-Thesis/datasets/GTZAN/GTZAN train/blues/blues.00049.wav"
+    "./datasets/GTZAN/GTZAN train/blues/blues.00049.wav"
 )
 input_audio, sampling_rate = torchaudio.load(input_audio_path)
 input_audio = input_audio.mean(dim=0, keepdim=True)  # convert stereo to mono
@@ -61,7 +61,7 @@ input_audio_embedding = model(input_audio[:, :, : 15 * sampling_rate])
 print("Input audio embedding obtained: ", input_audio_embedding.shape)
 
 # Calculate the similarity between the input audio and the audio files in the folder
-folder_path = "/home/jupyter/Master-Thesis/datasets/GTZAN/GTZAN train/blues"
+folder_path = "./datasets/GTZAN/GTZAN train/blues"
 audio_files = librosa.util.find_files(
     folder_path,
     ext=["aac", "au", "flac", "m4a", "mp3", "ogg", "wav"],

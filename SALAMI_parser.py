@@ -1,6 +1,6 @@
 import os
 
-folder_path = "/home/jupyter/Master-Thesis/datasets/SALAMI/audio"
+folder_path = "./datasets/SALAMI/audio"
 
 """
 # Iterate through all files in the folder

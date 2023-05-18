@@ -9,8 +9,8 @@ from features import Embeddiogram
 
 sns.set(style="dark")
 
-AUDIO_DIR = "/home/jupyter/Master-Thesis/datasets/SALAMI/audio"
-ANNOTATIONS_DIR = "/home/jupyter/Master-Thesis/datasets/SALAMI/references"
+AUDIO_DIR = "./datasets/SALAMI/audio"
+ANNOTATIONS_DIR = "./datasets/SALAMI/references"
 FEATURE = "embeddiogram"
 BOUNDARIES_ID = msaf.config.default_bound_id
 LABELS_ID = msaf.config.default_label_id
