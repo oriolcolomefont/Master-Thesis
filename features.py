@@ -38,11 +38,13 @@ import importlib.util
 from msaf.base import features_registry
 from msaf.configdefaults import AddConfigVar, IntParam
 
+WINDOW_SIZE = 4 * config.sample_rate  # 4 seconds of audio
+
 # embeddiogram Features
 AddConfigVar(
     "embeddiogram.win_length",
     "The size of the window of the embeddiogram.",
-    IntParam(8 * 22050),
+    IntParam(WINDOW_SIZE),
 )
 
 

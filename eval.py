@@ -65,7 +65,9 @@ def process_audio_file(audio_file_path, annot_file_path, feature_name):
     return boundaries, labels, annot_intervals, annot_labels
 
 
-def evaluate_segmentation(boundaries, labels, annot_intervals, annot_labels, eval_window):
+def evaluate_segmentation(
+    boundaries, labels, annot_intervals, annot_labels, eval_window
+):
     # Evaluate boundary detection
     p, r, f = mir_eval.segment.detection(
         reference_intervals=annot_intervals,
@@ -131,7 +133,11 @@ def main():
 
             # Evaluate segmentation
             evaluation_results = evaluate_segmentation(
-                estimated_intervals, results[1], reference_intervals, results[3], EVAL_WINDOW
+                estimated_intervals,
+                results[1],
+                reference_intervals,
+                results[3],
+                EVAL_WINDOW,
             )
             print(evaluation_results)
 
