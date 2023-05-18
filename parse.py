@@ -1,4 +1,15 @@
-from msd_parser import MSDParser
+from master_parser import MasterParser
 
-msd_parser = MSDParser(clip_duration=8.0, sample_rate=41000, limit=10000)
-audio_df = msd_parser.parse()
+name = "SALAMI"
+min_duration = 3.0
+limit = None
+base_directory = "/home/oriol_colome_font_epidemicsound_/Master-Thesis/datasets/SALAMI"
+
+parser = MasterParser(
+    name=name,
+    min_duration=min_duration,
+    limit=limit,
+    base_directory=base_directory,
+)
+
+audio_df, npy_file_name = parser.parse()

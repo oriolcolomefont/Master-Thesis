@@ -22,9 +22,11 @@ debugpy @ file:///home/conda/feedstock_root/build_artifacts/debugpy_167452235316
 decorator==5.1.1
 Deprecated==1.2.13
 docker-pycreds==0.4.0
+docopt==0.6.2
 enum34==1.1.10
 essentia==2.1b6.dev858
 executing @ file:///home/conda/feedstock_root/build_artifacts/executing_1667317341051/work
+fastjsonschema==2.16.3
 filelock==3.10.4
 fonttools==4.39.2
 fsspec @ file:///home/conda/feedstock_root/build_artifacts/fsspec_1678112553830/work
@@ -38,13 +40,16 @@ importlib-metadata @ file:///home/conda/feedstock_root/build_artifacts/importlib
 importlib-resources==5.12.0
 ipykernel @ file:///home/conda/feedstock_root/build_artifacts/ipykernel_1679336319192/work
 ipython @ file:///home/conda/feedstock_root/build_artifacts/ipython_1677617093347/work
+ipywidgets==8.0.6
 jams==0.3.4
 jedi @ file:///home/conda/feedstock_root/build_artifacts/jedi_1669134318875/work
 Jinja2==3.1.2
 joblib==1.2.0
+jsonpickle==3.0.1
 jsonschema==4.17.3
 jupyter_client @ file:///home/conda/feedstock_root/build_artifacts/jupyter_client_1679365123476/work
 jupyter_core @ file:///home/conda/feedstock_root/build_artifacts/jupyter_core_1678994160714/work
+jupyterlab-widgets==3.0.7
 kiwisolver==1.4.4
 lazy_loader==0.2
 librosa==0.8.0
@@ -60,11 +65,14 @@ mirdata==0.3.7
 mkl-fft==1.3.1
 mkl-random==1.2.2
 mkl-service==2.4.0
+more-itertools==9.1.0
 mpmath==1.3.0
 msaf @ git+https://github.com/urinieto/msaf.git@17db5b698e06d662dfa5c7442d826022746454b7
 msgpack==1.0.5
 munkres==1.1.4
+music21==8.1.0
 mypy-extensions @ file:///home/conda/feedstock_root/build_artifacts/mypy_extensions_1675543315189/work
+nbformat==5.8.0
 nest-asyncio @ file:///home/conda/feedstock_root/build_artifacts/nest-asyncio_1664684991461/work
 networkx==3.0
 numba==0.56.4
@@ -88,7 +96,9 @@ pathtools==0.1.2
 pexpect @ file:///home/conda/feedstock_root/build_artifacts/pexpect_1667297516076/work
 pickleshare @ file:///home/conda/feedstock_root/build_artifacts/pickleshare_1602536217715/work
 Pillow==9.4.0
+pipreqs==0.4.13
 platformdirs==3.1.1
+plotly==5.14.1
 pooch==1.7.0
 pretty-midi==0.2.10
 prompt-toolkit @ file:///home/conda/feedstock_root/build_artifacts/prompt-toolkit_1677600924538/work
@@ -123,6 +133,7 @@ soundfile==0.12.1
 soxr==0.3.4
 stack-data @ file:///home/conda/feedstock_root/build_artifacts/stack_data_1669632077133/work
 sympy==1.11.1
+tenacity==8.2.2
 threadpoolctl==3.1.0
 tomli @ file:///home/conda/feedstock_root/build_artifacts/tomli_1644342247877/work
 torch==1.13.1+cu116
@@ -137,7 +148,10 @@ typing_extensions==4.5.0
 unicodedata2 @ file:///home/conda/feedstock_root/build_artifacts/unicodedata2_1667239485250/work
 urllib3==1.26.15
 vmo==0.30.5
-wandb @ file:///home/conda/feedstock_root/build_artifacts/wandb_1678843302744/work
+wandb==0.15.0
 wcwidth @ file:///home/conda/feedstock_root/build_artifacts/wcwidth_1673864653149/work
+webcolors==1.13
+widgetsnbextension==4.0.7
 wrapt==1.15.0
+yarg==0.1.9
 zipp==3.15.0

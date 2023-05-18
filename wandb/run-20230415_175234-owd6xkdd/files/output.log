@@ -1,3 +1,0 @@
-
-Initializing distributed: GLOBAL_RANK: 2, MEMBER: 3/4
-LOCAL_RANK: 2 - CUDA_VISIBLE_DEVICES: [0,1,2,3]

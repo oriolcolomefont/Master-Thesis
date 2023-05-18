@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import librosa.util
 import torchaudio
@@ -8,63 +9,123 @@ from multiprocessing import Pool, cpu_count
 
 class MasterParser:
     def __init__(
-        self, clip_duration: float, sample_rate: int, limit: int, base_directory: str
+        self,
+        name: str,
+        min_duration: float,
+        limit: int,
+        base_directory: str,
+        last_file_path: str = None,
     ):
-        self.clip_duration = clip_duration
-        self.sample_rate = sample_rate
+        self.name = name
+        self.min_duration = min_duration
         self.limit = limit
         self.base_directory = base_directory
+        self.total_files = 0
+        self.last_file_path = last_file_path
+
+    def worker(self, directory, min_duration, limit):
+        filtered_files = []
+        audio_files = librosa.util.find_files(
+            directory, ext=["mp3", "wav", "flac", "ogg", "m4a"], limit=limit
+        )
+        for i, file in tqdm(
+            enumerate(audio_files),
+            desc=f"Processing directory {directory}",
+            total=len(audio_files),
+        ):
+            try:
+                info = torchaudio.info(file)
+                min_length = int(
+                    min_duration * info.sample_rate
+                )  # Calculate min_length based on the actual sample rate
+                if info.num_frames >= min_length:
+                    filtered_files.append(file)
+            except Exception as e:
+                print(f"Skipping invalid file: {file} due to error: {e}")
+                continue
+
+            if (i + 1) % (len(audio_files) // 10) == 0:
+                self.total_files += len(filtered_files)
+                progress = round((i + 1) / len(audio_files) * 100)
+                script_directory = os.path.dirname(os.path.abspath(__file__))
+                csv_file_name = os.path.join(
+                    script_directory,
+                    f"{self.name}_limit={self.limit if self.limit else 'all'}_progress{progress}.csv",
+                )
+                npy_file_name = os.path.join(
+                    script_directory,
+                    f"{self.name}_limit={self.limit if self.limit else 'all'}_progress{progress}.npy",
+                )
+                pd.DataFrame(filtered_files, columns=["file_path"]).to_csv(
+                    csv_file_name, index=False
+                )
+                np.save(npy_file_name, filtered_files)
+
+        self.total_files += len(filtered_files)
+
+        script_directory = os.path.dirname(os.path.abspath(__file__))
+        csv_file_name = os.path.join(
+            script_directory,
+            f"{self.name}_limit={self.limit if self.limit else 'all'}_progress100.csv",
+        )
+        npy_file_name = os.path.join(
+            script_directory,
+            f"{self.name}_limit={self.limit if self.limit else 'all'}_progress100.npy",
+        )
+        pd.DataFrame(filtered_files, columns=["file_path"]).to_csv(
+            csv_file_name, index=False
+        )
+        np.save(npy_file_name, filtered_files)
+
+        return filtered_files
 
     def parse(self, directories=None):
-        if directories is None:
-            # List all directories in the base folder
+        if self.last_file_path is not None:
+            audio_df = pd.read_csv(self.last_file_path)
+            processed_directories = list(
+                set(os.path.dirname(f) for f in audio_df["file_path"].values)
+            )
+            if directories is not None:
+                directories = list(set(directories) - set(processed_directories))
+            else:
+                directories = processed_directories
+        else:
             directories = [
                 os.path.join(self.base_directory, d)
                 for d in os.listdir(self.base_directory)
                 if os.path.isdir(os.path.join(self.base_directory, d))
             ]
 
-        # Set the minimum length in frames for a valid audio file
-        min_length = int(self.clip_duration * self.sample_rate)
-
-        # Define a worker function for multiprocessing
-        def worker(directory):
-            filtered_files = []
-            audio_files = librosa.util.find_files(
-                directory, ext=["mp3", "wav", "flac", "ogg", "m4a"], limit=self.limit
-            )
-            for file in tqdm(audio_files, desc=f"Processing directory {directory}"):
-                try:
-                    info = torchaudio.info(file)
-                    if info.num_frames >= min_length:
-                        filtered_files.append(file)
-                except RuntimeError as e:
-                    if "Invalid data found when processing input" in str(e):
-                        print(f"Skipping invalid file: {file}")
-                    else:
-                        raise e
-            return filtered_files
-
-        # Create a pool of worker processes
         with Pool(cpu_count()) as pool:
-            results = pool.map(worker, directories)
+            # Wrap the arguments for starmap with tqdm to display overall progress
+            args = [
+                (directory, self.min_duration, self.limit) for directory in directories
+            ]
+            results = list(tqdm(pool.starmap(self.worker, args), total=len(args)))
 
-        # Flatten the results
         filtered_files = [file for sublist in results for file in sublist]
 
-        # Create a pandas DataFrame with the audio file paths
-        audio_df = pd.DataFrame(filtered_files, columns=["file_path"])
+        if self.last_file_path is not None:
+            audio_df = audio_df.append(
+                pd.DataFrame(filtered_files, columns=["file_path"]), ignore_index=True
+            )
+        else:
+            audio_df = pd.DataFrame(filtered_files, columns=["file_path"])
 
-        # Set the output directory for the CSV file
-        output_directory = "/home/oriol_colome_font_epidemicsound_/Master-Thesis"
-
-        # Set the CSV file name with the limit value and output directory
+        script_directory = os.path.dirname(os.path.abspath(__file__))
         csv_file_name = os.path.join(
-            output_directory, f"msd_audio_files_limit={self.limit}.csv"
+            script_directory,
+            f"{self.name}_limit={self.limit if self.limit else 'all'}.csv",
+        )
+        npy_file_name = os.path.join(
+            script_directory,
+            f"{self.name}_limit={self.limit if self.limit else 'all'}.npy",
         )
 
-        # Save the DataFrame to a CSV file
         audio_df.to_csv(csv_file_name, index=False)
+        np.save(npy_file_name, filtered_files)
 
+        print(f"Total files processed: {self.total_files}")
         print(audio_df.head())
-        return audio_df
+
+        return audio_df, npy_file_name

@@ -10,7 +10,7 @@ import torchaudio.sox_effects as sox
 class MyDataset(Dataset):
     def __init__(
         self,
-        root_dir,
+        file_list=None,
         loss_type: str = "triplet",
         sample_rate: int = 44100,
         clip_duration: float = 8.0,
@@ -18,36 +18,14 @@ class MyDataset(Dataset):
         max_chunk_duration_sec: float = 1.0,
         seed: int = 42,
     ):
-        self.root_dir = root_dir
+        self.file_list = file_list
         self.loss_type = loss_type
         self.sample_rate = sample_rate
         self.clip_duration = clip_duration
         self.min_chunk_duration_sec = min_chunk_duration_sec
         self.max_chunk_duration_sec = max_chunk_duration_sec
-        self.file_list = self._load_files()
 
         np.random.seed(seed)
-
-    def _load_files(self):
-        # filter based on min_length
-        filtered_file_list = []
-
-        min_length = int(self.clip_duration * self.sample_rate)
-
-        file_list = librosa.util.find_files(
-            self.root_dir,
-            ext=["aac", "au", "flac", "m4a", "mp3", "ogg", "wav"],
-        )
-        for file in file_list:
-            try:
-                if torchaudio.info(file).num_frames >= min_length:
-                    filtered_file_list.append(file)
-            except RuntimeError as e:
-                if "Invalid data found when processing input" in str(e):
-                    print(f"Skipping invalid file: {file}")
-                else:
-                    raise e
-        return filtered_file_list
 
     def __len__(self):
         return len(self.file_list)
@@ -82,12 +60,11 @@ class MyDataset(Dataset):
     def __getitem__(self, index):
         filename = self.file_list[index]
         metadata = torchaudio.info(filename)
-        num_frames = int(self.clip_duration * metadata.sample_rate)
-        frame_offset = np.random.randint(0, metadata.num_frames - num_frames)
 
-        waveform, _ = torchaudio.load(
-            filename, frame_offset=frame_offset, num_frames=num_frames
-        )
+        num_frames = int(self.clip_duration * metadata.sample_rate)
+
+        waveform, _ = torchaudio.load(filename, num_frames=num_frames)
+        # Convert stereo to mono
         waveform = waveform.mean(dim=0, keepdim=True)  # convert stereo to mono
 
         # Resample the waveform if the resample parameter is set, otherwise use the default sample rate
@@ -206,7 +183,7 @@ class MyDataset(Dataset):
         # Check if the positive and negative examples have the same length
         if anchor.shape != negative.shape:
             raise ValueError(
-                f"Input positive and output negative have different shapes. Scrambling the positive sample went wrong: {anchor.shape} vs {negative.shape}"
+                f"Input positive and output negative have different shapes. Scrambling the anchor sample went wrong: {anchor.shape} vs {negative.shape}"
             )
 
         return negative

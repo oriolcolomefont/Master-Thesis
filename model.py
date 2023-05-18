@@ -7,9 +7,7 @@ from criterion import TripletLoss, ContrastiveLoss
 
 import wandb
 
-wandb.login()
 
-"""
 class Model(nn.Module):
     def __init__(self):
         super(Model, self).__init__()
@@ -17,10 +15,9 @@ class Model(nn.Module):
     def initialize(self, m):
         if isinstance(m, (nn.Conv1d)):
             nn.init.kaiming_uniform_(m.weight, mode="fan_in", nonlinearity="relu")
-"""
 
 
-class SampleCNN(nn.Module):
+class SampleCNN(Model):
     def __init__(self, strides, supervised, out_dim, device=None):
         super(SampleCNN, self).__init__()
 
@@ -111,10 +108,14 @@ class TripletNet(pl.LightningModule):
         # log hyperparameters
         self.save_hyperparameters(ignore=["encoder"])
         self.encoder = SampleCNN(strides, supervised, out_dim)
+        self.strides = self.encoder.strides
         self.loss_type = loss_type
 
     def forward(self, x):
         return self.encoder(x)
+
+    def on_fit_start(self):
+        wandb.watch(self, log="gradients", log_graph=True)
 
     def training_step(self, batch, batch_idx):
         if self.loss_type == "triplet":
