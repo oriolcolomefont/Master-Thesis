@@ -20,7 +20,7 @@ from builtins import super
 import librosa
 import numpy as np
 
-#Necessary packages for the embedding feature
+# Necessary packages for the embedding feature
 
 import torch
 from tqdm import tqdm
@@ -39,20 +39,28 @@ from msaf.base import features_registry
 from msaf.configdefaults import AddConfigVar, IntParam
 
 # embeddiogram Features
-AddConfigVar('embeddiogram.win_length',
-             "The size of the window of the embeddiogram.", IntParam(8*22050))
+AddConfigVar(
+    "embeddiogram.win_length",
+    "The size of the window of the embeddiogram.",
+    IntParam(8 * 22050),
+)
 
 
 class Embeddiogram(Features):
     """This class contains the implementation of the Embeddiogram feature."""
 
-    def __init__(self, file_struct, feat_type, sr=config.sample_rate,
-                 hop_length=config.hop_size,
-                 win_length=config.embeddiogram.win_length):
-        
+    def __init__(
+        self,
+        file_struct,
+        feat_type,
+        sr=config.sample_rate,
+        hop_length=config.hop_size,
+        win_length=config.embeddiogram.win_length,
+    ):
         # Init the parent
-        super().__init__(file_struct=file_struct, sr=sr, hop_length=hop_length,
-                         feat_type=feat_type)
+        super().__init__(
+            file_struct=file_struct, sr=sr, hop_length=hop_length, feat_type=feat_type
+        )
         self.win_length = win_length
 
     @classmethod
@@ -70,12 +78,12 @@ class Embeddiogram(Features):
             time frame.
         """
         # Load and preprocess the input audio
-        input_audio = self._audio #time domain samples only
+        input_audio = self._audio  # time domain samples only
         print("Input audio loaded")
         print(f"Sample rate = {self.sr}")
         print(f"Number of samples = {input_audio.shape[0]}")
 
-        window_size = 4*self.sr  # number of samples in a window
+        window_size = 4 * self.sr  # number of samples in a window
         hop_size = self.hop_length  # number of samples between windows
         num_hops = 1 + (input_audio.shape[0] - window_size) // hop_size
         if (input_audio.shape[0] - window_size) % hop_size > 0:
@@ -95,7 +103,10 @@ class Embeddiogram(Features):
 
         # Set up the input and output data
         embeddings = []
-        slices = [(i * hop_size, min(i * hop_size + window_size, input_audio.shape[0])) for i in range(num_hops)]
+        slices = [
+            (i * hop_size, min(i * hop_size + window_size, input_audio.shape[0]))
+            for i in range(num_hops)
+        ]
 
         gpu_device_ids = list(range(num_gpus))
 
@@ -105,11 +116,18 @@ class Embeddiogram(Features):
             slices_per_gpu += 1
 
         # Divide the audio slices into chunks for each GPU
-        slice_chunks = [slices[i:i + slices_per_gpu] for i in range(0, len(slices), slices_per_gpu)]
+        slice_chunks = [
+            slices[i : i + slices_per_gpu]
+            for i in range(0, len(slices), slices_per_gpu)
+        ]
 
         # Process the chunks of audio slices on each GPU
         with ThreadPoolExecutor(max_workers=num_gpus) as executor:
-            embeddings = list(executor.map(self.process_audio_slices_chunk, gpu_device_ids, slice_chunks))
+            embeddings = list(
+                executor.map(
+                    self.process_audio_slices_chunk, gpu_device_ids, slice_chunks
+                )
+            )
 
         # Flatten the list of lists of embeddings
         embeddings = [embedding for chunk in embeddings for embedding in chunk]
@@ -117,16 +135,20 @@ class Embeddiogram(Features):
         # Stack the embeddings
         embeddiogram = np.column_stack(embeddings)
 
-        normalized_embeddiogram = (embeddiogram - embeddiogram.min()) / (embeddiogram.max() - embeddiogram.min())
+        normalized_embeddiogram = (embeddiogram - embeddiogram.min()) / (
+            embeddiogram.max() - embeddiogram.min()
+        )
 
         return normalized_embeddiogram.T
 
     def process_audio_slices_chunk(self, gpu_device_id, slice_chunk):
         # Add the directory containing my model.py file to the system path
-        sys.path.append('/home/jupyter/Master-Thesis/')
+        sys.path.append("/home/jupyter/Master-Thesis/")
 
         # Import the model.py module using importlib
-        spec = importlib.util.spec_from_file_location("model", "/home/jupyter/Master-Thesis/model.py")
+        spec = importlib.util.spec_from_file_location(
+            "model", "/home/jupyter/Master-Thesis/model.py"
+        )
         model_module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(model_module)
 
@@ -151,16 +173,23 @@ class Embeddiogram(Features):
 
         # Process the audio slices and return the embeddings
         embeddings = []
-        for start_end_tuple in tqdm(slice_chunk, desc=f"Processing audio slices on GPU {gpu_device_id}", leave=True):
+        for start_end_tuple in tqdm(
+            slice_chunk,
+            desc=f"Processing audio slices on GPU {gpu_device_id}",
+            leave=True,
+        ):
             start, end = start_end_tuple
             audio_slice = self._audio[None, None, start:end]
-            audio_slice = torch.from_numpy(audio_slice).float().to(f"cuda:{gpu_device_id}")
-    
+            audio_slice = (
+                torch.from_numpy(audio_slice).float().to(f"cuda:{gpu_device_id}")
+            )
+
             with torch.no_grad():
                 embedding = model(audio_slice).cpu().numpy().flatten()
             embeddings.append(embedding)
 
         return embeddings
-    
+
+
 # All available features
-features_registry['embeddiogram'] = Embeddiogram
+features_registry["embeddiogram"] = Embeddiogram
