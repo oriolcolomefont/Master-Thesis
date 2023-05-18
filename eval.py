@@ -1,13 +1,16 @@
 import os
 import msaf
-import seaborn as sns
 import numpy as np
 from tqdm import tqdm
 import mir_eval
 import pandas as pd
 from features import Embeddiogram
+from msaf.base import features_registry
+import wandb
+from train import PROJECT_NAME
 
-sns.set(style="dark")
+# All available features
+features_registry["embeddiogram"] = Embeddiogram
 
 AUDIO_DIR = "./datasets/SALAMI/audio"
 ANNOTATIONS_DIR = "./datasets/SALAMI/references"
@@ -15,6 +18,10 @@ FEATURE = "embeddiogram"
 BOUNDARIES_ID = msaf.config.default_bound_id
 LABELS_ID = msaf.config.default_label_id
 EVAL_WINDOW = 0.5  # The maximum allowed deviation for a correct boundary (in seconds)
+
+run = wandb.init(
+    project=PROJECT_NAME, job_type="eval", config={"eval_window": EVAL_WINDOW}
+)
 
 
 def get_audio_and_annot_files(audio_dir, annotations_dir):

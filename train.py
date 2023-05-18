@@ -1,8 +1,6 @@
-import datetime
 import os
 import pandas as pd
 import numpy as np
-import torch
 import multiprocessing
 from torch.utils.data import DataLoader
 from pytorch_lightning import Trainer
@@ -21,9 +19,7 @@ wandb.login(
     key="b047312016c639a2d2ebe9948a5937668cd19066",
 )
 
-FILE_LIST_PATH = (
-    "./datasets/MSD/MSD_audio_limit=all_progress100.csv"
-)
+FILE_LIST_PATH = "./datasets/MSD/MSD_audio_limit=all_progress100.csv"
 DATASET_NAME = "Million Song Dataset"
 
 BATCH_SIZE = 8
@@ -38,44 +34,8 @@ PATIENCE = MAX_EPOCHS
 SAVE_TOP_K = 3
 LOG_EVERY_N_STEPS = 10
 PRECISION = "16-mixed"
-STRATEGY = "ddp"
 PROJECT_NAME = "MASTER THESIS"
-ACCELERATOR = "gpu"
-GPUS = torch.cuda.device_count()
 CPU_COUNT = multiprocessing.cpu_count()
-
-config = {
-    "batch_size": BATCH_SIZE,
-    "clip_duration": CLIP_DURATION,
-    "sample_rate": SAMPLE_RATE,
-    "loss_type": LOSS_TYPE,
-    "strides": STRIDES,
-    "out_dim": OUT_DIM,
-    "supervised": SUPERVISED,
-    "max_epochs": MAX_EPOCHS,
-    "patience": PATIENCE,
-    "save_top_k": SAVE_TOP_K,
-    "log_every_n_steps": LOG_EVERY_N_STEPS,
-    "precision": PRECISION,
-    "strategy": STRATEGY,
-    "dataset_name": DATASET_NAME,
-}
-
-# Get the global rank of the current process (0 for the main process)
-global_rank = 0
-if torch.cuda.is_available() and ACCELERATOR == "gpu" and STRATEGY == "ddp":
-    global_rank = int(os.environ.get("LOCAL_RANK", 0))
-
-# Initialize wandb only for the main process (rank 0)
-if global_rank == 0:
-    wandb.init(
-        project=PROJECT_NAME,
-        job_type="train",
-        config=config,
-    )
-else:
-    # Set the WANDB_MODE for non-main processes to "dryrun" to prevent them from logging
-    os.environ["WANDB_MODE"] = "dryrun"
 
 
 def load_file_list(file_list_path):
@@ -137,14 +97,6 @@ def init_model_and_logger(config):
         loss_type=LOSS_TYPE,
     )
 
-    if torch.cuda.is_available() and ACCELERATOR == "gpu" and STRATEGY == "ddp":
-        model = model.cuda()
-        import torch.distributed as dist
-
-        dist.init_process_group(
-            backend="nccl", init_method="tcp://localhost:23456", world_size=1, rank=0
-        )
-
     wandb_logger = WandbLogger(
         project=PROJECT_NAME,
         log_model=True,
@@ -153,24 +105,14 @@ def init_model_and_logger(config):
         group=None,
     )
 
-    wandb_logger.watch(model, log="gradients", log_graph=False)
-
     return model, wandb_logger
 
 
-def get_checkpoint_filename(run_name):
-    date = datetime.date.today().strftime("%Y-%m-%d")
-    return f"run-{run_name}-{date}-{{epoch:02d}}-{{val_loss:.2f}}-{LOSS_TYPE}"
-
-
-def create_callbacks(run_name):
-    filename = get_checkpoint_filename(run_name)
-
+def create_callbacks():
     return [
         EarlyStopping(monitor="val_loss", patience=PATIENCE, verbose=True, mode="min"),
         ModelCheckpoint(
             dirpath="./checkpoints",
-            filename=filename,
             monitor="val_loss",
             mode="min",
             save_top_k=SAVE_TOP_K,
@@ -181,14 +123,12 @@ def create_callbacks(run_name):
 
 def train_model(model, train_loader, validation_loader, wandb_logger):
     trainer = Trainer(
-        accelerator=ACCELERATOR if torch.cuda.is_available() else "cpu",
         default_root_dir="./checkpoints",
         logger=wandb_logger,
-        strategy=STRATEGY,
         max_epochs=MAX_EPOCHS,
         precision="16-mixed" if PRECISION == "16-mixed" else 32,
         sync_batchnorm=True,
-        callbacks=create_callbacks(wandb.run.name),
+        callbacks=create_callbacks(),
         enable_checkpointing=True,
     )
 
@@ -196,17 +136,34 @@ def train_model(model, train_loader, validation_loader, wandb_logger):
         model, train_dataloaders=train_loader, val_dataloaders=validation_loader
     )
 
-    wandb_logger.log_metrics({"trainer_state_dict": trainer.state_dict()})
-    wandb.finish()
+    return trainer.ckpt_path
 
 
 def main():
+    config = {
+        "batch_size": BATCH_SIZE,
+        "clip_duration": CLIP_DURATION,
+        "sample_rate": SAMPLE_RATE,
+        "loss_type": LOSS_TYPE,
+        "strides": STRIDES,
+        "out_dim": OUT_DIM,
+        "supervised": SUPERVISED,
+        "max_epochs": MAX_EPOCHS,
+        "patience": PATIENCE,
+        "save_top_k": SAVE_TOP_K,
+        "log_every_n_steps": LOG_EVERY_N_STEPS,
+        "precision": PRECISION,
+        "dataset_name": DATASET_NAME,
+    }
+
     file_list = load_file_list(FILE_LIST_PATH)
     train_files, val_files = train_test_split(file_list, test_size=0.2, random_state=42)
     train_set, val_set = get_train_val_datasets(train_files, val_files)
     train_loader, validation_loader = create_data_loaders(train_set, val_set)
     model, wandb_logger = init_model_and_logger(config)
-    train_model(model, train_loader, validation_loader, wandb_logger)
+    ckpt_path = train_model(model, train_loader, validation_loader, wandb_logger)
+
+    return ckpt_path
 
 
 if __name__ == "__main__":

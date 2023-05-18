@@ -5,8 +5,6 @@ import torch.optim as optim
 import pytorch_lightning as pl
 from criterion import TripletLoss, ContrastiveLoss
 
-import wandb
-
 
 class Model(nn.Module):
     def __init__(self):
@@ -113,9 +111,6 @@ class TripletNet(pl.LightningModule):
 
     def forward(self, x):
         return self.encoder(x)
-
-    def on_fit_start(self):
-        wandb.watch(self, log="gradients", log_graph=True)
 
     def training_step(self, batch, batch_idx):
         if self.loss_type == "triplet":

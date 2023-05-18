@@ -46,9 +46,7 @@ model.load_state_dict(checkpoint["state_dict"])
 print("Model loaded")
 
 # Load and preprocess the input audio
-input_audio_path = (
-    "./datasets/GTZAN/GTZAN train/blues/blues.00049.wav"
-)
+input_audio_path = "./datasets/GTZAN/GTZAN train/blues/blues.00049.wav"
 input_audio, sampling_rate = torchaudio.load(input_audio_path)
 input_audio = input_audio.mean(dim=0, keepdim=True)  # convert stereo to mono
 input_audio = input_audio.unsqueeze(0)
