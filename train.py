@@ -31,7 +31,6 @@ OUT_DIM = 128
 SUPERVISED = False
 MAX_EPOCHS = 10000
 PATIENCE = MAX_EPOCHS
-SAVE_TOP_K = 3
 LOG_EVERY_N_STEPS = 10
 PRECISION = "16-mixed"
 PROJECT_NAME = "MASTER THESIS"
@@ -109,34 +108,39 @@ def init_model_and_logger(config):
 
 
 def create_callbacks():
-    return [
-        EarlyStopping(monitor="val_loss", patience=PATIENCE, verbose=True, mode="min"),
-        ModelCheckpoint(
-            dirpath="./checkpoints",
-            monitor="val_loss",
-            mode="min",
-            save_top_k=SAVE_TOP_K,
-            save_weights_only=False,
-        ),
-    ]
+    checkpoint_callback = ModelCheckpoint(
+        dirpath="./checkpoints",
+        monitor="val_loss",
+        mode="min",
+        save_weights_only=False,
+    )
+    early_stopping_callback = EarlyStopping(
+        monitor="val_loss", patience=PATIENCE, verbose=True, mode="min"
+    )
+
+    return [early_stopping_callback, checkpoint_callback], checkpoint_callback
 
 
 def train_model(model, train_loader, validation_loader, wandb_logger):
+    callbacks, checkpoint_callback = create_callbacks()
+
     trainer = Trainer(
         default_root_dir="./checkpoints",
         logger=wandb_logger,
         max_epochs=MAX_EPOCHS,
         precision="16-mixed" if PRECISION == "16-mixed" else 32,
         sync_batchnorm=True,
-        callbacks=create_callbacks(),
+        callbacks=callbacks,
         enable_checkpointing=True,
     )
 
-    trainer.fit(
+    fit = trainer.fit(
         model, train_dataloaders=train_loader, val_dataloaders=validation_loader
     )
 
-    return trainer.ckpt_path
+    best_model_path = checkpoint_callback.best_model_path
+
+    return fit, best_model_path
 
 
 def main():
@@ -150,7 +154,6 @@ def main():
         "supervised": SUPERVISED,
         "max_epochs": MAX_EPOCHS,
         "patience": PATIENCE,
-        "save_top_k": SAVE_TOP_K,
         "log_every_n_steps": LOG_EVERY_N_STEPS,
         "precision": PRECISION,
         "dataset_name": DATASET_NAME,
@@ -161,9 +164,11 @@ def main():
     train_set, val_set = get_train_val_datasets(train_files, val_files)
     train_loader, validation_loader = create_data_loaders(train_set, val_set)
     model, wandb_logger = init_model_and_logger(config)
-    ckpt_path = train_model(model, train_loader, validation_loader, wandb_logger)
+    fit, best_model_path = train_model(
+        model, train_loader, validation_loader, wandb_logger
+    )
 
-    return ckpt_path
+    return fit, best_model_path
 
 
 if __name__ == "__main__":

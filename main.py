@@ -15,7 +15,6 @@ settings = [
         "EVAL_WINDOW": 0.5,
         "FEATURE": "embeddiogram",
     },
-    
 ]
 
 for setting in settings:
@@ -27,9 +26,8 @@ for setting in settings:
     train.MAX_EPOCHS = setting["MAX_EPOCHS"]
     train.PATIENCE = setting["PATIENCE"]
 
-
-    ckpt_path = train.main()
+    fit, best_model_path = train.main()
     eval.FEATURE = setting["FEATURE"]
     eval.EVAL_WINDOW = setting["EVAL_WINDOW"]
-    features.CKPT_PATH = ckpt_path
+    features.CKPT_PATH = best_model_path
     eval.main()
