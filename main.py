@@ -14,7 +14,8 @@ settings = [
         "PATIENCE": 1,
         "EVAL_WINDOW": 0.5,
         "FEATURE": "embeddiogram",
-    }
+    },
+    
 ]
 
 for setting in settings:
