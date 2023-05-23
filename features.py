@@ -1,23 +1,4 @@
-"""
-Each feature must inherit from the base class :class:`msaf.base.Features` to be
-included in the whole framework.
-
-Here is a list of all the available features:
-
-.. autosummary::
-    :toctree: generated/
-
-    CQT
-    MFCC
-    PCP
-    Tonnetz
-    Tempogram
-    Features
-    Embeddiogram
-"""
-
 from builtins import super
-import librosa
 import numpy as np
 
 # Necessary packages for the embedding feature
@@ -30,15 +11,13 @@ from multiprocessing import cpu_count
 # Local stuff
 from msaf import config
 from msaf.base import Features
-from msaf.exceptions import FeatureParamsError
 
-import sys
 import importlib.util
 
 from msaf.configdefaults import AddConfigVar, IntParam
 
 WINDOW_SIZE = 4 * config.sample_rate  # 4 seconds of audio
-# CKPT_PATH = ("./checkpoints/run-solar-sound-307-2023-04-20-epoch=127-val_loss=0.03-triplet.ckpt")
+#CKPT_PATH = ("./checkpoints/run-solar-sound-307-2023-04-20-epoch=127-val_loss=0.03-triplet.ckpt")
 
 CKPT_PATH = "./checkpoints/epoch=24-step=24025.ckpt"
 
