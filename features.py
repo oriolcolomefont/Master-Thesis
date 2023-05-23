@@ -17,7 +17,7 @@ import importlib.util
 from msaf.configdefaults import AddConfigVar, IntParam
 
 WINDOW_SIZE = 4 * config.sample_rate  # 4 seconds of audio
-#CKPT_PATH = ("./checkpoints/run-solar-sound-307-2023-04-20-epoch=127-val_loss=0.03-triplet.ckpt")
+# CKPT_PATH = ("./checkpoints/run-solar-sound-307-2023-04-20-epoch=127-val_loss=0.03-triplet.ckpt")
 
 CKPT_PATH = "./checkpoints/epoch=24-step=24025.ckpt"
 
