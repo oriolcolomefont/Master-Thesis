@@ -2,7 +2,6 @@ import itertools
 import os
 import logging
 import traceback
-import time
 import train
 import features
 from msaf import config
@@ -14,18 +13,17 @@ logging.basicConfig(level=logging.INFO)
 
 def create_settings():
     settings_dict = {
-        "FILE_LIST_PATH": "./datasets/MSD/MSD_audio_limit=all.csv",
+        "FILE_LIST_PATH": "./datasets/MSD/partial/MSD_audio_limit=all_progress10.csv",
         "DATASET_NAME": "Million Song Dataset",
         "SAMPLE_RATE": config.sample_rate,
-        "MAX_EPOCHS": 1,
+        "MAX_EPOCHS": 2,
         "EVAL_WINDOW": 0.5,
     }
 
-    batch_sizes = sorted([4, 5, 6, 7, 8])
-    window_sizes = sorted([i * settings_dict["SAMPLE_RATE"] for i in range(4, 9)])
+    batch_sizes = sorted([8])
+    window_sizes = sorted([i * settings_dict["SAMPLE_RATE"] for i in range(4, 8)])
     feature_list = sorted(["pcp", "mfcc", "embeddiogram"])
-    max_epochs_list = sorted([10, 50, 100, 200, 300, 400, 500, 1000])
-    clip_durations = sorted([7.0, 11.0, 15.0])
+    clip_durations = sorted([3.0, 7.0, 15.0])
 
     settings = []
 
@@ -33,10 +31,9 @@ def create_settings():
         batch_size,
         window_size,
         feature,
-        max_epochs,
         clip_duration,
     ) in itertools.product(
-        batch_sizes, window_sizes, feature_list, max_epochs_list, clip_durations
+        batch_sizes, window_sizes, feature_list, clip_durations
     ):
         settings_item = settings_dict.copy()
         settings_item.update(
@@ -44,7 +41,6 @@ def create_settings():
                 "BATCH_SIZE": batch_size,
                 "WINDOW_SIZE": window_size,
                 "FEATURE": feature,
-                "MAX_EPOCHS": max_epochs,
                 "CLIP_DURATION": clip_duration,
             }
         )
@@ -77,13 +73,6 @@ def main():
 
             _, best_model_path = train.main()
 
-            # Create a file to signal that training is done
-            with open('training_done.txt', 'w') as f:
-                f.write('Training completed')
-
-            # Wait for the training to complete
-            while not os.path.exists('training_done.txt'):
-                time.sleep(1)
 
             """
             SETTING UP TRAINING PARAMETERS
@@ -106,8 +95,6 @@ def main():
 
             eval.main()
 
-            # Remove the file to signal the end of evaluation and ready for next training
-            os.remove('training_done.txt')
         except Exception as e:
             logging.error(
                 f"An error occurred while processing the settings {setting}. Error: {str(e)}. Continuing to the next iteration of the loop.\n{traceback.format_exc()}"

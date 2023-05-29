@@ -29,13 +29,13 @@ LOSS_TYPE = "triplet"
 STRIDES = [3, 3, 3, 3, 3, 3, 3, 3, 3]
 OUT_DIM = 128
 SUPERVISED = False
-MAX_EPOCHS = 10000
-PATIENCE = MAX_EPOCHS
+MAX_EPOCHS = 100
+PATIENCE = 50
 LOG_EVERY_N_STEPS = 10
 PRECISION = "16-mixed"
 PROJECT_NAME = "MASTER THESIS"
-CPU_COUNT = multiprocessing.cpu_count()
-
+#CPU_COUNT = multiprocessing.cpu_count()
+CPU_COUNT = 8 
 
 def load_file_list(file_list_path):
     _, file_extension = os.path.splitext(file_list_path)
