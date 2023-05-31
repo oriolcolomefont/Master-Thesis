@@ -13,10 +13,10 @@ logging.basicConfig(level=logging.INFO)
 
 def create_settings():
     settings_dict = {
-        "FILE_LIST_PATH": "./datasets/MSD/partial/MSD_audio_limit=all_progress10.csv",
+        "FILE_LIST_PATH": "./datasets/MSD/MSD_audio_limit=all.csv",
         "DATASET_NAME": "Million Song Dataset",
         "SAMPLE_RATE": config.sample_rate,
-        "MAX_EPOCHS": 2,
+        "MAX_EPOCHS": 100,
         "EVAL_WINDOW": 0.5,
     }
 

@@ -30,7 +30,7 @@ def process_audio_file(audio_file):
 
 
 # Load the checkpoint file
-CKPT_PATH = "./checkpoints/run-valiant-darkness-40-2023-05-02-epoch=09-val_loss=0.18-triplet.ckpt"
+CKPT_PATH = "./checkpoints/epoch=24-step=24025.ckpt"
 checkpoint = torch.load(CKPT_PATH)
 
 # Create the model

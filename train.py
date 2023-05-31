@@ -37,6 +37,7 @@ PROJECT_NAME = "MASTER THESIS"
 #CPU_COUNT = multiprocessing.cpu_count()
 CPU_COUNT = 8 
 
+
 def load_file_list(file_list_path):
     _, file_extension = os.path.splitext(file_list_path)
 
