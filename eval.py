@@ -14,7 +14,7 @@ features_registry["embeddiogram"] = Embeddiogram
 
 AUDIO_DIR = "./datasets/SALAMI/audio"
 ANNOTATIONS_DIR = "./datasets/SALAMI/references"
-FEATURE = "embeddiogram"
+FEATURE = "tonnetz"
 BOUNDARIES_ID = msaf.config.default_bound_id
 LABELS_ID = msaf.config.default_label_id
 EVAL_WINDOW = 0.5  # The maximum allowed deviation for a correct boundary (in seconds)

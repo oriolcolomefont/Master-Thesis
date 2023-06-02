@@ -32,9 +32,7 @@ def create_settings():
         window_size,
         feature,
         clip_duration,
-    ) in itertools.product(
-        batch_sizes, window_sizes, feature_list, clip_durations
-    ):
+    ) in itertools.product(batch_sizes, window_sizes, feature_list, clip_durations):
         settings_item = settings_dict.copy()
         settings_item.update(
             {
@@ -55,7 +53,6 @@ def main():
     for setting in tqdm(settings):
         logging.info(f"Processing settings: {setting}")
         try:
-
             """
             SETTING UP TRAINING PARAMETERS
             """
@@ -73,25 +70,26 @@ def main():
 
             _, best_model_path = train.main()
 
-
             """
             SETTING UP TRAINING PARAMETERS
             """
-            
+
             eval.FEATURE = setting["FEATURE"]
             eval.EVAL_WINDOW = setting["EVAL_WINDOW"]
             features.CKPT_PATH = best_model_path
             features.WINDOW_SIZE = setting["WINDOW_SIZE"]
 
             # Check if a file exists before attempting to delete it
-            if os.path.exists("/home/jupyter/oriol/Master-Thesis/.features_msaf_tmp.json"):
+            if os.path.exists(
+                "/home/jupyter/oriol/Master-Thesis/.features_msaf_tmp.json"
+            ):
                 os.remove("/home/jupyter/oriol/Master-Thesis/.features_msaf_tmp.json")
             else:
                 logging.info("The temporary JSON file does not exist")
 
             """
             EVALUATING THE MODEL FOR THE GIVEN SETTING (BOUNDARY DETECTION; SALAMI DATASET)
-            """            
+            """
 
             eval.main()
 

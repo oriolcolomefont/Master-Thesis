@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 import multiprocessing
+import torch
 from torch.utils.data import DataLoader
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
@@ -29,13 +30,13 @@ LOSS_TYPE = "triplet"
 STRIDES = [3, 3, 3, 3, 3, 3, 3, 3, 3]
 OUT_DIM = 128
 SUPERVISED = False
-MAX_EPOCHS = 100
+MAX_EPOCHS = 1000
 PATIENCE = 50
 LOG_EVERY_N_STEPS = 10
 PRECISION = "16-mixed"
 PROJECT_NAME = "MASTER THESIS"
 #CPU_COUNT = multiprocessing.cpu_count()
-CPU_COUNT = 8 
+CPU_COUNT = 8
 
 
 def load_file_list(file_list_path):
@@ -77,6 +78,7 @@ def create_data_loaders(train_set, val_set):
         collate_fn=lambda b: collate_fn(b, loss_type=train_set.loss_type),
         num_workers=CPU_COUNT,
         drop_last=True,
+        pin_memory=True,
     )
     validation_loader = DataLoader(
         dataset=val_set,
@@ -85,6 +87,7 @@ def create_data_loaders(train_set, val_set):
         collate_fn=lambda b: collate_fn(b, loss_type=val_set.loss_type),
         num_workers=CPU_COUNT,
         drop_last=True,
+        pin_memory=True,
     )
     return train_loader, validation_loader
 
@@ -114,6 +117,7 @@ def create_callbacks():
         monitor="val_loss",
         mode="min",
         save_weights_only=False,
+        save_top_k=5,
     )
     early_stopping_callback = EarlyStopping(
         monitor="val_loss", patience=PATIENCE, verbose=True, mode="min"
