@@ -20,7 +20,7 @@ wandb.login(
     key="b047312016c639a2d2ebe9948a5937668cd19066",
 )
 
-FILE_LIST_PATH = "./datasets/MSD/MSD_audio_limit=all_progress100.csv"
+FILE_LIST_PATH = "./datasets/MSD/MSD_audio_limit=all.csv"
 DATASET_NAME = "Million Song Dataset"
 
 BATCH_SIZE = 8
@@ -36,7 +36,7 @@ LOG_EVERY_N_STEPS = 10
 PRECISION = "16-mixed"
 PROJECT_NAME = "MASTER THESIS"
 #CPU_COUNT = multiprocessing.cpu_count()
-CPU_COUNT = 8
+CPU_COUNT = 16
 
 
 def load_file_list(file_list_path):
