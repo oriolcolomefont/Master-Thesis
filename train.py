@@ -1,11 +1,10 @@
 import os
 import pandas as pd
 import numpy as np
-import multiprocessing
-import torch
 from torch.utils.data import DataLoader
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
+from collections import deque
 from pytorch_lightning.loggers import WandbLogger
 from sklearn.model_selection import train_test_split
 import wandb
@@ -111,13 +110,33 @@ def init_model_and_logger(config):
     return model, wandb_logger
 
 
+class CustomModelCheckpoint(ModelCheckpoint):
+
+    def __init__(self, dirpath, monitor, mode, save_weights_only, save_top_k, save_last_k):
+        super().__init__(dirpath=dirpath, monitor=monitor, mode=mode,
+                         save_weights_only=save_weights_only, save_top_k=save_top_k)
+        self.save_last_k = save_last_k
+        self.last_k_paths = deque(maxlen=self.save_last_k)
+
+    def on_validation_end(self, trainer, pl_module):
+        super().on_validation_end(trainer, pl_module)
+        # Save last N checkpoints
+        if len(self.last_k_paths) == self.save_last_k:
+            try:
+                os.remove(self.last_k_paths[0])
+            except:
+                pass
+        self.last_k_paths.append(self.last_model_path)
+
+
 def create_callbacks():
-    checkpoint_callback = ModelCheckpoint(
+    checkpoint_callback = CustomModelCheckpoint(
         dirpath="./checkpoints",
         monitor="val_loss",
         mode="min",
         save_weights_only=False,
         save_top_k=5,
+        save_last_k=5,
     )
     early_stopping_callback = EarlyStopping(
         monitor="val_loss", patience=PATIENCE, verbose=True, mode="min"
