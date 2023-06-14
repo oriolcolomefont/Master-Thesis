@@ -9,8 +9,6 @@ Leveraging self-supervised deep neural networks, inductive bias, and aural skill
 
 **Supervisors:** Carl Thomé and Carlos Lordelo
 
-**Co-Supervisor:** Frederic Font
-
 **Date:** July 2023
 
 ## Abstract
