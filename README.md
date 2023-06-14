@@ -7,7 +7,7 @@ Leveraging self-supervised deep neural networks, inductive bias, and aural skill
 
 **Author:** Oriol Colomé Font
 
-**Supervisors:** Carl Thomé and Carlos Lordelo
+**Supervisors:** [Carl Thomé](https://github.com/carlthome) and [Carlos Lordelo](https://github.com/cpvlordelo)
 
 **Date:** July 2023
 
