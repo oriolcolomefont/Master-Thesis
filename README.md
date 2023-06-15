@@ -44,7 +44,7 @@ While music-motivated audio embeddings appear promising, delivering competitive 
 
 ## Acknowledgements
 
-*Acknowledge the individuals or institutions that contributed to your project*
+[Carl Thomé](https://github.com/carlthome) and [Carlos Lordelo](https://github.com/cpvlordelo) whose expertise in MIR, ML, and DSP has been pivotal to the progress and success of my thesis. Their invaluable guidance and unwavering encouragement have empowered me to overcome the challenges encountered throughout this journey. Their dedication and commitment to mentorship are truly inspiring, and their influence has left an indelible mark on my academic path. The opportunity to work under their mentorship has been a privilege and an honor. Their profound impact is beyond what words can encapsulate.
 
 ## License
 
