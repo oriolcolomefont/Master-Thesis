@@ -63,7 +63,9 @@ While music-motivated audio embeddings appear promising, delivering competitive 
 
 ## Acknowledgements
 
-[Carl Thomé](https://github.com/carlthome) and [Carlos Lordelo](https://github.com/cpvlordelo), whose expertise in MIR, ML, and DSP has been pivotal to the progress and success of my thesis. Their invaluable guidance and unwavering encouragement have empowered me to overcome the challenges encountered throughout this journey. Their dedication and commitment to mentorship are truly inspiring, and their influence has left an indelible mark on my academic path. The opportunity to work under their mentorship has been a privilege and an honor. Their profound impact is beyond what words can encapsulate.
+[Carl Thomé](https://github.com/carlthome) and [Carlos Lordelo](https://github.com/cpvlordelo), whose unrivaled expertise in the areas of MIR, ML, and DSP has not only been pivotal to the success of my thesis but their wisdom and guidance have been a constant source of motivation and enlightenment. Their genuine enthusiasm for mentorship and an intrinsic knack for going above and beyond has been truly inspiring. Throughout my journey, they have been more than just mentors; they have become the embodiment of academic kindness and professionalism. They never made me feel inferior or judged but treated me as an equal peer, fostering an environment of respect and intellectual growth.
+
+Their unwavering support and encouragement have empowered me to tackle and overcome the myriad challenges encountered during this journey. Their influence has left a lasting mark on my academic path and their mentorship, a privilege I will forever hold in high esteem. The profundity of their impact, which extends well beyond the scope of this thesis, is not easily encapsulated by mere words but is deeply felt in the better researcher I have become under their guidance.
 
 ## License
 
