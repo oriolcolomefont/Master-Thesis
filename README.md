@@ -1,6 +1,8 @@
 # Master Thesis in Sound and Music Computing
 ## Epidemic Sound AB & Universitat Pompeu Fabra (Music Technology Group)
 
+
+
 ### Title: Uncovering Underlying High-Level Musical Content in the Time Domain
 
 Leveraging self-supervised deep neural networks, inductive bias, and aural skills to learn deep audio embeddings with applications to boundary detection tasks.
