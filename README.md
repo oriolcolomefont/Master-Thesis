@@ -48,8 +48,11 @@ While music-motivated audio embeddings appear promising, delivering competitive 
 
 ## License
 
-*Specify the license under which your project is distributed*
+*GNU General Public License v3.0*
 
 ## Contact
 
-For any questions or concerns, please contact Oriol Colomé Font at *oriolcolomefont@gmail.com*.
+For any questions or concerns, please get in touch with Oriol Colomé Font at:
+*oriolcolomefont@gmail.com*
+*oriol.colome01@estudiant.upf.edu*
+*oriol.colome.font@epidemicsound.com*
