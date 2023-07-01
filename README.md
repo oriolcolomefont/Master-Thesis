@@ -3,7 +3,7 @@
 
 ### Title: Uncovering Underlying High-Level Musical Content in the Time Domain
 
-Leveraging self-supervised deep neural networks, inductive bias, and aural skills to learn deep audio embeddings with applications to Music Information Retrieval (MIR) downstream tasks.
+Leveraging self-supervised deep neural networks, inductive bias, and aural skills to learn deep audio embeddings with applications to boundary detection tasks.
 
 **Author:** Oriol Colomé Font
 
