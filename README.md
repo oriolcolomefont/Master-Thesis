@@ -1,7 +1,7 @@
 # Master Thesis in Sound and Music Computing
 ## Epidemic Sound AB & Universitat Pompeu Fabra (Music Technology Group)
 
-
+![alt text](https://github.com/oriolcolomefont/Master-Thesis/blob/54e35045debfb4f802cbc312afb681d6c41c7414/UPF-Logo.png?raw=true)
 
 ### Title: Uncovering Underlying High-Level Musical Content in the Time Domain
 
