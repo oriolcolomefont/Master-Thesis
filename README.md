@@ -34,7 +34,7 @@ This model structure is integral to our work, allowing us to identify and mainta
 
 Preliminary results suggest that, while not outperforming state-of-the-art results, our musically-informed technique has significant potential for boundary detection tasks and, most likely, nearly all MIR downstream tasks that are not purely sonic-based.
 
-While music-motivated audio embeddings appear promising, delivering competitive results with room for improvement and potentially adaptable to other tasks constrained by data scarcity, the question remains if such general-purpose audio representation can mimic human hearing.
+While music-motivated audio embeddings don't outperform state-of-the-art results, they appear promising, delivering competitive results with room for improvement and potentially adaptable to other tasks constrained by data scarcity; the question remains if such general-purpose audio representation can mimic human hearing.
 
 ### Keywords
 
