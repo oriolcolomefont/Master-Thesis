@@ -55,10 +55,9 @@ def get_config(feature, boundaries_id, labels_id):
 
 
 def process_audio_file(audio_file_path, annot_file_path, feature_name):
-    annot_file_path = annot_file_path[:-1]
 
     try:
-        annot_intervals, annot_labels = msaf.io.read_references(annot_file_path)
+        annot_intervals, annot_labels = msaf.io.read_references(audio_file_path)
     except FileNotFoundError as e:
         print(f"Error: {e}")
         return None
