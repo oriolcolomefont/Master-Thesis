@@ -4,7 +4,7 @@
 <img src="https://github.com/oriolcolomefont/Master-Thesis/blob/3477a79ff7821c1d296068c376b8afb854b7f092/Epidemic_Sound_Logo_White.png?raw=true" alt="alt text" width="200"/>
 <img src="https://github.com/oriolcolomefont/Master-Thesis/blob/54e35045debfb4f802cbc312afb681d6c41c7414/UPF-Logo.png?raw=true" alt="alt text" width="200"/>
 
-### Title: Uncovering Underlying High-Level Musical Content in the Time Domain
+### Uncovering Underlying High-Level Musical Content in the Time Domain
 
 Leveraging self-supervised deep neural networks, inductive bias, and aural skills to learn deep audio embeddings with applications to boundary detection tasks.
 
