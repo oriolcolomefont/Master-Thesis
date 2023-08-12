@@ -16,7 +16,7 @@ from collate_fn import collate_fn
 # Authenticate the account and initilize the project
 
 wandb.login(
-    key="b047312016c639a2d2ebe9948a5937668cd19066",
+    key="insert key HERE",
 )
 
 FILE_LIST_PATH = "./datasets/MSD/MSD_audio_limit=all.csv"
