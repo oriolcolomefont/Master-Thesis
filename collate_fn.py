@@ -3,6 +3,28 @@ import torch.nn.functional as F
 
 
 def collate_fn(batch, loss_type):
+    """
+    A collate function for creating batches of data for training siamese/triplet network models.
+
+    Args:
+        batch (list): A list of dictionaries where each dictionary represents a data sample with keys:
+            - "anchor" (torch.Tensor): The anchor waveform tensor.
+            - "positive" (torch.Tensor): The positive waveform tensor.
+            - "negative" (torch.Tensor): The negative waveform tensor.
+            - "label" (int): Label for the anchor-positive pair.
+            - "label_neg" (int): Label for the anchor-negative pair.
+        loss_type (str): The type of loss function to use. Can be "triplet" or "contrastive".
+
+    Returns:
+        torch.Tensor or tuple: Depending on the loss type, returns either a tuple containing tensors for:
+            - "triplet" loss: (anchors, positives, hardest_negatives)
+            - "contrastive" loss: (samples1, samples2, labels)
+        or a single tensor for "contrastive" loss: labels.
+
+    Raises:
+        ValueError: If an invalid loss type is provided.
+
+    """
     if loss_type == "triplet":
         return collate_fn_triplet(batch)
     elif loss_type == "contrastive":
