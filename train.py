@@ -13,6 +13,16 @@ from dataset import MyDataset
 from model import TripletNet
 from collate_fn import collate_fn
 
+"""
+This script demonstrates the process of training a Triplet Network using PyTorch Lightning and logging the training progress with WandB. 
+Triplet Networks are commonly used for learning similarity metrics, where the network aims to bring similar samples closer and dissimilar 
+samples farther apart in the learned embedding space. 
+The script covers the major components required to set up and train such a network.
+
+Note: Make sure to replace "insert key HERE" with your actual WandB API key for authentication, and ensure that you have the necessary dependencies (libraries, datasets, etc.) 
+installed and set up for this script to run successfully.
+"""
+
 # Authenticate the account and initilize the project
 
 wandb.login(
