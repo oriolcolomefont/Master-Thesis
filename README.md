@@ -59,10 +59,6 @@ Alternatively, you can use [conda](https://docs.conda.io/en/latest/) to create a
 
 *Provide steps on how to use the project*
 
-## Results and Conclusion
-
-*Provide an overview of your results and conclusions, if applicable*
-
 ## Acknowledgements
 
 [Carl Thomé](https://github.com/carlthome) and [Carlos Lordelo](https://github.com/cpvlordelo), whose unrivaled expertise in the areas of MIR, ML, and DSP has not only been pivotal to the success of my thesis but their wisdom and guidance have been a constant source of motivation and enlightenment. Their genuine enthusiasm for mentorship and an intrinsic knack for going above and beyond has been truly inspiring. Throughout my journey, they have been more than just mentors; they have become the embodiment of academic kindness and professionalism. They never made me feel inferior or judged but treated me as an equal peer, fostering an environment of respect and intellectual growth.
