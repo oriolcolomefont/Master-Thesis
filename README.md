@@ -43,15 +43,19 @@ While music-motivated audio embeddings don't outperform state-of-the-art results
 
 ## Installation and Usage
 
-*Detail the steps needed to install and run your project, if applicable*
+### Pip
 
-### Requirements
+Use the package manager [pip](https://pip.pypa.io/en/stable/) to install the required dependencies.
 
-*List out the software requirements for your project*
+```bash
+pip install -r requirements.txt
 
-### Installation Steps
+Alternatively, you can use conda to create a virtual environment and install the required dependencies.
 
-*Detail the steps to install the project*
+conda create -n project-env python=3.8
+conda activate project-env
+conda install --file requirements.txt
+
 
 ### How to Use
 
