@@ -8,8 +8,31 @@ from msaf import config
 import eval
 from tqdm import tqdm
 
-logging.basicConfig(level=logging.INFO)
+"""
+Automated Experimentation and Evaluation Script
 
+This script automates the process of training and evaluating a model under various settings. 
+It conducts experiments by testing different combinations of hyperparameters, training the model, 
+and evaluating its performance using the SALAMI dataset for boundary detection.
+
+Usage:
+    python script_name.py
+
+Dependencies:
+    - PyTorch
+    - PyTorch Lightning
+    - NumPy
+    - Pandas
+    - tqdm
+
+Module Dependencies:
+    - train (Contains model training functionality)
+    - features (Contains feature extraction functionality)
+    - eval (Contains evaluation functionality)
+
+"""
+
+logging.basicConfig(level=logging.INFO)
 
 def create_settings():
     settings_dict = {
