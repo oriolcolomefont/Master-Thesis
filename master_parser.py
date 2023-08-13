@@ -6,6 +6,53 @@ import os
 from tqdm import tqdm
 from multiprocessing import Pool, cpu_count
 
+"""
+    Audio Files Parser
+
+    This class provides functionality to parse audio files from specified directories based on given criteria.
+    It filters out files that are less than the minimum specified duration and saves the paths of the
+    filtered audio files in CSV and NumPy formats.
+
+    Args:
+        name (str): A descriptive name for this parsing operation.
+        min_duration (float): Consider the minimum duration (in seconds) of audio files.
+        limit (int): Maximum number of files to consider from each directory.
+        base_directory (str): Base directory containing subdirectories with audio files.
+        last_file_path (str, optional): Path to the last saved CSV file for continuation. Default is None.
+
+    Methods:
+        worker(directory, min_duration, limit):
+            Process audio files in a directory, filtering them based on specified criteria.
+
+        parse(directories=None):
+            Parse audio files from specified directories. If 'last_file_path' is provided, you can continue from the last saved state.
+            Saves the filtered file paths to CSV and NumPy formats.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing file paths of parsed audio files.
+        str: Path to the saved NumPy file containing the list of filtered audio file paths.
+
+    Dependencies:
+        - numpy
+        - pandas
+        - librosa.util
+        - torchaudio
+        - os
+        - tqdm
+        - multiprocessing
+
+    Example:
+        parser = MasterParser(
+            name="example",
+            min_duration=10.0,
+            limit=100,
+            base_directory="/path/to/audio/files",
+            last_file_path="last_parsed.csv"
+        )
+        parsed_df, npy_path = parser.parse()
+
+    """
+
 
 class MasterParser:
     def __init__(
