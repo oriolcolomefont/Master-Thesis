@@ -41,7 +41,7 @@ While music-motivated audio embeddings don't outperform state-of-the-art results
 - MIR, Music Structure Analysis, Deep audio embeddings, Audio representations, Representation learning, Embeddings, Transfer learning, Multi-task learning, Multi-modal learning, Aural Skills
 
 
-## Installation and Usage
+## Virtual environment installation
 
 ### Pip
 
@@ -54,10 +54,6 @@ Alternatively, you can use [conda](https://docs.conda.io/en/latest/) to create a
 `conda create -n project-env python=3.8`
 `conda activate project-env`
 `conda install --file requirements.txt`
-
-### How to Use
-
-*Provide steps on how to use the project*
 
 ## Acknowledgements
 
