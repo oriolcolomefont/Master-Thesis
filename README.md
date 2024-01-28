@@ -65,6 +65,7 @@ pip install -r requirements.txt
 
 Alternatively, you can use conda to create a virtual environment and install the required dependencies.
 
+```bash
 conda create -n project-env python=3.8
 conda activate project-env
 conda install --file requirements.txt
