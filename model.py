@@ -1,5 +1,5 @@
 """
-The SampleCNN class is as implemented by https://github.com/Spijkervet/CLMR 
+The SampleCNN class is implemented by https://github.com/Spijkervet/CLMR 
 """
 
 # Import the required libraries
