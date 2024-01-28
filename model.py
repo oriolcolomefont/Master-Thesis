@@ -1,3 +1,7 @@
+"""
+The SampleCNN class is as implemented by https://github.com/Spijkervet/CLMR 
+"""
+
 # Import the required libraries
 import torch
 import torch.nn as nn
