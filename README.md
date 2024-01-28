@@ -1,8 +1,3 @@
-<div class="logo-container">
-  <img src="https://github.com/oriolcolomefont/Master-Thesis/blob/3477a79ff7821c1d296068c376b8afb854b7f092/Epidemic_Sound_Logo_White.png?raw=true" alt="Epidemic Sound Logo" width="200"/>
-  <img src="https://github.com/oriolcolomefont/Master-Thesis/blob/54e35045debfb4f802cbc312afb681d6c41c7414/UPF-Logo.png?raw=true" alt="UPF Logo" width="200"/>
-</div>
-
 # [Master Thesis in Sound and Music Computing](https://zenodo.org/records/8380670)
 ## Epidemic Sound AB & Universitat Pompeu Fabra (Music Technology Group)
 
