@@ -13,15 +13,7 @@ Leveraging self-supervised deep neural networks, inductive bias, and aural skill
 
 ## Abstract
 
-This thesis posits the existence of invariant high-level musical concepts that persist regardless of changes in sonic qualities, akin to the symbolic domain where essence endures despite varying interpretations through different performances, instruments, and styles, among many other, almost countless variables.
-
-In collaboration with Epidemic Sound AB and the Music Technology Group (MTG) at Universitat Pompeu Fabra (UPF), we employed self-supervised contrastive learning to uncover the underlying structure of Western tonal music by learning deep audio features for music boundary detection. We applied deep convolutional neural networks with a triplet loss function to identify abstract and semantic high-level musical elements without relying on their sonic qualities. This way, we replaced traditional acoustic features with deep audio embeddings, paving the way for sound-agnostic and content-sensitive music representation for downstream track segmentation tasks.
-
-Our cognitively-based approach for learning embeddings focuses on using full-resolution data and preserving high-level musical information that unfolds in the time domain. A key component in our methodology is triplet networks, which effectively understand and preserve the nuanced relationships within musical data. Drawing upon our domain expertise, we developed robust transformations to encode heuristic musical concepts that should remain constant. This novel approach combines music and machine learning to enhance machine listening models’ efficacy.
-
-Preliminary results suggest that, while not outperforming state-of-the-art methods, our musically-informed technique has significant potential for boundary detection tasks. Most likely, it also holds promise for nearly all downstream sound-agnostic and content-sensitive tasks constrained by data scarcity, as it is possible to achieve competitive performance compared to traditional handcrafted signal processing methods by learning only from unlabeled audio files.
-
-The question remains whether such a general-purpose audio representation can mimic human hearing.
+The thesis explores invariant high-level musical concepts that persist despite changes in sonic qualities. Collaborating with Epidemic Sound AB and the Music Technology Group at Universitat Pompeu Fabra, the study employs self-supervised contrastive learning to uncover the structure of Western tonal music using deep audio features. The approach utilizes triplet networks and focuses on full-resolution data to preserve high-level musical information over time. The study aims to create sound-agnostic and content-sensitive music representations for track segmentation tasks by replacing traditional acoustic features with deep audio embeddings. Preliminary results show potential for boundary detection tasks, suggesting effectiveness in sound-agnostic and content-sensitive applications with data scarcity. The question posed is whether this general-purpose audio representation can replicate human hearing.
 
 ### Collaboration and Methodology
 
