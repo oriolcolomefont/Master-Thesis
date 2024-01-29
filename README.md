@@ -46,8 +46,6 @@ While music-motivated audio embeddings don't outperform state-of-the-art results
 
 ## Virtual environment installation
 
-## Virtual environment installation
-
 ### Pip
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install the required dependencies.
